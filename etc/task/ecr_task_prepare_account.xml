@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!-- 任务定义文件,每个任务有一个文件构成，任务构造器可以根据此文件构造一个任务出来 -->
+
+<task name="ECRPrepareAccountTask" describe="导入企业账户信息18:54:05-18:55:08" recovery="false"  saveHistory="true"  historyFolder="./his" >
+
+		<executeUnits>
+				<executeUnit name="DeletePayPlan" describe="导入前清空还款计划和还款流水" allowManualExecute="true" executeClass="com.amarsoft.task.units.dpx.SQLProcess">
+					<extendProperties>
+						<property name="unit.onErrorAction" value="break"/>
+						<property name="unit.logLevel" value="debug"/>
+						<property name="unit.script" value="
+							connect to {$ARE.ecr_dataSource};&#xA;
+							set autocommit false;&#xA;
+							delete from  ;&#xA;
+							commit;&#xA;
+							delete from ECR_LCBACKLIST;&#xA;
+							commit;&#xA;
+							delete from ECR_REPWARNING where WarningType = '2';&#xA;
+							commit;&#xA;
+							delete from ECR_REPWARNING where WarningType = '3';&#xA;
+							commit;&#xA;
+							disconnect;"
+						/>
+					</extendProperties>
+				</executeUnit>
+				<executeUnit name="ImportPayPlan" describe="导入还款计划" allowManualExecute="true" executeClass="com.amarsoft.task.units.dpx.PRHUnit">
+					<extendProperties>
+						<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_PAYPLAN:etc/ecr_are.xml:," />
+						<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+						<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+						<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+<!-- ACCTCODE,PAYDATE,PERIODPAYDATE,PAYCORP,PAYINTE,PAYCORPFINE,PAYINTEFINE,ACTUALPAYDATE,ACTUALCORP,ACTUALINTE,ACTUALCORPFINE,
+ACTUALINTEFINE,PAYOFFSTATUS,MANAGERORGID,MANAGERUSERID,OPERORGID,OPERUSERID,UPDATEDATE,OCCURDATE,EXTEND1,EXTEND2,EXTEND3 -->
+						<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+							value="datasource:db:ecr:select  ACCTCODE
+											EEP.AcctCode as AcctCode{#账户标识码},
+											EEP.PayDate as PayDate{#结算日期},
+											EEP.PayCorp as PayCorp{#应还本金},
+											EEP.PayInte as PayInte{#应还利息},
+											EEP.PayCorpFine as PayCorpFine{#应还本金罚息},
+											EEP.PayInteFine as PayInteFine{#应还利息罚息},
+											EEP.ActualPayDate as ActualPayDate{#实还日期},
+											EEP.ActualCorp as ActualCorp{#实还本金},
+											EEP.ActualInte as ActualInte{#实还利息},
+											EEP.ActualCorpFine as ActualCorpFine{#实还本金罚息},
+											EEP.ActualInteFine as ActualInteFine{#实还利息罚息},
+											EEP.PayoffStatus as PayoffStatus{#还款标志},
+											EEP.ManagerorgID as ManagerorgID{#管户机构编号},
+											EEP.ManagerUserID as ManagerUserID{#管户用户编号},
+											EEP.UpdateDate as UpdateDate{#更新日期},
+											'{$ARE.bizDate}' as OccurDate{#数据日期}
+										from ECR_INT_PAYPLAN EEP,ECR_INT_ACCTINFO EAI,ECR_INT_ACCTCTRCT EAC
+										where EEP.AcctCode = EAI.BACCTCODE and EAI.BCtrctCode = EAC.BCtrctCode 
+											and (EAC.AcctType ='R4' or EAC.AcctType ='D2' or (EAC.AcctType ='D1' and (EAC.Flag ='0' or EAC.Flag ='1')))
+											and (EEP.PayOffStatus='1'  {#未结清的还款计划}
+											or (EEP.PayOffStatus='0' and EEP.PayDate = (select max(PayDate) from ECR_INT_PAYPLAN EIP where EIP.AcctCode=EEP.AcctCode)){#已结清的最近一期还款计划})
+							" />
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" />		
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_PAYPLAN" />
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="AcctCode,PayDate" />
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.checkDBRecord" value="false" />
+					</extendProperties>
+				</executeUnit>
+				
+				<executeUnit name="ImportAccountInfo" describe="导入借贷账户信息18:49:30-18:49:35----------跑这个" allowManualExecute="true" executeClass="com.amarsoft.task.units.dpx.PRHUnit">
+					<extendProperties>
+						<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_ACCOUNTINFO:etc/ecr_are.xml:," />
+						<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ImportAccountHandler" />
+						<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+						<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+						<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+							     value="datasource:db:ecr:select EAI.BAcctCode as AcctCode{#账户标识码},
+							     EAI.BCtrctCode as BCtrctCode{#合同号},
+							     EAI.CustomerID as CustomerID{#客户号},
+							     EAC.ContractCode as ContractCode{#授信协议标识码},
+							     EAC.AcctType as AcctType{#账户类型},
+							     EAC.Flag as Flag{#分次放款标志},
+							     EAI.Name as Name{#借款人名称},
+							     EAI.IDType as IDType{#借款人身份标识类型},
+							     EAI.IDNum as IDNum{#借款人身份标识号码},
+							     EAC.BusiLines as BusiLines{#借贷业务大类},
+							     EAC.BusiDtlLines as BusiDtlLines{#借贷业务种类细分},
+							     EAI.RepayMode as RepayMode{#还款方式},
+							     EAI.RepayFreqcy as RepayFreqcy{#还款频率},
+							     EAI.NxtAgrrRpyDate as NxtAgrrRpyDate{#下一次约定还款日期},
+							     EAI.LoanTimeLimCat as LoanTimeLimCat{#借款期限分类},
+							     EAI.OpenDate as OpenDate{#开户日期},
+							     EAI.DueDate as DueDate{#到期日期},
+							     EAI.Cy as Cy{#币种},
+							     EAC.CtrCtamt as AcctCredLine{#信用额度},
+							     EAI.LoanAmt as LoanAmt{#借款金额},
+							     EAI.AcctBal as AcctBal{#余额},
+							     EAI.BalChgDat as BalChgDat{#余额变化日期},
+							     EAI.NormalBal as NormalBal{#正常本金余额},
+							     EAI.OverdBal as OverdBal{#逾期本金余额},
+							     EAI.Interest as Interest{#利息},
+							     EAI.OverdDy as OverdDy{#当前逾期天数},
+							     EAI.FiveCate as FiveCate{#五级分类},
+							     EAI.FiveCateAdjDate as FiveCateAdjDate{#五级分类认定日期},
+							     EAI.AcctStatus as AcctStatus{#账户状态},
+							     EAI.CloseDate as CloseDate{#账户关闭日期},
+							     EAC.GuarMode as GuarMode{#担保方式},
+							     EAC.OthRepyGuarWay as OthRepyGuarWay{#其他还款保证方式},
+							     EAC.ActInvest as ActInvest{#贷款实际投向},
+							     EAC.LoaFrm as LoaFrm{#贷款发放形式},
+							     EAI.AssetTrandFlag as AssetTrandFlag{#资产转让标志},
+							     EAC.FundSou as FundSou{#业务经营类型},
+							     EAC.ApplyBusiDist as ApplyBusiDist{#业务申请地行政区划代码},
+							     EAI.ManagerorgID as ManagerorgID{#管户机构编号},
+							     EAI.ManagerUserID as ManagerUserID{#管户用户编号},
+							     EAI.UpdateDate as UpdateDate{#更新日期}
+							 from ECR_INT_ACCTINFO EAI,ECR_INT_ACCTCTRCT EAC
+							 where EAI.BCtrctCode = EAC.BCtrctCode
+							     and (EAC.AcctType = 'R4' or EAC.AcctType = 'D2' or EAC.AcctType = 'C1' or (EAC.AcctType = 'D1' and (EAC.Flag = '0' or EAC.Flag = '1')))
+								 -- R4-循环贷额度下分账户  D2-贴现账户 C1-催收账户 D1-非循环贷账户
+							     and (EAI.DueDate &gt; EAI.OpenDate or EAC.AcctType ='C1') {#到期日期大于开立日期}
+							     and EAI.LoanAmt &gt; 0{#发放金额大于0}
+								 and (EAI.AcctBal + EAI.Interest &gt; 0 {#未结清数据}
+								 	or (EAI.AcctBal + EAI.Interest = 0 and EAI.CloseDate &gt;= '{$ARE.appDate}'
+								 		and EAI.CloseDate &gt;= '{$ARE.lastMonth}-01' and EAI.CloseDate &lt;= '{$ARE.bizDate}')){#近阶段结清数据}
+						 		"/>
+						<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportAccountHandler.database" value="ecr" />				
+						<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportAccountHandler.table" value="ECR_ACCOUNTINFO" />
+						<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportAccountHandler.keyColumns" value="AcctCode" />
+						<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportAccountHandler.checkDBRecord" value="true" />
+						<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportAccountHandler.updateColumns" 
+						    value="AcctType,Flag,Name,IDType,IDNum,BusiLines,BusiDtlLines,RepayMode,RepayFreqcy,NxtAgrrRpyDate,LoanTimeLimCat,OpenDate,DueDate,Cy,AcctCredLine,LoanAmt,AcctBal,BalChgDat,NormalBal,OverdBal,Interest,OverdDy,FiveCate,FiveCateAdjDate,AcctStatus,CloseDate,GuarMode,OthRepyGuarWay,ActInvest,LoaFrm,AssetTrandFlag,FundSou,ApplyBusiDist,RptDateCode,RecordFlag,ManagerorgID,ManagerUserID,UpdateDate,OccurDate"/>
+					 	<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportAccountHandler.compareColumns" 
+					 		value="AcctType,Name,IDType,IDNum,NxtAgrrRpyDate,AcctBal,BalChgDat,NormalBal,OverdBal,Interest,OverdDy,FiveCate,FiveCateAdjDate,AcctStatus,CloseDate,DueDate" />
+					 </extendProperties>
+				</executeUnit>	
+				
+
+				
+				<executeUnit name="ImportGuarAccountInfo" describe="导入担保账户信息18:51:13-18:51:14" allowManualExecute="true" executeClass="com.amarsoft.task.units.dpx.PRHUnit">
+					<extendProperties>
+						<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_ACCOUNTINFO:etc/ecr_are.xml:," />
+						<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ImportAccountHandler" />
+						<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+						<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+						<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+							     value="datasource:db:ecr:select EGI.BillCode as AcctCode{#账户标识码},
+							     EGI.BCtrctCode as BCtrctCode{#BCtrctCode},
+							     EGI.CustomerID as CustomerID{#客户号},
+							     EAC.ContractCode as ContractCode{#授信协议标识码},
+							     EAC.AcctType as AcctType{#账户类型},
+							     EAC.Flag as Flag{#分次放款标志},
+							     EGI.Name as Name{#借款人名称},
+							     EGI.IDType as IDType{#借款人身份标识类型},
+							     EGI.IDNum as IDNum{#借款人身份标识号码},
+							     EAC.BusiLines as BusiLines{#借贷业务大类},
+							     EAC.BusiDtlLines as BusiDtlLines{#借贷业务种类细分},
+							     EGI.OpenDate as OpenDate{#开户日期},
+							     EGI.DueDate as DueDate{#到期日期},
+							     EGI.Cy as Cy{#币种},
+							     EGI.GuarAmt as LoanAmt{#借款金额},
+							     EGI.AcctBal as AcctBal{#余额},
+							     EGI.BalChgDat as BalChgDat{#余额变化日期},
+							     EGI.FiveCate as FiveCate{#五级分类},
+							     EGI.FiveCateAdjDate as FiveCateAdjDate{#五级分类认定日期},
+							     EGI.AcctStatus as AcctStatus{#账户状态},
+							     EGI.CloseDate as CloseDate{#账户关闭日期},
+							     EAC.GuarMode as GuarMode{#担保方式},
+							     EAC.OthRepyGuarWay as OthRepyGuarWay{#其他还款保证方式},
+							     EAC.SecDep as SecDep{#保证金百分比},
+							     EGI.CompAdvFlag as CompAdvFlag{#代偿（垫款）标志},
+							     EGI.RiEx as RiEx{#风险敞口},
+							     EAC.CycFlag as CycFlag{#可循环标志},
+							     EGI.ManagerorgID as ManagerorgID{#管户机构编号},
+							     EGI.ManagerUserID as ManagerUserID{#管户用户编号},
+							     EGI.UpdateDate as UpdateDate{#更新日期}
+							 from ECR_INT_GUARACCTINFO EGI,ECR_INT_ACCTCTRCT EAC
+							 where  EGI.BCtrctCode = EAC.BCtrctCode
+							     and EGI.DueDate &gt; EGI.OpenDate {#到期日期大于开立日期}
+							     and EGI.GuarAmt &gt; 0{#发放金额大于0}
+							     and (EGI.AcctBal &gt; 0
+									or (EGI.AcctBal = 0 and EGI.CloseDate &gt;= '{$ARE.appDate}'
+										and EGI.CloseDate &gt;= '{$ARE.lastMonth}-01' and EGI.CloseDate &lt;= '{$ARE.bizDate}')){#未结清和近阶段结清数据}
+						 		"/>
+						<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportAccountHandler.database" value="ecr" />				
+						<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportAccountHandler.table" value="ECR_ACCOUNTINFO" />
+						<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportAccountHandler.keyColumns" value="AcctCode" />
+					 	<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportAccountHandler.updateColumns" 
+					 		value="AcctType,Name,IDType,IDNum,BusiLines,BusiDtlLines,OpenDate,Cy,LoanAmt,AcctBal,BalChgDat,FiveCate,FiveCateAdjDate,AcctStatus,CloseDate,GuarMode,OthRepyGuarWay,SecDep,CompAdvFlag,RiEx,CycFlag,RptDateCode,RecordFlag,ManagerorgID,ManagerUserID,UpdateDate,OccurDate" />
+					 	<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportAccountHandler.compareColumns" 
+					 		value="AcctType,Name,IDType,IDNum,OpenDate,LoanAmt,AcctBal,BalChgDat,FiveCate,FiveCateAdjDate,AcctStatus,CloseDate,SecDep,CompAdvFlag,RiEx" />
+					 </extendProperties>
+				</executeUnit>
+				
+				<executeUnit name="ImportEAINotExtractData" describe="导入未抽取的接口表数据18:50:21-18:50:22" allowManualExecute="true" executeClass="com.amarsoft.task.units.dpx.PRHUnit">
+					<extendProperties>
+						<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_REPWARNING:etc/ecr_are.xml:," />
+						<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+						<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+						<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/>
+						<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+								value="datasource:db:ecr:select 
+								EAI.BAcctCode as AcctCode,{#账户标识码}
+								EAI.CustomerID as CustomerID,{#客户号}
+								EAI.Name as Name,{#借款人姓名}
+					     		EAI.IDType as IDType,{#借款人证件类型}
+					     		EAI.IDNum as IDNum,{#借款人证件号码}
+					     		'3' as WarningType,{#预警类型}
+					     		'{$ARE.bizDate}' as OccurDate,{#数据日期}
+					     		'ECR_INT_ACCTINFO' as WarningTable{#预警表},
+					     		EAC.AcctType as AcctType,{#账户类型}
+					     		EAI.ManagerorgID as ManagerorgID{#管户机构编号},
+							    EAI.ManagerUserID as ManagerUserID{#管户用户编号}
+					     		from ECR_INT_ACCTINFO EAI,ECR_INT_ACCTCTRCT EAC{# EAI=借据表,EAC=合同表}
+					     		where EAI.BCtrctCode = EAC.BCtrctCode
+					     		and (EAC.AcctType = 'R4' or EAC.AcctType = 'D2' or EAC.AcctType = 'C1' or (EAC.AcctType = 'D1' and (EAC.Flag = '0' or EAC.Flag = '1')))
+					     		and not exists(select 1 from ECR_ACCOUNTINFO
+					     			where AcctCode=EAI.BAcctCode)
+						"/>
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" />		
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_REPWARNING" />
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="AcctCode,WarningType" />
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.checkDBRecord" value="false" />
+					</extendProperties>
+				</executeUnit>
+
+				<executeUnit name="ImportEGINotExtractData" describe="导入未抽取的接口表数据18:51:51-18:51:52" allowManualExecute="true" executeClass="com.amarsoft.task.units.dpx.PRHUnit">
+					<extendProperties>
+						<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_REPWARNING:etc/ecr_are.xml:," />
+						<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+						<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+						<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/>
+						<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+								value="datasource:db:ecr:select 
+								EGI.BillCode as AcctCode,{#账户标识码}
+								EGI.CustomerID as CustomerID,{#客户号}
+								EGI.Name as Name,{#借款人姓名}
+					     		EGI.IDType as IDType,{#借款人证件类型}
+					     		EGI.IDNum as IDNum,{#借款人证件号码}
+					     		'3' as WarningType,{#预警类型}
+					     		'{$ARE.bizDate}' as OccurDate,{#数据日期}
+					     		'ECR_INT_GUARACCTINFO' as WarningTable{#预警表},
+					     		EGI.ManagerorgID as ManagerorgID{#管户机构编号},
+							    EGI.ManagerUserID as ManagerUserID{#管户用户编号}
+					     		from ECR_INT_GUARACCTINFO EGI,ECR_INT_ACCTCTRCT EAC{# EGI=表外信息表}
+					     		where EGI.BCtrctCode = EAC.BCtrctCode
+					     		and not exists(select 1 from ECR_ACCOUNTINFO
+					     			where AcctCode=EGI.BillCode)
+						"/>
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" />		
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_REPWARNING" />
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="AcctCode,WarningType" />
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.checkDBRecord" value="false" />
+					</extendProperties>
+				</executeUnit>
+				
+				<executeUnit name="ImportLCBacklist" describe="导入还款流水中间表18:52:25-18:53:22" allowManualExecute="true" executeClass="com.amarsoft.task.units.dpx.PRHUnit">
+					<extendProperties>
+						<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_LCBACKLIST:etc/ecr_are.xml:," />
+						<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+						<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+						<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+						<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+							value="datasource:db:ecr:select 
+											ELL.AcctCode as AcctCode{#账户标识码},
+											ELL.RpmtCode as RpmtCode{#还款流水号},
+											ELL.RpmtDate as RpmtDate{#发生日期},
+											ELL.RpmtCorp as RpmtCorp{#还款本金},
+											ELL.RpmtInst as RpmtInst{#还款利息},
+											ELL.RpmtCorpFine as RpmtCorpFine{#发生本金罚息},
+											ELL.RpmtInstFine as RpmtInstFine{#发生利息罚息},
+											ELL.RpmtType as RpmtType{#还款形式},
+											ELL.ManagerorgID as ManagerorgID{#管户机构编号},
+											ELL.ManagerUserID as ManagerUserID{#管户用户编号},
+											ELL.UpdateDate as UpdateDate{#更新日期},
+											'{$ARE.bizDate}' as OccurDate{#数据日期}
+										from ECR_INT_LCBACKLIST ELL
+										where exists(select 1 from ECR_ACCOUNTINFO EA where EA.AcctCode = ELL.AcctCode and EA.RecordFlag in('A','U') 
+												and EA.AcctType &lt;&gt; 'R1' and (EA.AcctType &lt;&gt; 'D1' or (EA.AcctType ='D1' and EA.Flag &lt;&gt;'2')))
+											and ELL.RpmtDate = (select max(RpmtDate) from ECR_INT_LCBACKLIST EL where ELL.AcctCode=EL.AcctCode)
+							" />
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" />		
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_LCBACKLIST" />
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="AcctCode,RpmtCode,RpmtDate" />
+						<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.checkDBRecord" value="false" />
+					</extendProperties>
+				</executeUnit>
+		</executeUnits>
+		
+		<routeMap start="DeletePayPlan" >
+		 <route unit="DeletePayPlan" successful="ImportPayPlan" />
+		<route unit="ImportPayPlan" successful="ImportAccountInfo" />
+		<route unit="ImportAccountInfo" successful="ImportEAINotExtractData" />
+		<route unit="ImportEAINotExtractData" successful="ImportGuarAccountInfo" />
+		<route unit="ImportGuarAccountInfo" successful="ImportEGINotExtractData" />
+		<route unit="ImportEGINotExtractData" successful="ImportLCBacklist" />
+	    </routeMap>	
+	    
+		
+</task>

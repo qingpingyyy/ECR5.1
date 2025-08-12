@@ -1,0 +1,10 @@
+call startup.bat datacopy
+call startup.bat prepareAccount
+call startup.bat prepareCust
+call startup.bat prepareFinance
+call startup.bat prepareAcctAndGuar
+call startup.bat prepareCredAndMotga
+call startup.bat validate
+call startup.bat transfer
+call startup.bat report
+call startup.bat exportenc

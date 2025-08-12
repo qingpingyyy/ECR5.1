@@ -1,0 +1,1021 @@
+<?xml version="1.0" encoding="GBK" ?>
+<validator>
+	<code>
+		<!--段校验-->
+		<rule name="R4100101-1" sgmtName="AcctBsSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR000"
+			  errorMsg="当“报送时点说明代码”为“10-新开户/首次报送”时，若“账户类型”为“D1”、“D2”、“R1”、“R4”、“C1”，必须包含基础段。">
+			<precondition>
+				<rule name="R4100101-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+				<rule name="R4100101-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;D2;R1;R4;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100101-2" sgmtName="AcctBsInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR000"
+			  errorMsg="当“报送时点说明代码”为“10-新开户/首次报送”时，若“账户类型”为“D1”、“D2”、“R1”、“R4”、“C1”，必须包含基本信息段。">
+			<precondition>
+				<rule name="R4100101-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+				<rule name="R4100101-2-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;D2;R1;R4;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100101-3" sgmtName="AcctCredSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR000"
+			  errorMsg="当“报送时点说明代码”为“10-新开户/首次报送”时，若“账户类型”为“R1”、“R4”，必须包含授信额度信息段。">
+			<precondition>
+				<rule name="R4100101-3-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+				<rule name="R4100101-3-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="R1;R4;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100101-4" sgmtName="ActLbltyInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR000"
+			  errorMsg="当“报送时点说明代码”为“10-新开户/首次报送”时，若“账户类型”为“D1”、“D2”、“R1”、“R4”、“C1”，必须包含还款表现信息段。">
+			<precondition>
+				<rule name="R4100101-4-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+				<rule name="R4100101-4-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;D2;R1;R4;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100101-5" sgmtName="AcctCredSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR000"
+			  errorMsg="当“报送时点说明代码”为“10-新开户/首次报送”时，若“账户类型”为“D1”，如果基本信息段中“分次放款标识”代码表位为“1”或“2”，则应包含授信额度信息段。">
+			<precondition>
+				<rule name="R4100101-5-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+				<rule name="R4100101-5-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;"/>
+				<rule name="R4100101-5-P3" sgmtName="AcctBsInfSgmt" fieldName="Flag" level="3" type="DL"
+					  dataList="1;2;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100102-1" sgmtName="OrigCreditorInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR001" errorMsg="当“报送时点说明代码”为“10-新开户/首次报送”时，若“账户类型”为“D1”、“R1”、“R4”，不应包含初始债权说明段。">
+			<precondition>
+				<rule name="R4100102-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+				<rule name="R4100102-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R1;R4;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100102-2" sgmtName="AcctCredSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR001" errorMsg="当“报送时点说明代码”为“10-新开户/首次报送”时，若“账户类型”为“D1”，“分次放款标识”为“0”，不应包含授信额度信息段。">
+			<precondition>
+				<rule name="R4100102-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+				<rule name="R4100102-2-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;"/>
+				<rule name="R4100102-2-P2" sgmtName="AcctBsInfSgmt" fieldName="Flag" level="3" type="DL" dataList="0;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100102-3" sgmtName="AcctCredSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR001" errorMsg="当“报送时点说明代码”为“10-新开户/首次报送”时，若“账户类型”为“D2”、“C1”，不应包含授信额度信息段。">
+			<precondition>
+				<rule name="R4100102-3-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+				<rule name="R4100102-3-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D2;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100102-4" sgmtName="MotgaCltalCtrctInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR001" errorMsg="当“报送时点说明代码”为“10-新开户/首次报送”时，若“账户类型”为“D2”、“C1”，不应包含抵质押物信息段。">
+			<precondition>
+				<rule name="R4100102-4-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+				<rule name="R4100102-4-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D2;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100103-1" sgmtName="AcctBsSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR002"
+			  errorMsg="当“报送时点说明代码”为“20-账户关闭”时，若“账户类型”为“D1”、“D2”、“R1”、“R4”、“C1”，必须包含基础段。">
+			<precondition>
+				<rule name="R4100103-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="20;"/>
+				<rule name="R4100103-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;D2;R1;R4;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100103-2" sgmtName="ActLbltyInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR002"
+			  errorMsg="当“报送时点说明代码”为“20-账户关闭”时，若“账户类型”为“D1”、“D2”、“R1”、“R4”、“C1”，必须包含还款表现信息段。">
+			<precondition>
+				<rule name="R4100103-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="20;"/>
+				<rule name="R4100103-2-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;D2;R1;R4;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100104-1" sgmtName="OrigCreditorInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR003" errorMsg="当“报送时点说明代码”为“20-账户关闭”时，若“账户类型”为“D1”、“R1”、“R4”、“C1”，不应包含初始债权说明段。">
+			<precondition>
+				<rule name="R4100104-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="20;"/>
+				<rule name="R4100104-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R1;R4;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100104-2" sgmtName="AcctCredSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR003" errorMsg="当“报送时点说明代码”为“20-账户关闭”时，若“账户类型”为“D1”，“分次放款标识”为“0”，不应包含授信额度信息段。">
+			<precondition>
+				<rule name="R4100104-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="20;"/>
+				<rule name="R4100104-2-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;"/>
+				<rule name="R4100104-2-P3" sgmtName="AcctBsInfSgmt" fieldName="Flag" level="3" type="DL" dataList="0;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100104-3" sgmtName="AcctCredSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR003" errorMsg="当“报送时点说明代码”为“20-账户关闭”时，若“账户类型”为“D2”、“C1”，不应包含授信额度信息段。">
+			<precondition>
+				<rule name="R4100104-3-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="20;"/>
+				<rule name="R4100104-3-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D2;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100104-4" sgmtName="MotgaCltalCtrctInfSgmt" fieldName="N/A" level="2" type="SE"
+			  reverseCheck="true" errorCode="CLR003" errorMsg="当“报送时点说明代码”为“20-账户关闭”时，若“账户类型”为“D2”、“C1”，不应包含抵质押物信息段。">
+			<precondition>
+				<rule name="R4100104-4-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="20;"/>
+				<rule name="R4100104-4-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D2;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100104-5" sgmtName="RltRepymtInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR003" errorMsg="当“报送时点说明代码”为“20-账户关闭”时，若“账户类型”为“C1”，不应包含相关还款责任人段。">
+			<precondition>
+				<rule name="R4100104-5-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="20;"/>
+				<rule name="R4100104-5-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100105-1" sgmtName="AcctBsSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR004"
+			  errorMsg="当“报送时点说明代码”为“31-开户后放款”时，若“账户类型”为“D1”，“分次放款标识”为“2”，必须包含基本信息段。">
+			<precondition>
+				<rule name="R4100105-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="31;"/>
+				<rule name="R4100105-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;"/>
+				<rule name="R4100105-1-P3" sgmtName="AcctBsInfSgmt" fieldName="Flag" level="3" type="DL" dataList="2;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100105-2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DE"  dataList="D1"  
+		      reverseCheck="true"  errorCode="CLR004" errorMsg="当“报送时点说明代码”为“31-开户后放款”时，“分次放款标识”为“0”、“1”，账户类型不能为“D1”。">
+			<precondition>
+				<rule name="R4100105-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="31;"/>
+				<rule name="R4100105-2-P3" sgmtName="AcctBsInfSgmt" fieldName="Flag" level="3" type="DL" dataList="0;1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100105-3" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"  dataList="D2;R1;R4;C1;"  
+		      reverseCheck="true" errorCode="CLR004" errorMsg="当“报送时点说明代码”为“31-开户后放款”时，账户类型不能为“D2”、“R1”、“R4”、“C1”。">
+			<precondition>
+				<rule name="R4100105-3-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="31;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100106-1" sgmtName="OrigCreditorInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR005" errorMsg="当“报送时点说明代码”为“31-开户后放款”时，若“账户类型”为“D1”，“分次放款标识”为“2”，不应包含初始债权说明段。">
+			<precondition>
+				<rule name="R4100106-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="31;"/>
+				<rule name="R4100106-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;"/>
+				<rule name="R4100106-1-P3" sgmtName="AcctBsInfSgmt" fieldName="Flag" level="3" type="DL" dataList="2;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100107-1" sgmtName="AcctBsSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR006"
+			  errorMsg="当“报送时点说明代码”为“32-约定还款日结算”时，若“账户类型”为“D1”、“D2”、“R4”，应包含基础段。">
+			<precondition>
+				<rule name="R4100107-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="32;"/>
+				<rule name="R4100107-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;D2;R4;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100107-2" sgmtName="ActLbltyInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR006"
+			  errorMsg="当“报送时点说明代码”为“32-约定还款日结算”时，若“账户类型”为“D1”、“D2”、“R4”，应包含还款表现信息段。">
+			<precondition>
+				<rule name="R4100107-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="32;"/>
+				<rule name="R4100107-2-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;D2;R4;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100107-3" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"  dataList="R1;C1;" 
+		      reverseCheck="true" errorCode="CLR004"
+			  errorMsg="当“报送时点说明代码”为“32-约定还款日结算”时，账户类型不能为“R1”、“C1”。">
+			<precondition>
+				<rule name="R4100107-3-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="32;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100108-1" sgmtName="OrigCreditorInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR007" errorMsg="当“报送时点说明代码”为“32-约定还款日结算”时，若“账户类型”为“D1”、“R1”、“R4”，不应包含初始债权说明段。">
+			<precondition>
+				<rule name="R4100108-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="32;"/>
+				<rule name="R4100108-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R1;R4;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100108-2" sgmtName="AcctCredSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR007" errorMsg="当“报送时点说明代码”为“32-约定还款日结算”时，若“账户类型”为“D1”，“分次放款标识”为“0”，则不应包含授信额度信息段。">
+			<precondition>
+				<rule name="R4100108-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="32;"/>
+				<rule name="R4100108-2-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;"/>
+				<rule name="R4100108-2-P3" sgmtName="AcctBsInfSgmt" fieldName="Flag" level="3" type="DL" dataList="0;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100108-3" sgmtName="AcctCredSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR007" errorMsg="当“报送时点说明代码”为“32-约定还款日结算”时，若“账户类型”为“D2”，则不应包含授信额度信息段。">
+			<precondition>
+				<rule name="R4100108-3-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="32;"/>
+				<rule name="R4100108-3-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D2;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100108-4" sgmtName="MotgaCltalCtrctInfSgmt" fieldName="N/A" level="2" type="SE"
+			  reverseCheck="true" errorCode="CLR007" errorMsg="当“报送时点说明代码”为“32-约定还款日结算”时，若“账户类型”为“D2”，则不应包含抵质押物信息段。">
+			<precondition>
+				<rule name="R4100108-4-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="32;"/>
+				<rule name="R4100108-4-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D2;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100108-5" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DE"  dataList="C1"
+			  reverseCheck="true" errorCode="CLR007" errorMsg="当“报送时点说明代码”为“32-约定还款日结算”，“账户类型”不能为“C1”">
+			<precondition>
+				<rule name="R4100108-5-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="32;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100109-1" sgmtName="AcctBsSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR008"
+			  errorMsg="当“报送时点说明代码”为“33-实际还款”时，若“账户类型”为“D1”、“D2”、“R4”、“C1”，应包含基础段。">
+			<precondition>
+				<rule name="R4100109-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="33;"/>
+				<rule name="R4100109-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;D2;R4;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100109-2" sgmtName="ActLbltyInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR008"
+			  errorMsg="当“报送时点说明代码”为“33-实际还款”时，若“账户类型”为“D1”、“D2”、“R4”、“C1”，应包含还款表现信息段。">
+			<precondition>
+				<rule name="R4100109-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="33;"/>
+				<rule name="R4100109-2-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;D2;R4;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100110-1" sgmtName="OrigCreditorInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR009" errorMsg="当“报送时点说明代码”为“33-实际还款”时，若“账户类型”为“D1”、“R4”、“C1”，不应包含初始债权说明段。">
+			<precondition>
+				<rule name="R4100110-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="33;"/>
+				<rule name="R4100110-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R4;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100110-2" sgmtName="AcctCredSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR009" errorMsg="当“报送时点说明代码”为“33-实际还款”时，若“账户类型”为“D1”，“分次放款标识”为“0”，不应包含授信额度信息段。">
+			<precondition>
+				<rule name="R4100110-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="33;"/>
+				<rule name="R4100110-2-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;"/>
+				<rule name="R4100110-2-P3" sgmtName="AcctBsInfSgmt" fieldName="Flag" level="3" type="DL" dataList="0;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100110-3" sgmtName="AcctCredSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR009" errorMsg="当“报送时点说明代码”为“33-实际还款”时，若“账户类型”为“D2”、“C1”，不应包含授信额度信息段。">
+			<precondition>
+				<rule name="R4100110-3-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="33;"/>
+				<rule name="R4100110-3-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D2;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100110-4" sgmtName="MotgaCltalCtrctInfSgmt" fieldName="N/A" level="2" type="SE"
+			  reverseCheck="true" errorCode="CLR009" errorMsg="当“报送时点说明代码”为“33-实际还款”时，若“账户类型”为“D2”、“C1”，不应包含抵质押物信息段。">
+			<precondition>
+				<rule name="R4100110-4-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="33;"/>
+				<rule name="R4100110-4-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D2;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100110-5" sgmtName="RltRepymtInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR009" errorMsg="当“报送时点说明代码”为“33-实际还款”时，若“账户类型”为“C1”，不应包含相关还款责任人段。">
+			<precondition>
+				<rule name="R4100110-5-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="33;"/>
+				<rule name="R4100110-5-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100108-5" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DE"  dataList="R1"
+			  reverseCheck="true" errorCode="CLR008" errorMsg="当“报送时点说明代码”为“33-实际还款”，“账户类型”不能为“R1”">
+			<precondition>
+				<rule name="R4100108-5-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="33;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100111-1" sgmtName="AcctBsSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR010"
+			  errorMsg="当“报送时点说明代码”为“41-五级分类调整”时，若“账户类型”为“D1”、“D2”、“R4”、“C1”，应包含基础段。">
+			<precondition>
+				<rule name="R4100111-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="41;"/>
+				<rule name="R4100111-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;D2;R4;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100111-2" sgmtName="ActLbltyInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR010"
+			  errorMsg="当“报送时点说明代码”为“41-五级分类调整”时，若“账户类型”为“D1”、“D2”、“R4”、“C1”，应包含还款表现信息段。">
+			<precondition>
+				<rule name="R4100111-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="41;"/>
+				<rule name="R4100111-2-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;D2;R4;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100112-1" sgmtName="OrigCreditorInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR010" errorMsg="当“报送时点说明代码”为“41-五级分类调整”时，若“账户类型”为“D1”、“R4”、“C1”，不应包含初始债权说明段。">
+			<precondition>
+				<rule name="R4100112-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="41;"/>
+				<rule name="R4100112-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R4;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100112-2" sgmtName="AcctCredSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR011" errorMsg="当“报送时点说明代码”为“41-五级分类调整”时，若“账户类型”为“D1”，“分次放款标识”为“0”，不应包含授信额度信息段。">
+			<precondition>
+				<rule name="R4100112-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="41;"/>
+				<rule name="R4100112-2-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;"/>
+				<rule name="R4100112-2-P3" sgmtName="AcctBsInfSgmt" fieldName="Flag" level="3" type="DL" dataList="0;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100112-3" sgmtName="AcctCredSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR011" errorMsg="当“报送时点说明代码”为“41-五级分类调整”时，若“账户类型”为“D2”、“C1”，不应包含授信额度信息段。">
+			<precondition>
+				<rule name="R4100112-3-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="41;"/>
+				<rule name="R4100112-3-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D2;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100112-4" sgmtName="MotgaCltalCtrctInfSgmt" fieldName="N/A" level="2" type="SE"
+			  reverseCheck="true" errorCode="CLR011" errorMsg="当“报送时点说明代码”为“41-五级分类调整”时，若“账户类型”为“D2”、“C1”，不应包含抵质押物信息段。">
+			<precondition>
+				<rule name="R4100112-4-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="41;"/>
+				<rule name="R4100112-4-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D2;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100112-5" sgmtName="RltRepymtInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR011" errorMsg="当“报送时点说明代码”为“41-五级分类调整”时，若“账户类型”为“C1”，不应包含相关还款责任人段。">
+			<precondition>
+				<rule name="R4100112-5-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="41;"/>
+				<rule name="R4100112-5-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100112-6" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DE"  dataList="R1"
+			  reverseCheck="true" errorCode="CLR010" errorMsg="当“报送时点说明代码”为“41-五级分类调整”，“账户类型”不能为“R1”">
+			<precondition>
+				<rule name="R4100112-6-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="41;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100113-1" sgmtName="AcctBsSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR012"
+			  errorMsg="当“报送时点说明代码”为“42-展期发生”时，若“账户类型”为“D1”、“R4”，应包含基础段。">
+			<precondition>
+				<rule name="R4100113-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="42;"/>
+				<rule name="R4100113-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R4;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100113-2" sgmtName="ActLbltyInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR012"
+			  errorMsg="当“报送时点说明代码”为“42-展期发生”时，若“账户类型”为“D1”、“R4”，应包含还款表现信息段。">
+			<precondition>
+				<rule name="R4100113-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="42;"/>
+				<rule name="R4100113-2-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R4;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100113-3" sgmtName="AcctSpecTrstDspnSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR012"
+			  errorMsg="当“报送时点说明代码”为“42-展期发生”时，若“账户类型”为“D1”、“R4”，应包含特定交易说明段。">
+			<precondition>
+				<rule name="R4100113-3-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="42;"/>
+				<rule name="R4100113-3-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R4;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100114-1" sgmtName="OrigCreditorInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR013" errorMsg="当“报送时点说明代码”为“42-展期发生”时，若“账户类型”为“D1”、“R1”，不应包含初始债权说明段。">
+			<precondition>
+				<rule name="R4100114-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="42;"/>
+				<rule name="R4100114-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100114-2" sgmtName="AcctCredSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR013" errorMsg="当“报送时点说明代码”为“42-展期发生”时，若“账户类型”为“D1”，“分次放款标识”为“0”，不应包含授信额度信息段。">
+			<precondition>
+				<rule name="R4100114-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="42;"/>
+				<rule name="R4100114-2-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;"/>
+				<rule name="R4100114-2-P3" sgmtName="AcctBsInfSgmt" fieldName="Flag" level="3" type="DL" dataList="0;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100114-3" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"  dataList="C1;D2;R1;"
+			  reverseCheck="true" errorCode="CLR012" errorMsg="当“报送时点说明代码”为“42-展期发生”，“账户类型”不能为“C1”、“D2”、“R1”">
+			<precondition>
+				<rule name="R4100114-3-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="42;"/>
+			</precondition>
+		</rule>
+		
+		<rule name="R4100115-1" sgmtName="AcctBsSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR014"
+			  errorMsg="当“报送时点说明代码”为“49-其他报送日”时，若“账户类型”为“D1”、“D2”、“R1”、“R4”、“C1”，应包含基础段。">
+			<precondition>
+				<rule name="R4100115-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="49;"/>
+				<rule name="R4100115-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;D2;R1;R4;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100115-2" sgmtName="ActLbltyInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR014"
+			  errorMsg="当“报送时点说明代码”为“49-其他报送日”时，若“账户类型”为“D1”、“D2”、“R1”、“R4”、“C1”，应包含还款表现信息段。">
+			<precondition>
+				<rule name="R4100115-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="49;"/>
+				<rule name="R4100115-2-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;D2;R1;R4;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100116-1" sgmtName="OrigCreditorInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR015" errorMsg="当“报送时点说明代码”为“49-其他报送日”时，若“账户类型”为“D1”、“R1”、“R4”、“C1”，不应包含初始债权说明段。">
+			<precondition>
+				<rule name="R4100116-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="49;"/>
+				<rule name="R4100116-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R1;R4;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100116-2" sgmtName="AcctCredSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR015" errorMsg="当“报送时点说明代码”为“49-其他报送日”时，若“账户类型”为“D1”，“分次放款标识”为“0”，不应包含授信额度信息段。">
+			<precondition>
+				<rule name="R4100116-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="49;"/>
+				<rule name="R4100116-2-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;"/>
+				<rule name="R4100116-2-P3" sgmtName="AcctBsInfSgmt" fieldName="Flag" level="3" type="DL" dataList="0;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100116-3" sgmtName="MotgaCltalCtrctInfSgmt" fieldName="N/A" level="2" type="SE"
+			  reverseCheck="true" errorCode="CLR015" errorMsg="当“报送时点说明代码”为“49-其他报送日”时，若“账户类型”为“D2”、“C1”，不应包含抵质押物信息段。">
+			<precondition>
+				<rule name="R4100116-3-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="49;"/>
+				<rule name="R4100116-3-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D2;C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100116-4" sgmtName="AcctCredSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR015" errorMsg="当“报送时点说明代码”为“49-其他报送日”时，若“账户类型”为“D2”、“C1”，不应包含授信额度信息段。">
+			<precondition>
+				<rule name="R4100116-4-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="49;"/>
+				<rule name="R4100116-4-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D2;C1"/>
+			</precondition>
+		</rule>
+		<rule name="R4100116-5" sgmtName="RltRepymtInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CLR015" errorMsg="当“报送时点说明代码”为“49-其他报送日”时，若“账户类型”为“C1”，不应包含相关还款责任人段。">
+			<precondition>
+				<rule name="R4100116-5-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="49;"/>
+				<rule name="R4100116-5-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="C1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100117-1" sgmtName="RltRepymtInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR016"
+			  errorMsg="当“报告时点说明代码”为“10-新开户/首次上报”，若“基本信息段”的“担保方式”为“1-保证”时，必须报送相关还款责任人段。">
+			<precondition>
+				<rule name="R4100117-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+				<rule name="R4100117-1-P2" sgmtName="AcctBsInfSgmt" fieldName="GuarMode" level="3" type="DL"
+					  dataList="1;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100118-1" sgmtName="MotgaCltalCtrctInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR017"
+			  errorMsg="当“报告时点说明代码”为“10-新开户/首次上报，若“基本信息段”的“担保方式”为“2-质押”、“3-抵押”时，必须报送抵质押物信息段。">
+			<precondition>
+				<rule name="R4100118-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+				<rule name="R4100118-1-P2" sgmtName="AcctBsInfSgmt" fieldName="GuarMode" level="3" type="DL"
+					  dataList="2;3;"/>
+			</precondition>
+		</rule>
+		<rule name="R4100119-1" sgmtName="AcctBsSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR018"
+			  errorMsg="企业借贷账户信息记录必须包含基础段。"/>
+		<!-- 数据项校验 -->
+		<rule name="I0000201-1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DIC" dataList="ELoanAcctType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“账户类型”取值需要在代码表中。"/>
+		<rule name="I0000201-2" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DIC" dataList="RptDateCode410"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报告时点说明代码”取值需要在代码表中。"/>
+		<rule name="I0000201-3" sgmtName="AcctBsSgmt" fieldName="IDType" level="3" type="DL" dataList="10;20;30"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“借款人身份标识类型”取值需要在代码表中。"/>
+		<rule name="I0000201-4" sgmtName="AcctBsInfSgmt" fieldName="BusiLines" level="3" type="DIC" dataList="ELoanBiz"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“借贷业务大类”取值需要在代码表中。"/>
+		<rule name="I0000201-5" sgmtName="AcctBsInfSgmt" fieldName="Cy" level="3" type="DIC" dataList="Currency"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“币种”取值需要在代码表中。"/>
+		<rule name="I0000201-6" sgmtName="AcctBsInfSgmt" fieldName="Flag" level="3" type="DIC" dataList="GradLendFlag"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“分次放款标志”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-6-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1"/>
+			</precondition>
+		</rule>
+		<rule name="I0000201-7" sgmtName="AcctBsInfSgmt" fieldName="RepayMode" level="3" type="DIC" dataList="RepayMode"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“还款方式”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-7-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R1;R4;"/>
+			</precondition>
+		</rule>
+		<rule name="I0000201-8" sgmtName="AcctBsInfSgmt" fieldName="RepayFreqcy" level="3" type="DIC"
+			  dataList="RepayFreqcy" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“还款频率”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-8-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R1;R4;"/>
+			</precondition>
+		</rule>
+		<rule name="I0000201-9" sgmtName="AcctBsInfSgmt" fieldName="ApplyBusiDist" level="3" type="DIC"
+			  dataList="AdminDiv" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“业务申请地行政区划代码”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-9-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  reverseCheck="true" dataList="C1"/>
+			</precondition>
+		</rule>
+		<rule name="I0000201-10" sgmtName="AcctBsInfSgmt" fieldName="GuarMode" level="3" type="DIC" dataList="GuarMode"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“担保方式”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-10-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  reverseCheck="true" dataList="C1"/>
+			</precondition>
+		</rule>
+		<rule name="I0000201-11" sgmtName="AcctBsInfSgmt" fieldName="OthRepyGuarWay" level="3" type="DIC"
+			  dataList="OthRepyGuarWay" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“其他还款保证方式”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-11-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  reverseCheck="true" dataList="C1"/>
+			</precondition>
+		</rule>
+		<rule name="I0000201-12" sgmtName="AcctBsInfSgmt" fieldName="LoanTimeLimCat" level="3" type="DIC"
+			  dataList="LoanTimeLimCat" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“借款期限分类”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-12-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R4;"/>
+			</precondition>
+		</rule>
+		<rule name="I0000201-13" sgmtName="AcctBsInfSgmt" fieldName="LoaFrm" level="3" type="DIC" dataList="LoaFrm"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“贷款发放形式”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-13-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  reverseCheck="true" dataList="C1"/>
+			</precondition>
+		</rule>
+		<rule name="I0000201-14" sgmtName="AcctBsInfSgmt" fieldName="ActInvest" level="3" type="DIC"
+			  dataList="IndustryCate" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“贷款实际投向”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-14-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R1;R4;"/>
+			</precondition>
+		</rule>
+		<rule name="I0000201-15" sgmtName="AcctBsInfSgmt" fieldName="FundSou" level="3" type="DIC" dataList="FundSou"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“业务经营类型”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-15-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  reverseCheck="true" dataList="C1"/>
+			</precondition>
+		</rule>
+		<rule name="I0000201-16" sgmtName="AcctBsInfSgmt" fieldName="AssetTrandFlag" level="3" type="DIC"
+			  dataList="AssetTrandFlag" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“资产转让标志”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-16-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R1;R4;"/>
+			</precondition>
+		</rule>
+
+		<rule name="I0000201-17" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:ArlpIDType" level="3" type="DIC"
+			  dataList="IDCategory" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“身份类别”取值需要在代码表中。"/>
+		<rule name="I0000201-18" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:ArlpType" level="3" type="DIC"
+			  dataList="ArlpType" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“还款责任类型”取值需要在代码表中。"/>
+
+		<rule name="I0000201-20" sgmtName="OrigCreditorInfSgmt" fieldName="OrigDbtCate" level="3" type="DIC"
+			  dataList="OrigDbtCate" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“原债务种类”取值需要在代码表中。"/>
+		<rule name="I0000201-21" sgmtName="OrigCreditorInfSgmt" fieldName="InitRpySts" level="3" type="DIC"
+			  dataList="InitRpySts" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“债权转移时的还款状态”取值需要在代码表中。"/>
+
+		<rule name="I0000201-22" sgmtName="ActLbltyInfSgmt" fieldName="AcctStatus" level="3" type="DIC"
+			  dataList="AcctStatus" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“账户状态”取值需要在代码表中。"/>
+		<rule name="I0000201-23" sgmtName="ActLbltyInfSgmt" fieldName="FiveCate" level="3" type="DIC"
+			  dataList="FiveCate" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“五级分类”取值需要在代码表中。"/>
+		<rule name="I0000201-24" sgmtName="ActLbltyInfSgmt" fieldName="RpmtType" level="3" type="DIC"
+			  dataList="RpmtType" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“还款形式”取值需要在代码表中。"/>
+
+		<rule name="I0000201-25" sgmtName="AcctSpecTrstDspnSgmt" fieldName="CagOfTrdInf:ChanTranType" level="3" type="DIC"
+			  dataList="ChanTranType" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“交易类型 ”取值需要在代码表中。"/>
+
+		<rule name="I4100C02-1" sgmtName="AcctBsInfSgmt" fieldName="OpenDate" level="3" type="DTR"
+			  dataEndValue="{$AcctBsInfSgmt.DueDate}" errorCode="CLE001" errorMsg="“开户日期”应不晚于“到期日期”。">
+		</rule>
+		<rule name="I4100C03-1" sgmtName="AcctBsInfSgmt" fieldName="RepayFreqcy" level="3" type="DL" dataList="10;"
+			  errorCode="CLE002" errorMsg="若账户基本信息段中的“还款方式”为“90-合并报送，不区分还款方式”，则“还款频率”为“10-月”。">
+			<precondition>
+				<rule name="I4100C03-1-P1" sgmtName="AcctBsInfSgmt" fieldName="RepayMode" level="3" type="DL"
+					  dataList="90;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100C04-1" sgmtName="AcctBsInfSgmt" fieldName="RepayFreqcy" level="3" type="DL" dataList="99;"
+			  errorCode="CLE003" errorMsg="若账户基本信息段中的“还款方式”以“2”开头，则“还款频率”为“99-其他”。">
+			<precondition>
+				<rule name="I4100C04-1-P1" sgmtName="AcctBsInfSgmt" fieldName="RepayMode" level="3" type="DL"
+					  dataList="21;22;23;29;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100C05-1" sgmtName="AcctBsInfSgmt" fieldName="RepayMode" level="3" type="DL" reverseCheck="true"
+			  dataList="31;32;33;39;" errorCode="CLE004"
+			  errorMsg="若“账户类型”为R4、D1时，账户基本信息段中的“还款方式”必须不为“31”、“32”、“33”、“39”。">
+			<precondition>
+				<rule name="I4100C05-1-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;R4;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100C06-1" sgmtName="AcctBsInfSgmt" fieldName="RepayMode" level="3" type="DL" reverseCheck="true"
+			  dataList="11;12;13;14;15;19;21;22;23;29;" errorCode="CLE005"
+			  errorMsg="若“账户类型”为R1时，账户“基本信息段”中的“还款方式”必须不为“11”、“12”、“13”、“14”、“15”、“19”、“21”、“22”、“23”、“29”。">
+			<precondition>
+				<rule name="I4100C06-1-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="R1;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100D01-1" sgmtName="RltRepymtInfSgmt" fieldName="N/A" level="2" type="PNNA"
+			  groupList="RltRepymtInfSgmt.RltRepymtInf:ArlpType;ArlpAmt" dataList="1"
+			  errorCode="CLE006" errorMsg="相关还款责任人段中“还款责任人类型”为“1-共同借款人”时，“还款责任金额”为空，否则不能为空值。">
+		</rule>
+		<rule name="I4100D01-2" sgmtName="RltRepymtInfSgmt" fieldName="N/A" level="2" type="PNA"
+			  groupList="RltRepymtInfSgmt.RltRepymtInf:ArlpType;ArlpAmt" dataList="2;3;4;5;9;"
+			  errorCode="CLE006" errorMsg="相关还款责任人段中“还款责任人类型”为“1-共同借款人”时，“还款责任金额”为空，否则不能为空值。">
+		</rule>
+		<rule name="I4100D02-1" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:WartySign" level="3" type="NA"
+			  errorCode="CLE007" errorMsg="相关还款责任人段中“还款责任人类型”为“2-保证人”时，“联保标志”必须不能为空值。">
+			<precondition>
+				<rule name="I4100D02-1-P1" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:ArlpType" level="3"
+					  type="DL" dataList="2;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100D02-2" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:MaxGuarMcc" level="3" type="NA"
+			  errorCode="CLE007" errorMsg="相关还款责任人段中“还款责任人类型”为“2-保证人”时，“保证合同编号”必须不能为空值。">
+			<precondition>
+				<rule name="I4100D02-2-P1" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:ArlpType" level="3"
+					  type="DL" dataList="2;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100D03-1" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:ArlpCertType" level="3" type="DL"
+			  dataList="1;2;5;6;8;9;A;B;C;X;10;20;" errorCode="CLE008"
+			  errorMsg="对于相关还款责任人段中的“身份类别”和“责任人身份标识类型”的代码必须匹配。">
+			<precondition>
+				<rule name="I4100D03-1-P1" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:ArlpIDType" level="3"
+					  type="DL" dataList="1;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100D03-2" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:ArlpCertType" level="3" type="DL"
+			  dataList="10;20;30;" errorCode="CLE008"
+			  errorMsg="对于相关还款责任人段中的“身份类别”和“责任人身份标识类型”的代码必须匹配。">
+			<precondition>
+				<rule name="I4100D03-2-P1" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:ArlpIDType" level="3"
+					  type="DL" dataList="2;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H02-1" sgmtName="ActLbltyInfSgmt" fieldName="AcctBal" level="3" type="DL" dataList="0;"
+			  errorCode="CLE012" errorMsg="当 “账户状态”为“21-关闭”时，“余额”必须为0。">
+			<precondition>
+				<rule name="I4100H02-1-P1" sgmtName="ActLbltyInfSgmt" fieldName="AcctStatus" level="3" type="DL"
+					  dataList="21;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H03-1" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="NA" errorCode="CLE013"
+			  errorMsg="当且仅当“账户状态”为“21-关闭”时，“账户关闭日期”不能为空值。">
+			<precondition>
+				<rule name="I4100H03-1-P1" sgmtName="ActLbltyInfSgmt" fieldName="AcctStatus" level="3" type="DL"
+					  dataList="21;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H04-1" sgmtName="ActLbltyInfSgmt" fieldName="TotOverd" level="3" type="DRN" dataStartValue="0"
+			  errorCode="CLE014" errorMsg="若“账户状态”为“31-呆账（已核销）”、“32-呆账（进入核销认定程序，等待核销）”时，“当前逾期总额”不能为0。">
+			<precondition>
+				<rule name="I4100H04-1-P1" sgmtName="ActLbltyInfSgmt" fieldName="AcctStatus" level="3" type="DL"
+					  dataList="31;32;"/>
+			</precondition>
+			<precondition>
+				<rule name="I4100H04-1-P2" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;D2;R1;R4;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H05-1" sgmtName="ActLbltyInfSgmt" fieldName="TotOverd" level="3" type="DL" dataList="0;"
+			  errorCode="CLE015" errorMsg="若“账户状态”为“21-关闭”时，“当前逾期总额”、“当前逾期本金”和“当前逾期天数”必须为0。@“当前逾期总额”。">
+			<precondition>
+				<rule name="I4100H05-1-P1" sgmtName="ActLbltyInfSgmt" fieldName="AcctStatus" level="3" type="DL"
+					  dataList="21;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H05-2" sgmtName="ActLbltyInfSgmt" fieldName="OverdPrinc" level="3" type="DL" dataList="0;"
+			  errorCode="CLE015" errorMsg="若“账户状态”为“21-关闭”时，“当前逾期总额”、“当前逾期本金”和“当前逾期天数”必须为0。@“当前逾期本金”。">
+			<precondition>
+				<rule name="I4100H05-2-P1" sgmtName="ActLbltyInfSgmt" fieldName="AcctStatus" level="3" type="DL"
+					  dataList="21;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H05-3" sgmtName="ActLbltyInfSgmt" fieldName="OverdDy" level="3" type="DL" dataList="0;"
+			  errorCode="CLE015" errorMsg="若“账户状态”为“21-关闭”时，“当前逾期总额”、“当前逾期本金”和“当前逾期天数”必须为0。@“当前逾期天数”。">
+			<precondition>
+				<rule name="I4100H05-3-P1" sgmtName="ActLbltyInfSgmt" fieldName="AcctStatus" level="3" type="DL"
+					  dataList="21;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H06-1" sgmtName="ActLbltyInfSgmt" fieldName="OverdPrinc" level="3" type="DR"
+			  dataEndValue="{$ActLbltyInfSgmt.TotOverd}" errorCode="CLE016"
+			  errorMsg="对于D1/D2/R1/R4账户，信息记录中“当前逾期本金”必须小于等于“当前逾期总额”。">
+			<precondition>
+				<rule name="I4100H06-1-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;D2;R1;R4;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H07-1" sgmtName="ActLbltyInfSgmt" fieldName="LatRpyPrincAmt" level="3" type="DR"
+			  dataEndValue="{$ActLbltyInfSgmt.LatRpyAmt}" errorCode="CLE017"
+			  errorMsg="“最近一次实际归还本金”必须小于等于“最近一次实际还款金额”。">
+		</rule>
+		<rule name="I4100H08-1" sgmtName="ActLbltyInfSgmt" fieldName="OverdDy" level="3" type="DRN" dataStartValue="0"
+			  errorCode="CLE018" errorMsg="当且仅当“当前逾期总额”大于0，则“当前逾期天数”不为0。">
+			<precondition>
+				<rule name="I4100H08-1-P1" sgmtName="ActLbltyInfSgmt" fieldName="TotOverd" level="3" type="DRN"
+					  dataStartValue="0"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H08-2" sgmtName="ActLbltyInfSgmt" fieldName="TotOverd" level="3" type="DRN" dataStartValue="0"
+			  errorCode="CLE018" errorMsg="当且仅当“当前逾期总额”大于0，则“当前逾期天数”不为0。">
+			<precondition>
+				<rule name="I4100H08-2-P1" sgmtName="ActLbltyInfSgmt" fieldName="OverdDy" level="3" type="DRN"
+					  dataStartValue="0"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H09-1" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="DTR"
+			  dataStartValue="{$ActLbltyInfSgmt.BalChgDate}" errorCode="CLE019"
+			  errorMsg="当“账户关闭日”不为空时，则必须不早于“余额变化日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“五级分类认定日期”。@“余额变化日期”。">
+			<precondition>
+				<rule name="I4100H09-1-P1" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="NA"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H09-2" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="DTR"
+			  dataStartValue="{$ActLbltyInfSgmt.LatRpyDate}" errorCode="CLE019"
+			  errorMsg="当“账户关闭日”不为空时，则必须不早于“余额变化日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“五级分类认定日期”。@“最近一次实际还款日期”。">
+			<precondition>
+				<rule name="I4100H09-2-P1" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="NA"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H09-3" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="DTR"
+			  dataStartValue="{$ActLbltyInfSgmt.LatAgrrRpyDate}" errorCode="CLE019"
+			  errorMsg="当“账户关闭日”不为空时，则必须不早于“余额变化日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“五级分类认定日期”。@“最近一次约定还款日期”。">
+			<precondition>
+				<rule name="I4100H09-3-P1" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="NA"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H09-4" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="DTR"
+			  dataStartValue="{$ActLbltyInfSgmt.FiveCateAdjDate}" errorCode="CLE019"
+			  errorMsg="当“账户关闭日”不为空时，则必须不早于“余额变化日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“五级分类认定日期”。@“五级分类认定日期”。">
+			<precondition>
+				<rule name="I4100H09-4-P1" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="NA"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H10-1" sgmtName="ActLbltyInfSgmt" fieldName="NxtAgrrRpyDate" level="3" type="NA"
+			  reverseCheck="true" errorCode="CLE020" errorMsg="当“账户状态”为“21-关闭”时，则“下一次约定还款日期”必须为空。">
+			<precondition>
+				<rule name="I4100H10-1-P1" sgmtName="ActLbltyInfSgmt" fieldName="AcctStatus" level="3" type="DL"
+					  dataList="21;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H11-1" sgmtName="ActLbltyInfSgmt" fieldName="NxtAgrrRpyDate" level="3" type="DTR"
+			  dataStartValue="{$ActLbltyInfSgmt.BalChgDate}" errorCode="CLE021"
+			  errorMsg="当“下一次约定还款日期”不为空时，必须不早于“余额变化日期”、“最近一次实际还款款日期”、“最近一次约定还款日期”、“五级分类认定日期”。@“余额变化日期”。">
+			<precondition>
+				<rule name="I4100H11-1-P1" sgmtName="ActLbltyInfSgmt" fieldName="NxtAgrrRpyDate" level="3" type="NA"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H11-2" sgmtName="ActLbltyInfSgmt" fieldName="NxtAgrrRpyDate" level="3" type="DTR"
+			  dataStartValue="{$ActLbltyInfSgmt.LatRpyDate}" errorCode="CLE021"
+			  errorMsg="当“下一次约定还款日期”不为空时，必须不早于“余额变化日期”、“最近一次实际还款款日期”、“最近一次约定还款日期”、“五级分类认定日期”。@“最近一次实际还款款日期”。">
+			<precondition>
+				<rule name="I4100H11-2-P1" sgmtName="ActLbltyInfSgmt" fieldName="NxtAgrrRpyDate" level="3" type="NA"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H11-3" sgmtName="ActLbltyInfSgmt" fieldName="NxtAgrrRpyDate" level="3" type="DTR"
+			  dataStartValue="{$ActLbltyInfSgmt.LatAgrrRpyDate}" errorCode="CLE021"
+			  errorMsg="当“下一次约定还款日期”不为空时，必须不早于“余额变化日期”、“最近一次实际还款款日期”、“最近一次约定还款日期”、“五级分类认定日期”。@“最近一次约定还款日期”。">
+			<precondition>
+				<rule name="I4100H11-3-P1" sgmtName="ActLbltyInfSgmt" fieldName="NxtAgrrRpyDate" level="3" type="NA"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H11-4" sgmtName="ActLbltyInfSgmt" fieldName="NxtAgrrRpyDate" level="3" type="DTR"
+			  dataStartValue="{$ActLbltyInfSgmt.FiveCateAdjDate}" errorCode="CLE021"
+			  errorMsg="当“下一次约定还款日期”不为空时，必须不早于“余额变化日期”、“最近一次实际还款款日期”、“最近一次约定还款日期”、“五级分类认定日期”。@“五级分类认定日期”。">
+			<precondition>
+				<rule name="I4100H11-4-P1" sgmtName="ActLbltyInfSgmt" fieldName="NxtAgrrRpyDate" level="3" type="NA"/>
+			</precondition>
+		</rule>
+		<rule name="I4100I01-1" sgmtName="AcctSpecTrstDspnSgmt" fieldName="CagOfTrdInf:DueTranMon" level="3" type="DRN"
+			  dataStartValue="0" errorCode="CLE022" errorMsg="当账户信息记录中的“交易变更类型”为“11-展期”，“到期日期变更月数”>0。">
+			<precondition>
+				<rule name="I4100I01-1-P1" sgmtName="AcctSpecTrstDspnSgmt" fieldName="CagOfTrdInf:ChanTranType"
+					  level="3" type="DL" dataList="11;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100I02-1" sgmtName="AcctSpecTrstDspnSgmt" fieldName="CagOfTrdNm" level="3" type="DRN"
+			  dataStartValue="0" errorCode="CLE023" errorMsg="交易个数应大于0。"/>
+		<rule name="I4100A01-1" sgmtName="AcctBsInfSgmt" fieldName="OpenDate" level="3" type="DTR"
+			  dataEndValue="{$AcctBsInfSgmt.DueDate}" errorCode="CLE024"
+			  errorMsg="“开户日期”不晚于同一条记录中的所有其他业务日期。其他业务日期包括但不限于：“到期日期”、“余额变化日期”、“五级分类认定日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“下一次约定还款日期”、“账户关闭日期”和“交易日期”。@“到期日期”。">
+		</rule>
+		<rule name="I4100A01-2" sgmtName="AcctBsInfSgmt" fieldName="OpenDate" level="3" type="DTR"
+			  dataEndValue="{$ActLbltyInfSgmt.BalChgDate}" errorCode="CLE024"
+			  errorMsg="“开户日期”不晚于同一条记录中的所有其他业务日期。其他业务日期包括但不限于：“到期日期”、“余额变化日期”、“五级分类认定日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“下一次约定还款日期”、“账户关闭日期”和“交易日期”。@“余额变化日期”。">
+		</rule>
+		<rule name="I4100A01-3" sgmtName="AcctBsInfSgmt" fieldName="OpenDate" level="3" type="DTR"
+			  dataEndValue="{$ActLbltyInfSgmt.FiveCateAdjDate}" errorCode="CLE024"
+			  errorMsg="“开户日期”不晚于同一条记录中的所有其他业务日期。其他业务日期包括但不限于：“到期日期”、“余额变化日期”、“五级分类认定日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“下一次约定还款日期”、“账户关闭日期”和“交易日期”。@“五级分类认定日期”。">
+		</rule>
+		<rule name="I4100A01-4" sgmtName="AcctBsInfSgmt" fieldName="OpenDate" level="3" type="DTR"
+			  dataEndValue="{$ActLbltyInfSgmt.LatRpyDate}" errorCode="CLE024"
+			  errorMsg="“开户日期”不晚于同一条记录中的所有其他业务日期。其他业务日期包括但不限于：“到期日期”、“余额变化日期”、“五级分类认定日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“下一次约定还款日期”、“账户关闭日期”和“交易日期”。@“最近一次实际还款日期”。">
+		</rule>
+		<rule name="I4100A01-5" sgmtName="AcctBsInfSgmt" fieldName="OpenDate" level="3" type="DTR"
+			  dataEndValue="{$ActLbltyInfSgmt.LatAgrrRpyDate}" errorCode="CLE024"
+			  errorMsg="“开户日期”不晚于同一条记录中的所有其他业务日期。其他业务日期包括但不限于：“到期日期”、“余额变化日期”、“五级分类认定日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“下一次约定还款日期”、“账户关闭日期”和“交易日期”。@“最近一次约定还款日期”。">
+		</rule>
+		<rule name="I4100A01-6" sgmtName="AcctBsInfSgmt" fieldName="OpenDate" level="3" type="DTR"
+			  dataEndValue="{$ActLbltyInfSgmt.NxtAgrrRpyDate}" errorCode="CLE024"
+			  errorMsg="“开户日期”不晚于同一条记录中的所有其他业务日期。其他业务日期包括但不限于：“到期日期”、“余额变化日期”、“五级分类认定日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“下一次约定还款日期”、“账户关闭日期”和“交易日期”。@“下一次约定还款日期”。">
+		</rule>
+		<rule name="I4100A01-7" sgmtName="AcctBsInfSgmt" fieldName="OpenDate" level="3" type="DTR"
+			  dataEndValue="{$ActLbltyInfSgmt.CloseDate}" errorCode="CLE024"
+			  errorMsg="“开户日期”不晚于同一条记录中的所有其他业务日期。其他业务日期包括但不限于：“到期日期”、“余额变化日期”、“五级分类认定日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“下一次约定还款日期”、“账户关闭日期”和“交易日期”。@“账户关闭日期”。">
+		</rule>
+		<rule name="I4100A01-8" sgmtName="AcctSpecTrstDspnSgmt" fieldName="CagOfTrdInf:TranDate" level="3" type="DTR"
+			  dataStartValue="{$AcctBsInfSgmt.OpenDate}" errorCode="CLE024"
+			  errorMsg="“开户日期”不晚于同一条记录中的所有其他业务日期。其他业务日期包括但不限于：“到期日期”、“余额变化日期”、“五级分类认定日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“下一次约定还款日期”、“账户关闭日期”和“交易日期”。@“交易日期”。">
+		</rule>
+		<rule name="I4100A02-1" sgmtName="ActLbltyInfSgmt" fieldName="BalChgDate" level="3" type="DTR"
+			  dataEndValue="{$ActLbltyInfSgmt.CloseDate}" errorCode="CLE025"
+			  errorMsg="如果有“账户关闭日期”数据项，则“账户关闭日期”必须不早于同一条记录中所有其他业务日期（除“到期日期”外）。其他业务日期（除“到期日期”外）包括但不限于：“余额变化日期”、“五级分类认定日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“下一次约定还款日期”和“交易日期”。@“余额变化日期”。">
+		      <precondition>
+				<rule name="I4100A02-1-P1" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="NA"/>
+			  </precondition>
+		</rule>
+		<rule name="I4100A02-2" sgmtName="ActLbltyInfSgmt" fieldName="FiveCateAdjDate" level="3" type="DTR"
+			  dataEndValue="{$ActLbltyInfSgmt.CloseDate}" errorCode="CLE025"
+			  errorMsg="如果有“账户关闭日期”数据项，则“账户关闭日期”必须不早于同一条记录中所有其他业务日期（除“到期日期”外）。其他业务日期（除“到期日期”外）包括但不限于：“余额变化日期”、“五级分类认定日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“下一次约定还款日期”和“交易日期”。@“五级分类认定日期”。">
+			  <precondition>
+				<rule name="I4100A02-2-P1" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="NA"/>
+			  </precondition>
+		</rule>
+		<rule name="I4100A02-3" sgmtName="ActLbltyInfSgmt" fieldName="LatRpyDate" level="3" type="DTR"
+			  dataEndValue="{$ActLbltyInfSgmt.CloseDate}" errorCode="CLE025"
+			  errorMsg="如果有“账户关闭日期”数据项，则“账户关闭日期”必须不早于同一条记录中所有其他业务日期（除“到期日期”外）。其他业务日期（除“到期日期”外）包括但不限于：“余额变化日期”、“五级分类认定日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“下一次约定还款日期”和“交易日期”。@“最近一次实际还款日期”。">
+			  <precondition>
+				<rule name="I4100A02-3-P1" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="NA"/>
+			  </precondition>
+		</rule>
+		<rule name="I4100A02-4" sgmtName="ActLbltyInfSgmt" fieldName="LatAgrrRpyDate" level="3" type="DTR"
+			  dataEndValue="{$ActLbltyInfSgmt.CloseDate}" errorCode="CLE025"
+			  errorMsg="如果有“账户关闭日期”数据项，则“账户关闭日期”必须不早于同一条记录中所有其他业务日期（除“到期日期”外）。其他业务日期（除“到期日期”外）包括但不限于：“余额变化日期”、“五级分类认定日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“下一次约定还款日期”和“交易日期”。@“最近一次约定还款日期”。">
+			  <precondition>
+				<rule name="I4100A02-4-P1" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="NA"/>
+			  </precondition>
+		</rule>
+		
+		<!-- <rule name="I4100A02-5" sgmtName="ActLbltyInfSgmt" fieldName="NxtAgrrRpyDate" level="3" type="DTR"
+			  dataEndValue="{$ActLbltyInfSgmt.CloseDate}" errorCode="CLE025"
+			  errorMsg="如果有“账户关闭日期”数据项，则“账户关闭日期”必须不早于同一条记录中所有其他业务日期（除“到期日期”外）。其他业务日期（除“到期日期”外）包括但不限于：“余额变化日期”、“五级分类认定日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“下一次约定还款日期”和“交易日期”。@“下一次约定还款日期”。">
+			  <precondition>
+				<rule name="I4100A02-5-P1" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="NA"/>
+			  </precondition>
+		</rule> -->
+		
+		<rule name="I4100A02-6" sgmtName="AcctSpecTrstDspnSgmt" fieldName="CagOfTrdInf:TranDate" level="3" type="DTR"
+			  dataEndValue="{$ActLbltyInfSgmt.CloseDate}" errorCode="CLE025"
+			  errorMsg="如果有“账户关闭日期”数据项，则“账户关闭日期”必须不早于同一条记录中所有其他业务日期（除“到期日期”外）。其他业务日期（除“到期日期”外）包括但不限于：“余额变化日期”、“五级分类认定日期”、“最近一次实际还款日期”、“最近一次约定还款日期”、“下一次约定还款日期”和“交易日期”。@“交易日期”。">
+			  <precondition>
+				<rule name="I4100A02-6-P1" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="NA"/>
+			  </precondition>
+		</rule>
+		<rule name="I4100A03-1" sgmtName="ActLbltyInfSgmt" fieldName="AcctStatus" level="3" type="DL" dataList="21;"
+			  errorCode="CLE026" errorMsg="当且仅当“报告时点说明代码”为“20-账户关闭”时，“账户状态”为“21-关闭”。">
+			<precondition>
+				<rule name="I4100A03-1-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="20;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100A03-2" sgmtName="ActLbltyInfSgmt" fieldName="AcctStatus" level="3" type="DL" reverseCheck="true"
+		      dataList="21;" errorCode="CLE026" errorMsg="当且仅当“报告时点说明代码”为“20-账户关闭”时，“账户状态”为“21-关闭”。">
+			<precondition>
+				<rule name="I4100A03-2-P1" sgmtName="AcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  reverseCheck="true" dataList="20;" />
+			</precondition>
+		</rule>
+		<rule name="I4100A04-1" sgmtName="AcctBsInfSgmt" fieldName="BusiLines" level="3" type="DL" dataList="41;51;"
+			  errorCode="CLE027" errorMsg="当账户类型为“C1”时，信贷业务大类只能为“51-资产处置”、“41-垫款”。">
+			<precondition>
+				<rule name="I4100A04-1-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="C1;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100A05-1" sgmtName="AcctSpecTrstDspnSgmt" fieldName="CagOfTrdInf:TranAmt" level="3" type="DR"
+			  dataEndValue="{$AcctBsInfSgmt.LoanAmt}" errorCode="CLE028" errorMsg="“交易金额”小于等于“借款金额”。">
+		</rule>
+		<rule name="I4100A06-1" sgmtName="AcctBsInfSgmt" fieldName="RepayMode" level="3" type="DL"
+			  dataList="11;12;13;14;15;19;21;22;23;29;90;" errorCode="CLE029"
+			  errorMsg="“还款方式”的代码表必须和“账户类型”相匹配。只有账户类型为“D1”、“R1”时，还款方式可以为“90-合并报送，不区分还款方式”。">
+			<precondition>
+				<rule name="I4100A06-1-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="D1;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100A06-2" sgmtName="AcctBsInfSgmt" fieldName="RepayMode" level="3" type="DL"
+			  dataList="11;12;13;14;15;19;21;22;23;29;" errorCode="CLE029"
+			  errorMsg="“还款方式”的代码表必须和“账户类型”相匹配。只有账户类型为“D1”、“R1”时，还款方式可以为“90-合并报送，不区分还款方式”。">
+			<precondition>
+				<rule name="I4100A06-2-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="R4;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100A06-3" sgmtName="AcctBsInfSgmt" fieldName="RepayMode" level="3" type="DL"
+			  dataList="31;32;39;90;" errorCode="CLE029"
+			  errorMsg="“还款方式”的代码表必须和“账户类型”相匹配。只有账户类型为“D1”、“R1”时，还款方式可以为“90-合并报送，不区分还款方式”。">
+			<precondition>
+				<rule name="I4100A06-3-P1" sgmtName="AcctBsSgmt" fieldName="AcctType" level="3" type="DL"
+					  dataList="R1;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100A07-1" sgmtName="RltRepymtInfSgmt" fieldName="N/A" level="2" type="GE"
+			  groupList="RltRepymtInfSgmt.RltRepymtInf:ArlpCertType+ArlpCertNum=AcctBsSgmt.IDType+IDNum"
+			  errorCode="CLE030" errorMsg="借款人两标（“身份标识类型”、“身份标识号码”）和责任人两标不能相同。"/>
+		<rule name="I4100H12-1" sgmtName="ActLbltyInfSgmt" fieldName="NxtAgrrRpyDate" level="3" type="DTR"
+			  dataStartValue="{$AcctBsSgmt.RptDate}" errorCode="CBE011"
+			  errorMsg="“信息报告日期”应不晚于同一条记录中“下一次约定还款日期”。">
+			<precondition>
+				<rule name="I4100H12-1-P1" sgmtName="ActLbltyInfSgmt" fieldName="NxtAgrrRpyDate" level="3" type="NA"/>
+			</precondition>
+		</rule>	  
+		
+		<rule name="I4100H13-1" sgmtName="ActLbltyInfSgmt" fieldName="TotOverd" level="3" type="DE" dataList="0"
+			  errorCode="CBE007" errorMsg="当账户状态为“关闭”时，“当前逾期总额”、“当前逾期天数”应为 0。">
+			<precondition>
+				<rule name="I4100H13-1-P1" sgmtName="ActLbltyInfSgmt" fieldName="AcctStatus" level="3" type="DL"
+					  dataList="21;"/>
+			</precondition>
+		</rule>
+		<rule name="I4100H13-2" sgmtName="ActLbltyInfSgmt" fieldName="OverdDy" level="3" type="DE" dataList="0"
+			  errorCode="CBE007" errorMsg="当账户状态为“关闭”时，“当前逾期总额”、“当前逾期天数”应为 0。">
+			<precondition>
+				<rule name="I4100H13-2-P1" sgmtName="ActLbltyInfSgmt" fieldName="AcctStatus" level="3" type="DL"
+					  dataList="21;"/>
+			</precondition>
+		</rule>
+		<!-- <rule name="I4100A10-1" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="DTR"
+			  dataStartValue="{$AcctSpecTrstDspnSgmt.TranDate}" errorCode="CLE019"
+			  errorMsg="账户信息记录中如果“账户关闭日期”数据项不为空，则该数据项应不早于“交易日期”。">
+			<precondition>
+				<rule name="I4100A10-1-P1" sgmtName="ActLbltyInfSgmt" fieldName="CloseDate" level="3" type="NA"/>
+			</precondition>
+		</rule> -->
+		
+		
+	</code>
+</validator>

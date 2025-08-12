@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="GBK" ?>
+<validator>
+	<code>
+		<rule name="R3100101-1" sgmtName="FcsInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CBR000"
+			  errorMsg="当报告时点说明代码为“新增客户资料/首次上报”时，记录必须至少包含基本概况段、 主要组成人员段、联系方式段。@缺少基本概况段。">
+			<precondition>
+				<rule name="R3100101-1-P1" sgmtName="BsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+			</precondition>
+		</rule>
+		<rule name="R3100101-2" sgmtName="MnMmbInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CBR000"
+			  errorMsg="当报告时点说明代码为“新增客户资料/首次上报”时，记录必须至少包含基本概况段、 主要组成人员段、联系方式段。@缺少主要组成人员段。">
+			<precondition>
+				<rule name="R3100101-2-P1" sgmtName="BsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+			</precondition>
+		</rule>
+		<rule name="R3100101-3" sgmtName="CotaInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CBR000"
+			  errorMsg="当报告时点说明代码为“新增客户资料/首次上报”时，记录必须至少包含基本概况段、 主要组成人员段、联系方式段。@缺少联系方式段">
+			<precondition>
+				<rule name="R3100101-3-P1" sgmtName="BsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+			</precondition>
+		</rule>
+		<rule name="R3100102-1" sgmtName="MnShaHodInfSgmt_S" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CBR001" errorMsg="当基础段中“组织机构类型”为机关类型（以“3、31、32、33、34、35、36、37、39”为代码时），注册资本及主要出资人段不能出现。">
+			<precondition>
+				<rule name="R3100102-1-P1" sgmtName="BsSgmt" fieldName="OrgType" level="3" type="DL"
+					  dataList="3;31;32;33;34;35;36;37;39;"/>
+			</precondition>
+		</rule>
+		<rule name="R3100102-2" sgmtName="MnShaHodInfSgmt_M" fieldName="N/A" level="2" type="SE" reverseCheck="true"
+			  errorCode="CBR001" errorMsg="当基础段中“组织机构类型”为机关类型（以“3、31、32、33、34、35、36、37、39”为代码时），注册资本及主要出资人段不能出现。">
+			<precondition>
+				<rule name="R3100102-1-P1" sgmtName="BsSgmt" fieldName="OrgType" level="3" type="DL"
+					  dataList="3;31;32;33;34;35;36;37;39;"/>
+			</precondition>
+		</rule>
+        <rule name="R3100103-1" sgmtName="BsSgmt" fieldName="N/A" level="2" type="SE" errorCode="BBR000"
+			  errorMsg="企业基本信息记录应包含基础段。">
+		</rule>
+		<rule name="I0000201-1" sgmtName="BsSgmt" fieldName="EntCertType" level="3" type="DL" dataList="10;20;30;"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“企业身份标识类型”取值需要在代码表中。"/>
+		<rule name="I0000201-2" sgmtName="BsSgmt" fieldName="RptDateCode" level="3" type="DIC" dataList="RptDateCode310"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报告时点说明代码”取值需要在代码表中。"/>
+		<rule name="I0000201-3" sgmtName="BsSgmt" fieldName="CustomerType" level="3" type="DIC" dataList="CustomerType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“客户资料类型”取值需要在代码表中。"/>
+		<rule name="I0000201-4" sgmtName="BsSgmt" fieldName="EtpSts" level="3" type="DIC" dataList="ExistingStatus"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“存续状态”取值需要在代码表中。"/>
+		<rule name="I0000201-5" sgmtName="BsSgmt" fieldName="OrgType" level="3" type="DIC" dataList="OrgType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“组织机构类型”取值需要在代码表中。"/>
+		<rule name="I0000201-6" sgmtName="IDSgmt" fieldName="IDRec:OthEntCertType" level="3" type="DIC" dataList="ECertType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“企业身份标识类型”取值需要在代码表中。"/>
+		<rule name="I0000201-7" sgmtName="FcsInfSgmt" fieldName="Nationality" level="3" type="DIC" dataList="Nationality"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“国别代码”取值需要在代码表中。"/>
+		<rule name="I0000201-8" sgmtName="FcsInfSgmt" fieldName="AdmDivOfReg" level="3" type="DIC" dataList="AdminDiv"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“登记地行政区划代码”取值需要在代码表中。"/>
+		<rule name="I0000201-9" sgmtName="FcsInfSgmt" fieldName="EcoIndusCate" level="3" type="DIC" dataList="IndustryCate"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“行业分类代码”取值需要在代码表中。"/>
+		<rule name="I0000201-10" sgmtName="FcsInfSgmt" fieldName="EcoType" level="3" type="DIC" dataList="EcoType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“经济类型代码”取值需要在代码表中。"/>
+		<rule name="I0000201-11" sgmtName="FcsInfSgmt" fieldName="EntScale" level="3" type="DIC" dataList="EntScale"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“规模”取值需要在代码表中。"/>
+		<rule name="I0000201-12" sgmtName="MnMmbInfSgmt" fieldName="MmbInf:MmbIDType" level="3" type="DIC" dataList="ICertType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“组成人员证件类型”取值需要在代码表中。"/>
+		<rule name="I0000201-13" sgmtName="MnMmbInfSgmt" fieldName="MmbInf:MmbPstn" level="3" type="DIC" dataList="PositionCode"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“组成人员职位”取值需要在代码表中。"/>
+		<rule name="I0000201-14" sgmtName="MnShaHodInfSgmt_S" fieldName="RegCapCurrency" level="3" type="DIC" dataList="Currency"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“注册资本币种”取值需要在代码表中。"/>
+		<rule name="I0000201-15" sgmtName="MnShaHodInfSgmt_M" fieldName="SharHodInf:SharHodType" level="3" type="DIC" dataList="InvestorType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“出资人类型”取值需要在代码表中。"/>
+		<rule name="I0000201-16" sgmtName="MnShaHodInfSgmt_M" fieldName="SharHodInf:SharHodCertType" level="3" type="DIC" dataList="IDCategory"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“出资人身份类别”取值需要在代码表中。"/>
+		<rule name="I0000201-17" sgmtName="ActuCotrlInfSgmt" fieldName="ActuCotrlInf:ActuCotrlCertType" level="3" type="DIC" dataList="IDCategory"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“实际控制人身份类别”取值需要在代码表中。"/>
+		<rule name="I0000201-18" sgmtName="SpvsgAthrtyInfSgmt" fieldName="SupOrgType" level="3" type="DIC" dataList="SupOrgType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“上级机构类型”取值需要在代码表中。"/>
+		<rule name="I0000201-19" sgmtName="SpvsgAthrtyInfSgmt" fieldName="SupOrgCertType" level="3" type="DL" dataList="10;20;30;"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“上级机构身份标识类型”取值需要在代码表中。"/>
+		<rule name="I0000201-20" sgmtName="CotaInfSgmt" fieldName="ConAddDistrictCode" level="3" type="DIC" dataList="AdminDiv"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“联系地址行政区划代码”取值需要在代码表中。"/>	  
+		<rule name="I3100E01-1" sgmtName="MnMmbInfSgmt" fieldName="N/A" level="2" type="GO" groupList="MmbInf:MmbPstn=1"
+			  errorCode="CBE000" errorMsg="报送主要组成人员信息段时，法定代表人/非法人组织负责人、董事长、监事长各自只能报一个人。@法定代表人/非法人组织负责人只能报一个人。"/>
+		<rule name="I3100E01-2" sgmtName="MnMmbInfSgmt" fieldName="N/A" level="2" type="GO" groupList="MmbInf:MmbPstn=4"
+			  errorCode="CBE000" errorMsg="报送主要组成人员信息段时，法定代表人/非法人组织负责人、董事长、监事长各自只能报一个人。@董事长只能报一个人。"/>
+		<rule name="I3100E01-3" sgmtName="MnMmbInfSgmt" fieldName="N/A" level="2" type="GO" groupList="MmbInf:MmbPstn=5"
+			  errorCode="CBE000" errorMsg="报送主要组成人员信息段时，法定代表人/非法人组织负责人、董事长、监事长各自只能报一个人。@监事长只能报一个人。"/>
+		<rule name="I3100E02-1" sgmtName="MnMmbInfSgmt" fieldName="N/A" level="2" type="GEX"
+			  groupList="MmbInf:MmbPstn=1" errorCode="CBE001" errorMsg="报送主要组成人员信息段时，法定代表人/非法人组织负责人必报。"/>
+		<rule name="I3100F01-1" sgmtName="MnShaHodInfSgmt_M" fieldName="SharHodInf:SharHodIDType" level="3" type="DL"
+			  dataList="1;2;5;6;8;9;A;B;C;X;10;20;" errorCode="CBE003"
+			  errorMsg="当注册资本及主要出资人段中的“出资人身份类别”为“1-自然人”，出资人证件类型填写自然人证件类型代码值。">
+			<precondition>
+				<rule name="I3100F01-1-P1" sgmtName="MnShaHodInfSgmt_M" fieldName="SharHodInf:SharHodCertType" level="3"
+					  type="DL" dataList="1;"/>
+			</precondition>
+		</rule>
+		<rule name="I3100F01-2" sgmtName="MnShaHodInfSgmt_M" fieldName="SharHodInf:SharHodIDType" level="3" type="DL"
+			  dataList="10;20;30;" errorCode="CBE003"
+			  errorMsg="当注册资本及主要出资人段中的“出资人身份类别”为“2-组织机构”，出资人身份标识类型填写企业身份标识类型代码值。">
+			<precondition>
+				<rule name="I3100F01-2-P1" sgmtName="MnShaHodInfSgmt_M" fieldName="SharHodInf:SharHodCertType" level="3"
+					  type="DL" dataList="2;"/>
+			</precondition>
+		</rule>
+		<rule name="I3100F02-1" sgmtName="MnShaHodInfSgmt_M" fieldName="SharHodInf:InvRatio" level="3" type="DR"
+			  dataEndValue="100" errorCode="CBE004" errorMsg="注册资本及主要出资人段中的出资比例大于0，小于或等于100。">
+			<precondition>
+				<rule name="I3100F02-1-P1" sgmtName="MnShaHodInfSgmt_M" fieldName="SharHodInf:InvRatio" level="3"
+					  type="DRN" dataStartValue="0"/>
+			</precondition>
+		</rule>
+		<rule name="I3100F02-2" sgmtName="MnShaHodInfSgmt_M" fieldName="SharHodInf:InvRatio" level="3" type="DRN"
+			   dataStartValue="0" errorCode="CBE004" errorMsg="注册资本及主要出资人段中的出资比例大于0，小于或等于100。">
+			<precondition>
+				<rule name="I3100F02-2-P1" sgmtName="MnShaHodInfSgmt_M" fieldName="SharHodInf:InvRatio" level="3"
+					  type="DR" dataEndValue="100"/>
+			</precondition>
+		</rule>
+		<rule name="I3100G01-1" sgmtName="ActuCotrlInfSgmt" fieldName="ActuCotrlInf:ActuCotrlIDType" level="3" type="DL"
+			  dataList="1;2;5;6;8;9;A;B;C;X;10;20;" errorCode="CBE005"
+			  errorMsg="当实际控制人段中的实际控制人“身份类别”为“1-自然人”，实际控制人证件类型填写自然人证件类型代码值。">
+			<precondition>
+				<rule name="I3100G01-1-P1" sgmtName="ActuCotrlInfSgmt" fieldName="ActuCotrlInf:ActuCotrlCertType" level="3"
+					  type="DL" dataList="1;"/>
+			</precondition>
+		</rule>
+		<rule name="I3100G01-2" sgmtName="ActuCotrlInfSgmt" fieldName="ActuCotrlInf:ActuCotrlIDType" level="3" type="DL"
+			  dataList="10;20;30;" errorCode="CBE005"
+			  errorMsg="当实际控制人段中的实际控制人“身份类别”为“2-组织机构”，实际控制人身份标识类型填写企业身份标识类型代码值。">
+			<precondition>
+				<rule name="I3100G01-2-P1" sgmtName="ActuCotrlInfSgmt" fieldName="ActuCotrlInf:ActuCotrlCertType" level="3"
+					  type="DL" dataList="2;"/>
+			</precondition>
+		</rule>
+		<rule name="I3100A01-1" sgmtName="IDSgmt" fieldName="IDRec:OthEntCertType" level="3" type="DE" dataList="02"
+			  errorCode="CBE006"
+			  errorMsg="当“组织机构类型”为机关（以“3、31、32、33、34、35、36、37、39 ”为代码），事业单位（以“5、51、53、59”为代码）中其一，其他标识段中的企业身份标识类型为“02-机关和事业单位登记号”。">
+			<precondition>
+				<rule name="I3100A01-1-P1" sgmtName="BsSgmt" fieldName="OrgType" level="3" type="DL"
+					  dataList="3;31;32;33;34;35;36;37;39;5;51;53;59;"/>
+			</precondition>
+		</rule>
+		<rule name="I3100A02-1" sgmtName="IDSgmt" fieldName="IDRec:OthEntCertType" level="3" type="DE" dataList="03"
+			  errorCode="CBE007" errorMsg="当“组织机构类型”为社会团体（以“7、71、73、79”为代码），其他标识段中的企业身份标识类型为“03-社会团体登记号”。">
+			<precondition>
+				<rule name="I3100A02-1-P1" sgmtName="BsSgmt" fieldName="OrgType" level="3" type="DL"
+					  dataList="7;71;73;79;"/>
+			</precondition>
+		</rule>
+		<rule name="I3100A03-1" sgmtName="IDSgmt" fieldName="IDRec:OthEntCertType" level="3" type="DE" dataList="04"
+			  errorCode="CBE008" errorMsg="当“组织机构类型”为“91-民办非企业单位”时，其他标识段中的企业身份标识类型为“04-民办非企业登记号”。">
+			<precondition>
+				<rule name="I3100A03-1-P1" sgmtName="BsSgmt" fieldName="OrgType" level="3" type="DE" dataList="91"/>
+			</precondition>
+		</rule>
+		<rule name="I3100A04-1" sgmtName="IDSgmt" fieldName="IDRec:OthEntCertType" level="3" type="DE" dataList="05"
+			  errorCode="CBE009" errorMsg="当“组织机构类型”为“93-基金会”时，其他标识段中的企业身份标识类型为“05-基金会登记号”。">
+			<precondition>
+				<rule name="I3100A04-1-P1" sgmtName="BsSgmt" fieldName="OrgType" level="3" type="DE" dataList="93"/>
+			</precondition>
+		</rule>
+		<rule name="I3100A05-1" sgmtName="IDSgmt" fieldName="IDRec:OthEntCertType" level="3" type="DE" dataList="06"
+			  errorCode="CBE010" errorMsg="当“组织机构类型”为“94-宗教活动场所”时，其他标识段中的企业身份标识类型为“06-宗教证书登记号”。">
+			<precondition>
+				<rule name="I3100A05-1-P1" sgmtName="BsSgmt" fieldName="OrgType" level="3" type="DE" dataList="94"/>
+			</precondition>
+		</rule>
+		<rule name="I3100D02-1" sgmtName="FcsInfSgmt" fieldName="EstablishDate" level="3" type="DTR"
+			  dataEndValue="{$FcsInfSgmt.FcsInfoUpDate}" errorCode="CBE011"
+			  errorMsg="基本概况信息段中的“成立日期” 要不晚于信息更新日期。">
+		</rule>
+		<rule name="I3100D01-1" sgmtName="FcsInfSgmt" fieldName="RegAdd" level="3" type="NA" errorCode="CBE003"
+			  errorMsg="当“国别代码” 为“CHN”时，“登记地址” 不能为空。">
+			<precondition>
+				<rule name="I3100D01-1-P1" sgmtName="FcsInfSgmt" fieldName="Nationality" level="3"
+					  type="DL" dataList="CHN;"/>
+			</precondition>
+		</rule>
+		<rule name="I3100C01-1" sgmtName="IDSgmt" fieldName="IDNm" level="3" type="DRN"
+			  dataStartValue="0" errorCode="CLE009" errorMsg="“其他标识个数”应大于 0。"/>
+	    <rule name="I3100E04-1" sgmtName="MnMmbInfSgmt" fieldName="MmbNm" level="3" type="DRN"
+	          dataStartValue="0" errorCode="CLE009" errorMsg="“主要组成人员个数”大于 0。"/>
+        <rule name="I3100H01-1" sgmtName="SpvsgAthrtyInfSgmt" fieldName="SupOrgCertType" level="3" type="DL"
+		      dataList="10;20;30;" errorCode="CBE005"
+		      errorMsg="“上级机构身份标识类型”只能选择“10-中征码（原贷款卡编码）”、“20-统一社会信用代码”、“30-组织机构代码”。">
+	    </rule>
+	    <rule name="I3100A07-1" sgmtName="IDSgmt" fieldName="N/A" level="2" type="GE"
+			  groupList="IDSgmt.IDRec:OthEntCertType+OthEntCertNum=BsSgmt.EntCertType+EntCertNum"
+			  errorCode="CLE030" errorMsg="其他标识段中的“企业身份表示类型”、“企业身份标识号码”不能与基础段中的“企业身份表示类型”、“企业身份标识号码”完全相同。"/>
+		<rule name="I3100E03-1" sgmtName="MnMmbInfSgmt" fieldName="MmbInf:MmbPstn" level="2" type="GEV" dataList="4;5;"
+			  groupList="MnMmbInfSgmt.MmbInf:MmbIDType+MmbIDNum"
+			  errorCode="CLE030" errorMsg="当报送主要组成人员信息段时，董事长、监事长不能是同一个人。">
+			 <precondition>
+				<rule name="I3100E03-1-P1" sgmtName="MnMmbInfSgmt" fieldName="N/A" level="2" type="GEX" groupList="MmbInf:MmbPstn=4"/>
+			    <rule name="I3100E03-1-P2" sgmtName="MnMmbInfSgmt" fieldName="N/A" level="2" type="GEX" groupList="MmbInf:MmbPstn=5" />      
+			</precondition>
+		</rule>
+		
+	</code>
+</validator>

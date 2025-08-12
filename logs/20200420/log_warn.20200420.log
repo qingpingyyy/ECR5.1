@@ -1,0 +1,25 @@
+2020-04-20 08:02:31.125 [] [] [main] WARN  com.amarsoft.are.sql.DefaultQuery - [SQL-001]{pid=1,id=2}{beginTime=1587340951015,endTime=1587340951123,elapsedTime=0.108}{select serialNo,taskName,unitName,status from task_run_status where taskName=:taskName and statusType='unit'  and  status=:status}{select serialNo,taskName,unitName,status from task_run_status where taskName=? and statusType='unit' and status=?}{TASKNAME=ECRDataCopyTask,STATUS=2}
+Caller+0	 at com.amarsoft.are.log.SLF4JWrapper.warn(SLF4JWrapper.java:283)
+Caller+1	 at com.amarsoft.are.sql.DefaultQuery.traceQueryEnd(DefaultQuery.java:427)
+Caller+2	 at com.amarsoft.are.sql.DefaultQuery.getResultSet(DefaultQuery.java:248)
+Caller+3	 at com.amarsoft.are.sql.Query.forEach(Query.java:213)
+2020-04-20 08:03:45.933 [] [] [main] WARN  com.amarsoft.are.dpx.recordset - Await handlers termination 1 minutes...
+Caller+0	 at com.amarsoft.are.log.SLF4JWrapper.warn(SLF4JWrapper.java:283)
+Caller+1	 at com.amarsoft.are.dpx.recordset.RecordSet.parseMultiThread(RecordSet.java:353)
+Caller+2	 at com.amarsoft.are.dpx.recordset.RecordSet.parse(RecordSet.java:163)
+Caller+3	 at com.amarsoft.task.units.dpx.PRHUnit.execute(PRHUnit.java:373)
+2020-04-20 08:06:38.531 [] [] [main] WARN  com.amarsoft.are.dpx.recordset - Await handlers termination 1 minutes...
+Caller+0	 at com.amarsoft.are.log.SLF4JWrapper.warn(SLF4JWrapper.java:283)
+Caller+1	 at com.amarsoft.are.dpx.recordset.RecordSet.parseMultiThread(RecordSet.java:353)
+Caller+2	 at com.amarsoft.are.dpx.recordset.RecordSet.parse(RecordSet.java:163)
+Caller+3	 at com.amarsoft.task.units.dpx.PRHUnit.execute(PRHUnit.java:373)
+2020-04-20 08:15:38.057 [] [] [main] WARN  com.amarsoft.are.dpx.recordset - Await handlers termination 1 minutes...
+Caller+0	 at com.amarsoft.are.log.SLF4JWrapper.warn(SLF4JWrapper.java:283)
+Caller+1	 at com.amarsoft.are.dpx.recordset.RecordSet.parseMultiThread(RecordSet.java:353)
+Caller+2	 at com.amarsoft.are.dpx.recordset.RecordSet.parse(RecordSet.java:163)
+Caller+3	 at com.amarsoft.task.units.dpx.PRHUnit.execute(PRHUnit.java:373)
+2020-04-20 08:20:29.901 [] [] [main] WARN  com.amarsoft.are.dpx.recordset - Await handlers termination 1 minutes...
+Caller+0	 at com.amarsoft.are.log.SLF4JWrapper.warn(SLF4JWrapper.java:283)
+Caller+1	 at com.amarsoft.are.dpx.recordset.RecordSet.parseMultiThread(RecordSet.java:353)
+Caller+2	 at com.amarsoft.are.dpx.recordset.RecordSet.parse(RecordSet.java:163)
+Caller+3	 at com.amarsoft.task.units.dpx.PRHUnit.execute(PRHUnit.java:373)

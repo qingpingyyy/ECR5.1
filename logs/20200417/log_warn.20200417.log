@@ -1,0 +1,25 @@
+2020-04-17 18:38:01.873 [] [] [main] WARN  com.amarsoft.are.dpx.recordset - Await handlers termination 1 minutes...
+Caller+0	 at com.amarsoft.are.log.SLF4JWrapper.warn(SLF4JWrapper.java:283)
+Caller+1	 at com.amarsoft.are.dpx.recordset.RecordSet.parseMultiThread(RecordSet.java:353)
+Caller+2	 at com.amarsoft.are.dpx.recordset.RecordSet.parse(RecordSet.java:163)
+Caller+3	 at com.amarsoft.task.units.dpx.PRHUnit.execute(PRHUnit.java:373)
+2020-04-17 18:40:58.325 [] [] [main] WARN  com.amarsoft.are.dpx.recordset - Await handlers termination 1 minutes...
+Caller+0	 at com.amarsoft.are.log.SLF4JWrapper.warn(SLF4JWrapper.java:283)
+Caller+1	 at com.amarsoft.are.dpx.recordset.RecordSet.parseMultiThread(RecordSet.java:353)
+Caller+2	 at com.amarsoft.are.dpx.recordset.RecordSet.parse(RecordSet.java:163)
+Caller+3	 at com.amarsoft.task.units.dpx.PRHUnit.execute(PRHUnit.java:373)
+2020-04-17 18:51:17.113 [] [] [main] WARN  com.amarsoft.are.dpx.recordset - Await handlers termination 1 minutes...
+Caller+0	 at com.amarsoft.are.log.SLF4JWrapper.warn(SLF4JWrapper.java:283)
+Caller+1	 at com.amarsoft.are.dpx.recordset.RecordSet.parseMultiThread(RecordSet.java:353)
+Caller+2	 at com.amarsoft.are.dpx.recordset.RecordSet.parse(RecordSet.java:163)
+Caller+3	 at com.amarsoft.task.units.dpx.PRHUnit.execute(PRHUnit.java:373)
+2020-04-17 18:56:33.262 [] [] [main] WARN  com.amarsoft.are.dpx.recordset - Await handlers termination 1 minutes...
+Caller+0	 at com.amarsoft.are.log.SLF4JWrapper.warn(SLF4JWrapper.java:283)
+Caller+1	 at com.amarsoft.are.dpx.recordset.RecordSet.parseMultiThread(RecordSet.java:353)
+Caller+2	 at com.amarsoft.are.dpx.recordset.RecordSet.parse(RecordSet.java:163)
+Caller+3	 at com.amarsoft.task.units.dpx.PRHUnit.execute(PRHUnit.java:373)
+2020-04-17 19:04:40.762 [] [] [main] WARN  com.amarsoft.are.dpx.recordset - Await handlers termination 1 minutes...
+Caller+0	 at com.amarsoft.are.log.SLF4JWrapper.warn(SLF4JWrapper.java:283)
+Caller+1	 at com.amarsoft.are.dpx.recordset.RecordSet.parseMultiThread(RecordSet.java:353)
+Caller+2	 at com.amarsoft.are.dpx.recordset.RecordSet.parse(RecordSet.java:163)
+Caller+3	 at com.amarsoft.task.units.dpx.PRHUnit.execute(PRHUnit.java:373)

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="GBK" ?>
+<inf>
+	<sgmt name="IdEfctInfSgmt" describe="证件有效期信息段" type="B" table="CECR_Cust_IdEfctInf" key="CustomerID,InfSurcCode" >
+		<field name="InfRecTp" describe="信息记录类型" type="text" source="fix" value="330" />
+		<field name="InfoSorcCd" describe="信息来源编码" type="text" source="db" dbname="InfSurcCode" />
+		<field name="OrgName" describe="组织机构名称" type="text" source="db" dbname="OrgName" />
+		<field name="OrgIDType" describe="组织机构身份标识类型" type="text" source="db" dbname="OrgIDType" />
+		<field name="OrgIDNum" describe="组织机构身份标识码" type="text" source="db" dbname="OrgIDNum" />
+		<field name="IdEfctDate" describe="证件有效起始日期" type="text" source="db" dbname="IdEfctDate" />
+		<field name="IdDueDate" describe="证件有效终止日期" type="text" source="db" dbname="IdDueDate" />
+		<field name="IdOrgName" describe="证件签发机关名称" type="text" source="db" dbname="IdOrgName" />
+		<field name="IdDist" describe="证件签发机关所在地行政区划" type="text" source="db" dbname="IdDist" />
+		<field name="Cimoc" describe="客户资料维护机构代码" type="text" source="db" dbname="Cimoc" />
+		<field name="RptDate" describe="信息报告日期" type="text" source="db" dbname="RptDate" />
+	</sgmt>
+</inf>

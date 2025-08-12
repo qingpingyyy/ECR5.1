@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="GBK" ?>
+<validator>
+	<code>
+		<rule name="I0000201-1" sgmtName="CtfItgInfSgmt" fieldName="EntCertType" level="3" type="DIC" dataList="ECertType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“企业身份标识类型”取值需要在代码表中。"/>
+		<rule name="I0000201-2" sgmtName="CtfItgInfSgmt" fieldName="OthEntCertType" level="3" type="DIC" dataList="ECertType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“企业其他身份标识类型”取值需要在代码表中。"/>
+		<rule name="I0000201-3" sgmtName="CtfItgInfSgmt" fieldName="CertAssFlg" level="3" type="DIC" dataList="CertAssFlg"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“身份标识关联标志”取值需要在代码表中。"/>
+
+		<rule name="I3400B01-1" sgmtName="CtfItgInfSgmt" fieldName="EntCertNum" level="3" type="DE"
+			  dataList="{$CtfItgInfSgmt.OthEntCertNum}" reverseCheck="true" errorCode="CGE000"
+			  errorMsg="企业身份标识整合信息记录中两组的“企业身份标识类型”、“企业身份标识号码”不能完全相同">
+			<precondition>
+				<rule name="I3400B01-1-P1" sgmtName="CtfItgInfSgmt" fieldName="EntCertType" level="3" type="DE"
+					  dataList="{$CtfItgInfSgmt.OthEntCertType}"/>
+			</precondition>
+		</rule>
+	</code>
+</validator>

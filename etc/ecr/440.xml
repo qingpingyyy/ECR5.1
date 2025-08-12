@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!-- 企业担保账户信息记录 -->
+<inf>
+	<sgmt name="GuarAcctBsSgmt" describe="基础段" type="B" ctable="ECR_Guar_Bs" htable="HECR_Guar_Bs" key="AcctCode" flag="B">
+		<field name="InfRecType" 	describe="信息记录类型" 		type="text" 	source="fix" value="440" />
+		<field name="AcctType" 		describe="账户类型" 			type="text" 	source="db" dbname="AcctType" />
+		<field name="AcctCode" 		describe="账户标识码" 			type="text" 	source="db" dbname="AcctCode" isKey="true" />
+		<field name="RptDate" 		describe="信息报告日期" 		type="text" 	source="db" dbname="RptDate" />
+		<field name="RptDateCode" 	describe="报告时点说明代码" 		type="text" 	source="db" dbname="RptDateCode" />
+		<field name="Name" 			describe="债务人名称" 			type="text" 	source="db" dbname="Name" />
+		<field name="IDType" 		describe="债务人身份标识类型" 	type="text" 	source="db" dbname="IDType" />
+		<field name="IDNum" 		describe="债务人身份标识号码" 	type="text" 	source="db" dbname="IDNum" />
+		<field name="MngmtOrgCode" 	describe="业务管理机构代码" 		type="text" 	source="db" dbname="MngmtOrgCode" />
+	</sgmt>
+	<sgmt name="GuarAcctBsInfSgmt" describe="账户基本信息段" type="S" ctable="ECR_Guar_BsInf" htable="HECR_Guar_BsInf" key="AcctCode" flag="C">
+		<field name="BusiLines" 		describe="担保业务大类" 	type="text" 	source="db" dbname="BusiLines" />
+		<field name="BusiDtilLines" 	describe="担保业务种类细分" 	type="text" 	source="db" dbname="BusiDtlLines" />
+		<field name="OpenDate" 			describe="开户日期" 		type="text" 	source="db" dbname="OpenDate" />
+		<field name="GuarAmt" 			describe="担保金额" 		type="numeric" 	source="db" dbname="GuarAmt" />
+		<field name="Cy" 				describe="币种" 			type="text" 	source="db" dbname="Cy" />
+		<field name="DueDate" 			describe="到期日期" 		type="text" 	source="db" dbname="DueDate" />
+		<field name="GuarMode" 			describe="反担保方式" 		type="text" 	source="db" dbname="GuarMode" />
+		<field name="OthRepyGuarWay" 	describe="其他还款保证方式" 	type="text" 	source="db" dbname="OthRepyGuarWay" />
+		<field name="SecDep" 			describe="保证金百分比" 	type="numeric" 	source="db" dbname="SecDep" />
+		<field name="CtrctTxtCode" 		describe="担保合同文本编号" 	type="text" 	source="db" dbname="CtrctTxtCode" />
+	</sgmt>
+	<sgmt name="RltRepymtInfSgmt" describe="相关还款责任人信息段" type="N" ctable="ECR_Guar_RltRepymt" htable="HECR_Guar_RltRepymt" key="AcctCode,RltRepymtSerialNo" flag="E">
+		<field name="RltRepymtNm" 	describe="相关还款责任人个数" type="num" source="count" />
+		<field name="RltRepymtInf" 	describe="关联还款责任人信息" type="node" source="table" >
+			<field name="InfoIDType" 	describe="身份类别" 				type="text" 	source="db" dbname="InfoIDType" />
+			<field name="ArlpName" 		describe="相关还款责任人名称" 		type="text" 	source="db" dbname="ArlpName" />
+			<field name="ArlpCertType" 	describe="相关还款责任人身份标识类型" 	type="text" 	source="db" dbname="ArlpCertType" />
+			<field name="ArlpCertNum" 	describe="相关还款责任人身份标识号码" 	type="text" 	source="db" dbname="ArlpCertNum" />
+			<field name="ArlpType" 		describe="还款责任类型" 			type="text" 	source="db" dbname="ArlpType" />
+			<field name="ArlpAmt" 		describe="还款责任金额" 			type="numeric" 	source="db" dbname="ArlpAmt" />
+			<field name="WartySign" 	describe="联保标志" 			    type="text" 	source="db" dbname="WartySign" />
+			<field name="MaxGuarMcc" 	describe="保证合同编号" 			type="text" 	source="db" dbname="MaxGuarMcc" />
+		</field>
+	</sgmt>
+	<sgmt name="GuarMotgaCltalCtrctInfSgmt" describe="抵质押品信息段" type="N" ctable="ECR_Guar_Motgactrct" htable="Hecr_Guar_Motgactrct" key="AcctCode,Ccc" flag="F">
+		<field name="CcNm" 	describe="抵质押合同个数" 	type="num" source="count" />
+		<field name="CccInf" 	describe="抵质押信息" 		type="node" source="table" >
+			<field name="Ccc" describe="抵(质)押合同标识号" type="text" source="db" dbname="Ccc" />
+		</field>
+	</sgmt>
+	<sgmt name="GuarAcctCredSgmt" describe="授信额度信息段" type="S" ctable="ECR_Guar_Cred" htable="HECR_Guar_Cred" key="AcctCode" flag="G">
+		<field name="Mcc" describe="授信协议标识码" type="text" source="db" dbname="Mcc" />
+	</sgmt>
+	<sgmt name="GuarRltRepymtInfSgmt" describe="在保责任信息段" type="S" ctable="ECR_Guar_RltRepymtInf" htable="HECR_Guar_RltRepymtInf" key="AcctCode" flag="D">
+		<field name="AcctStatus" 		describe="账户状态" 			type="text" 	source="db" dbname="AcctStatus" />
+		<field name="LoanAmt" 			describe="在保余额" 			type="numeric" 	source="db" dbname="LoanAmt" />
+		<field name="RepayPrd" 			describe="余额变化日期" 		type="text" 	source="db" dbname="RepayPrd" />
+		<field name="FiveCate" 			describe="五级分类" 			type="text" 	source="db" dbname="FiveCate" />
+		<field name="FiveCateAdjDate" 	describe="五级分类认定日期" 	type="text" 	source="db" dbname="FiveCateAdjDate" />
+		<field name="RiEx" 				describe="风险敞口" 			type="numeric" 	source="db" dbname="RiEx" />
+		<field name="CompAdvFlag" 		describe="代偿（垫款）标识" 	type="text" 	source="db" dbname="CompAdvFlag" />
+		<field name="CloseDate" 		describe="账户关闭日期" 		type="text" 	source="db" dbname="CloseDate" />
+	</sgmt>
+</inf>

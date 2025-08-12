@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="GBK" ?>
+<inf>
+	<sgmt name="CtfItgInfSgmt" describe="证件整合信息段" type="B" ctable="ECR_Cust_CtfItgInf" htable="HECR_Cust_CtfItgInf" key="OthOrgSerialNo,InfSurcCode,CustomerID">
+		<field name="InfRecType" describe="信息记录类型" type="text" source="fix" value="340" />
+		<field name="EntName" describe="企业名称" type="text" source="db" dbname="EntName" isKey="true" />
+		<field name="EntCertType" describe="企业身份标识类型" type="text" source="db" dbname="EntCertType" isKey="true" />
+		<field name="EntCertNum" describe="企业身份标识号码" type="text" source="db" dbname="EntCertNum" isKey="true" />
+		<field name="OthEntCertType" describe="企业其他身份标识类型" type="text" source="db" dbname="OthEntCertType" />
+		<field name="OthEntCertNum" describe="企业其他身份标识号码" type="text" source="db" dbname="OthEntCertNum" />
+		<field name="CertAssFlg" describe="身份标识关联标志" type="text" source="db" dbname="CertAssFlg" />
+		<field name="RptDate" describe="信息报告日期" type="text" source="db" dbname="RptDate" />
+	</sgmt>
+</inf>

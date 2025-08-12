@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+    <!-- 应用名称 -->
+    <property name="APP_NAME" value="." />
+    <!--日志文件的保存路径,首先查找系统属性-Dlog.dir,如果存在就使用其；否则，在当前目录下创建名为log目录做日志存放的目录 -->
+    <property name="LOG_HOME" value="${log.dir:-logs}/${APP_NAME}/%d{yyyyMMdd}" />
+    <!-- 日志输出格式 -->
+    <property name="ENCODER_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{log_opid}] [%X{log_userid }] [%thread] %-5level %logger{80} - %msg%n" />
+    <contextName>${APP_NAME}</contextName>
+
+    <!-- 控制台日志：输出全部日志到控制台 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>${ENCODER_PATTERN}</Pattern>
+        </encoder>
+    </appender>
+
+    <!-- 文件日志：输出全部日志到文件 -->
+    <appender name="OUTPUT_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/output.%d{yyyyMMdd}.%i.log.zip</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${ENCODER_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 文件日志：输出全部日志到文件,指定日志大写 -->
+    <appender name="LOG_FIXSIZE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <fileNamePattern>${LOG_HOME}/log.log</fileNamePattern>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/log.%d{yyyyMMdd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>20MB</maxFileSize>  
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${ENCODER_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 错误日志：用于将警告及错误日志输出到独立文件 -->
+    <appender name="LOG_WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/log_warn.%d{yyyyMMdd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${ENCODER_PATTERN}%caller{4}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+    </appender>
+
+    <!-- 按用户输出日志 -->
+    <appender name="LOG_USER" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <Key>log_userid</Key>
+            <DefaultValue>unknown</DefaultValue>
+        </discriminator>
+        <sift>
+            <appender name="FILE-${log_userid}"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+		            <fileNamePattern>${LOG_HOME}/user_${log_userid}.%d{yyyy-MM}.log</fileNamePattern>
+		            <maxHistory>7</maxHistory>
+		        </rollingPolicy>
+		        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+		            <pattern>${ENCODER_PATTERN}</pattern>
+		        </encoder>
+            </appender>
+        </sift>
+    </appender>
+
+    <appender name ="ASYNC_FILE" class= "ch.qos.logback.classic.AsyncAppender">    
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->    
+        <discardingThreshold >0</discardingThreshold>    
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->    
+        <queueSize>256</queueSize>    
+        <!-- 添加附加的appender,最多只能添加一个 -->    
+        <appender-ref ref ="OUTPUT_FILE"/>    
+    </appender> 
+     
+    <!-- 独立输出的同步日志 -->
+    <appender name="SYNC_FILE"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/sync.%d{yyyyMMdd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${ENCODER_PATTERN}</pattern>
+        </encoder>
+    </appender>
+    <logger name="log.sync" level="DEBUG" addtivity="true">
+        <appender-ref ref="SYNC_FILE" />
+    </logger>
+    
+    <logger name="com.zaxxer.hikari" level="ERROR"/>
+     
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="LOG_FIXSIZE" />
+        <appender-ref ref="LOG_USER" />
+        <appender-ref ref="LOG_WARN" />
+    </root>
+</configuration>

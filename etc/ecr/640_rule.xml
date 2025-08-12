@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="GBK" ?>
+<validator>
+	<code>
+		<rule name="I0000201-1" sgmtName="InstitutionBalanceSheetBsSgmt" fieldName="EntCertType" level="3" type="DL"
+			  dataList="10;20;30;" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“企业身份标识类型”取值需要在代码表中。"/>
+		<rule name="I0000201-2" sgmtName="InstitutionBalanceSheetBsSgmt" fieldName="SheetType" level="3" type="DIC"
+			  dataList="SheetType" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报表类型”取值需要在代码表中。"/>
+		<rule name="I0000201-3" sgmtName="InstitutionBalanceSheetBsSgmt" fieldName="SheetTypeDivide" level="3" type="DIC"
+			  dataList="SheetTypeDivide" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报表类型细分”取值需要在代码表中。"/>
+		<rule name="I0000201-4" sgmtName="InstitutionBalanceSheetBsSgmt" fieldName="RptDateCode" level="3" type="DIC"
+			  dataList="RptDateCode610" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报告时点说明代码”取值需要在代码表中。"/>
+
+		<rule name="I6400B01" sgmtName="InstitutionBalanceSheetBsSgmt" fieldName="SheetType" level="3"
+			  type="DE" dataList="10" errorCode="CRE200"
+			  errorMsg="“报表类型”必须填写“10”。">
+		</rule>
+		<rule name="I6400C01" sgmtName="InstitutionBalanceSheetSgmt" fieldName="TotalAssets" level="3"
+			  type="DE" compareWay="number"
+			  dataList="{$InstitutionBalanceSheetSgmt.TotalCurrentAssets}+{$InstitutionBalanceSheetSgmt.TotalNonCurrentAssets}"
+			  errorCode="CRE201"
+			  errorMsg="在事业单位资产负债表信息中数据项“资产总计=流动资产+非流动资产”。">
+		</rule>
+		<rule name="I6400C02" sgmtName="InstitutionBalanceSheetSgmt" fieldName="TotalLiabilities" level="3"
+			  type="DE" compareWay="number"
+			  dataList="{$InstitutionBalanceSheetSgmt.TotalCurrentLiabilities}+{$InstitutionBalanceSheetSgmt.TotalNonCurrentLiabilities}"
+			  errorCode="CRE202"
+			  errorMsg="在事业单位资产负债表信息中数据项“负债合计=流动负债+非流动负债”。">
+		</rule>
+		<rule name="I6400C03" sgmtName="InstitutionBalanceSheetSgmt" fieldName="TotalLiabilitiesAndNetAssets" level="3"
+			  type="DE" compareWay="number"
+			  dataList="{$InstitutionBalanceSheetSgmt.TotalLiabilities}+{$InstitutionBalanceSheetSgmt.TotalNetAssets}"
+			  errorCode="CRE203"
+			  errorMsg="在事业单位资产负债表信息中数据项“负债和净资产总计=负债合计+净资产合计”。">
+		</rule>
+		<rule name="I6400C04" sgmtName="InstitutionBalanceSheetSgmt" fieldName="TotalAssets" level="3"
+			  type="DE" compareWay="number" dataList="{$InstitutionBalanceSheetSgmt.TotalLiabilitiesAndNetAssets}" errorCode="CRE204"
+			  errorMsg="在事业单位资产负债表信息中数据项“资产总计=负债和净资产总计”。">
+		</rule>
+	</code>
+</validator>

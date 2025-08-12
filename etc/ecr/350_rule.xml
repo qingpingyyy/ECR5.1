@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="GBK" ?>
+<validator>
+	<code>
+		<rule name="I0000201-1" sgmtName="IcdnRltpInfSgmt" fieldName="EntCertType" level="3" type="DIC" dataList="ECertType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“A企业身份标识类型”取值需要在代码表中。"/>
+		<rule name="I0000201-2" sgmtName="IcdnRltpInfSgmt" fieldName="AssoEntCertType" level="3" type="DIC" dataList="ECertType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“B企业身份标识类型”取值需要在代码表中。"/>
+		<rule name="I0000201-3" sgmtName="IcdnRltpInfSgmt" fieldName="AssoType" level="3" type="DIC" dataList="AssoType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“关联关系类型”取值需要在代码表中。"/>
+		<rule name="I0000201-4" sgmtName="IcdnRltpInfSgmt" fieldName="AssoSign" level="3" type="DIC" dataList="AssoSign"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“关联标志”取值需要在代码表中。"/>
+
+        <rule name="I3500B01-1" sgmtName="IcdnRltpInfSgmt" fieldName="EntCertNum" level="3" type="DE"
+			  dataList="{$IcdnRltpInfSgmt.AssoEntCertNum}" reverseCheck="true" errorCode="CGE000"
+			  errorMsg="企业关联信息记录中两组的“企业身份标识类型”、“企业身份标识号码”不能完全相同">
+			<precondition>
+				<rule name="I3500B01-1-P1" sgmtName="IcdnRltpInfSgmt" fieldName="EntCertType" level="3" type="DE"
+					  dataList="{$IcdnRltpInfSgmt.AssoEntCertType}"/>
+			</precondition>
+		</rule>
+	</code>
+</validator>

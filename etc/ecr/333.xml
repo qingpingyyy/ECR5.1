@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="GBK" ?>
+<inf>
+	<sgmt name="IdEfctInfDltSgmt" describe="企业证件有效期删除请求信息段" type="B">
+		<field name="DelRecType" describe="信息记录类型" type="text" />
+		<field name="InfSurcCode" describe="信息来源编码" type="text" />
+		<field name="OrgName" describe="组织机构名称" type="text" />
+		<field name="OrgIDType" describe="组织机构身份标识类型" type="text" />
+		<field name="OrgIDNum" describe="组织机构身份标识号码" type="text" />
+	</sgmt>
+</inf>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="GBK" ?>
+<validator>
+	<code>
+		<rule name="I4210B01-1" sgmtName="CrdtInfIdCagsSgmt" fieldName="OdBnesCode" level="3" type="DE"
+			  dataList="NwBnesCode" reverseCheck="true" errorMsg="“原业务标识码”和“新业务标识码”不能相同。"/>
+	</code>
+</validator>

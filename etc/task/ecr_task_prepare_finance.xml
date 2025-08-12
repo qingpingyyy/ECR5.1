@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!-- 任务定义文件,每个任务有一个文件构成，任务构造器可以根据此文件构造一个任务出来 -->
+
+<task name="ECRPrepareFinanceTask" describe="导入企业财务报表信息" recovery="true"  saveHistory="true"  historyFolder="./his" >
+	<extendProperties>
+			<!-- 抽取条件:未结清或者之前一段时间内结清数据账户信息的财务报表信息 -->
+			<property name="FinanceCondition" value=" exists(SELECT 1 FROM ECR_ACCOUNTINFO EA 
+							where  EA.CustomerID=A.CustomerID
+							and EA.RecordFlag &lt;&gt; 'X')" />
+	</extendProperties>
+	<executeUnits>
+		<executeUnit name="InsertFinanceBs" describe="导入企业财务报表基础段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_FINANCE_REPORT_BS:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+					A.CustomerID as CustomerID{#客户号},
+					substr(A.SheetYear,1,4) as SheetYear{#报表年份},
+					A.SheetType as SheetType{#报表类型},
+					A.SheetTypeDivide as SheetTypeDivide{#报表类型细分},
+					A.InfRecType as InfRecType{#信息记录类型},
+					A.EntName as EntName{#企业名称},
+					A.EntCertType as EntCertType{#企业身份标识类型 },
+					A.EntCertNum as EntCertNum{#企业身份标识号码},
+					'{$ARE.bizDate}' as RptDate{#信息报告日期},
+					A.AuditFirmName as AuditFirmName{#审计事务所名称},
+					A.AuditorName as AuditorName{#审计人名称},
+					A.AuditTime as AuditTime{#审计时间},
+					A.ManagerOrgID as Cimoc{#客户资料维护机构代码},
+					'{$ARE.ECRORGID}' as FinanceID{#上报机构代码},
+					A.ManagerOrgID as ManagerOrgID{#管户机构编号},
+					A.ManagerUserID as ManagerUserID{#管户用户编号}
+					 from ECR_INT_FINANCEBS A 
+					 where {$TASK.FinanceCondition}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+					{Cimoc,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='ManageOrgID_ECR'}" 
+				/>
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.table" value="ECR_FINANCE_REPORT_BS" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.keyColumns" value="CustomerID,SheetYear,SheetType,SheetTypeDivide,InfRecType" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.updateColumns" value="*" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.compareColumns" 
+							value="EntName,EntCertType,EntCertNum,Cimoc" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertFinanceBs2002" describe="导入企业财务报表2002版资产负债信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_FINANCEBS_2002:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select * from ECR_INT_FINANCEBS02 A where {$TASK.FinanceCondition}"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.table" value="ECR_FINANCEBS_2002" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.keyColumns" value="CustomerID,SheetYear,SheetType,SheetTypeDivide" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.updateColumns" value="*" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertFinancePs2002" describe="导入企业财务报表2002版利润及利润分配信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_FINANCEPS_2002:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select * from ECR_INT_FINANCEPS02 A where {$TASK.FinanceCondition}"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.table" value="ECR_FINANCEPS_2002" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.keyColumns" value="CustomerID,SheetYear,SheetType,SheetTypeDivide" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.updateColumns" value="*" />				
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertFinanceCf2002" describe="导入企业财务报表2002版现金流量信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_FINANCECF_2002:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select * from ECR_INT_FINANCECF02 A where {$TASK.FinanceCondition}"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.table" value="ECR_FINANCECF_2002" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.keyColumns" value="CustomerID,SheetYear,SheetType,SheetTypeDivide" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.updateColumns" value="*" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertFinanceBs2007" describe="导入企业财务报表2007版资产负债信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_FINANCEBS_2007:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select * from ECR_INT_FINANCEBS07 A where {$TASK.FinanceCondition}"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.table" value="ECR_FINANCEBS_2007" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.keyColumns" value="CustomerID,SheetYear,SheetType,SheetTypeDivide" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.updateColumns" value="*" />			
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertFinancePs2007" describe="导入企业财务报表2007版利润及利润分配信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_FINANCEPS_2007:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select * from ECR_INT_FINANCEPS07 A where {$TASK.FinanceCondition}"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.table" value="ECR_FINANCEPS_2007" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.keyColumns" value="CustomerID,SheetYear,SheetType,SheetTypeDivide" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.updateColumns" value="*" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.endSql" value="update ECR_FINANCEPS_2007 set SheetYear =substr(SheetYear,1,4) where length(SheetYear) &gt;4" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertFinanceCf2007" describe="导入企业财务报表2007版现金流量信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_FINANCECF_2007:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select * from ECR_INT_FINANCECF07 A where {$TASK.FinanceCondition}"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.table" value="ECR_FINANCECF_2007" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.keyColumns" value="CustomerID,SheetYear,SheetType,SheetTypeDivide" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.updateColumns" value="*" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertFinanceBsIN" describe="导入企业财务报表事业单位资产负债信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_FINANCEBS_IN:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select * from ECR_INT_FINANCEBSIN A where {$TASK.FinanceCondition}"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.table" value="ECR_FINANCEBS_IN" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.keyColumns" value="CustomerID,SheetYear,SheetType,SheetTypeDivide" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.updateColumns" value="*" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertFinanceCfIN" describe="导入企业财务报表事业单位收入支出信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_FINANCECF_IN:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select * from ECR_INT_FINANCECFIN A where {$TASK.FinanceCondition}"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.table" value="ECR_FINANCECF_IN" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.keyColumns" value="CustomerID,SheetYear,SheetType,SheetTypeDivide" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRFinanceUpdateHandler.updateColumns" value="*" />
+			</extendProperties>
+		</executeUnit>
+		
+		<!-- 企业其他报表段修改时,更新基础段RptDateCode为20-更新财务报表,记录标志RecordFlag为U-更新，信息报告日期和数据日期为当前批量时间-->
+		<executeUnit name="SyncOrgFinanceRecordflag" describe="更新企业财务报表信息基础段" executeClass="com.amarsoft.app.pbc.ecr.dataimport.SyncOrgFinanceRecordflag" allowManualExecute="true"/>
+				
+		
+	</executeUnits>
+	<routeMap start="InsertFinanceBs" >
+		<route unit="InsertFinanceBs" successful="InsertFinanceBs2002" />
+		<route unit="InsertFinanceBs2002" successful="InsertFinancePs2002" />
+		<route unit="InsertFinancePs2002" successful="InsertFinanceCf2002" />
+		<route unit="InsertFinanceCf2002" successful="InsertFinanceBs2007" />
+		<route unit="InsertFinanceBs2007" successful="InsertFinancePs2007" />
+		<route unit="InsertFinancePs2007" successful="InsertFinanceCf2007" />
+		<route unit="InsertFinanceCf2007" successful="InsertFinanceBsIN" />
+		<route unit="InsertFinanceBsIN" successful="InsertFinanceCfIN" />
+		<route unit="InsertFinanceCfIN" successful="SyncOrgFinanceRecordflag" />
+    </routeMap>	
+</task>

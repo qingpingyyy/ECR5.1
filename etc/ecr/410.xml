@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!-- 企业借贷账户记录 -->
+<inf>
+	<sgmt name="AcctBsSgmt" describe="基础段" type="B" ctable="ECR_Acct_Bs" htable="HECR_Acct_Bs" key="AcctCode" flag="B">
+		<field name="InfRecType" describe="信息记录类型" type="text" source="fix" value="410" />
+		<field name="AcctType" describe="账户类型" type="text" source="db" dbname="AcctType" />
+		<field name="AcctCode" describe="账户标识码" type="text" source="db" dbname="AcctCode" isKey="true" />
+		<field name="RptDate" describe="信息报告日期" type="text" source="db" dbname="RptDate" />
+		<field name="RptDateCode" describe="报告时点说明代码" type="text" source="db" dbname="RptDateCode" />
+		<field name="Name" describe="借款人名称" type="text" source="db" dbname="Name" />
+		<field name="IDType" describe="借款人身份标识类型" type="text" source="db" dbname="IDType" />
+		<field name="IDNum" describe="借款人身份标识号码" type="text" source="db" dbname="IDNum" />
+		<field name="MngmtOrgCode" describe="业务管理机构代码" type="text" source="db" dbname="MngmtOrgCode" />
+	</sgmt>
+	<sgmt name="AcctBsInfSgmt" describe="基本信息段" type="S" ctable="ECR_Acct_BsInf" htable="HECR_Acct_BsInf" key="AcctCode" flag="C">
+		<field name="BusiLines" describe="借贷业务大类" type="text" source="db" dbname="BusiLines" />
+		<field name="BusiDtlLines" describe="借贷业务种类细分" type="text" source="db" dbname="BusiDtlLines" />
+		<field name="OpenDate" describe="开户日期" type="text" source="db" dbname="OpenDate" />
+		<field name="Cy" describe="币种" type="text" source="db" dbname="Cy" />
+		<field name="AcctCredLine" describe="信用额度" type="numeric" source="db" dbname="AcctCredLine" constraint="S" />
+		<field name="LoanAmt" describe="借款金额" type="numeric" source="db" dbname="LoanAmt" constraint="S" />
+		<field name="Flag" describe="分次放款标志" type="text" source="db" dbname="Flag" constraint="S" />
+		<field name="DueDate" describe="到期日期" type="text" source="db" dbname="DueDate" constraint="S" />
+		<field name="RepayMode" describe="还款方式" type="text" source="db" dbname="RepayMode" constraint="S" />
+		<field name="RepayFreqcy" describe="还款频率" type="text" source="db" dbname="RepayFreqcy" constraint="S" />
+		<field name="ApplyBusiDist" describe="业务申请地行政区划代码" type="text" source="db" dbname="ApplyBusiDist" constraint="S" />
+		<field name="GuarMode" describe="担保方式" type="text" source="db" dbname="GuarMode" constraint="S" />
+		<field name="OthRepyGuarWay" describe="其他还款保证方式" type="text" source="db" dbname="OthRepyGuarWay" constraint="S" />
+		<field name="LoanTimeLimCat" describe="借款期限分类" type="text" source="db" dbname="LoanTimeLimCat" constraint="S" />
+		<field name="LoaFrm" describe="贷款发放形式" type="text" source="db" dbname="LoaFrm" constraint="S" />
+		<field name="ActInvest" describe="贷款实际投向" type="text" source="db" dbname="ActInvest" constraint="S" />
+		<field name="FundSou" describe="业务经营类型" type="text" source="db" dbname="FundSou" constraint="S" />
+		<field name="AssetTransFlag" describe="资产转让标志" type="text" source="db" dbname="AssetTrandFlag" constraint="S" />
+	</sgmt>
+	<sgmt name="RltRepymtInfSgmt" describe="相关还款责任人段" type="N" ctable="ECR_Acct_RltRepymt" htable="HECR_Acct_RltRepymt" key="AcctCode,RltRepymtSerialNo" flag="D">
+		<field name="RltRepymtNm" describe="责任人个数" type="num" source="count" />
+		<field name="RltRepymtInf" describe="关联还款责任人信息" type="node" source="table" >
+			<field name="ArlpIDType" describe="身份类别" type="text" source="db" dbname="ArlpIDType"  />
+			<field name="ArlpName" describe="责任人名称" type="text" source="db" dbname="ArlpName" />
+			<field name="ArlpCertType" describe="责任人身份标识类型" type="text" source="db" dbname="ArlpCertType"  />
+			<field name="ArlpCertNum" describe="责任人身份标识号码" type="text" source="db" dbname="ArlpCertNum"  />
+			<field name="ArlpType" describe="还款责任类型" type="text" source="db" dbname="ArlpType"  />
+			<field name="ArlpAmt" describe="还款责任金额" type="numeric" source="db" dbname="ArlpAmt" />
+			<field name="WartySign" describe="联保标志" type="numeric" source="db" dbname="WartySign" />
+			<field name="MaxGuarMcc" describe="保证合同编号" type="text" source="db" dbname="MaxGuarMcc" />
+		</field>
+	</sgmt>
+	<sgmt name="MotgaCltalCtrctInfSgmt" describe="抵质押品信息段" type="N" ctable="ECR_Acct_MotgaCtrct" htable="HECR_Acct_MotgaCtrct" key="AcctCode,Ccc" flag="E">
+		<field name="CcNm" describe="抵质押合同个数" type="num" source="count" />
+		<field name="CccInf" describe="抵质押合同信息" type="node" source="table" >
+			<field name="Ccc" describe="抵(质)押合同标识码" type="text" source="db" dbname="Ccc" />
+		</field>
+	</sgmt>
+	<sgmt name="AcctCredSgmt" describe="授信额度信息段" type="S" ctable="ECR_Acct_Cred" htable="HECR_Acct_Cred" key="AcctCode" flag="F">
+		<field name="Mcc" describe="授信协议标识码" type="text" source="db" dbname="Mcc"  />
+	</sgmt>
+	<sgmt name="OrigCreditorInfSgmt" describe="初始债权说明段" type="S" ctable="ECR_Acct_OrigCreditor" htable="HECR_Acct_OrigCreditor" key="AcctCode" flag="G">
+		<field name="InitCredName" describe="初始债权人名称" type="text" source="db" dbname="InitCredName" />
+		<field name="InitCedOrgCode" describe="初始债权人机构代码" type="text" source="db" dbname="InitCedOrgCode" />
+		<field name="OrigDbtCate" describe="原债务种类" type="text" source="db" dbname="OrigDbtCate" />
+		<field name="InitRpySts" describe="债权转移时的还款状态" type="text" source="db" dbname="InitRpySts" />
+	</sgmt>
+	<sgmt name="ActLbltyInfSgmt" describe="还款表现信息段" type="S" ctable="ECR_Acct_ActLblty" htable="HECR_Acct_ActLblty" key="AcctCode" flag="H">
+		<field name="AcctStatus" describe="账户状态" type="text" source="db" dbname="AcctStatus" />
+		<field name="AcctBal" describe="余额" type="numeric" source="db" dbname="AcctBal" />
+		<field name="BalChgDate" describe="余额变化日期" type="text" source="db" dbname="BalChgDate" />
+		<field name="FiveCate" describe="五级分类" type="text" source="db" dbname="FiveCate" />
+		<field name="FiveCateAdjDate" describe="五级分类认定日期" type="text" source="db" dbname="FiveCateAdjDate" />
+		<field name="PymtPrd" describe="剩余还款月数" type="numeric" source="db" dbname="PymtPrd" constraint="S" />
+		<field name="TotOverd" describe="当前逾期总额" type="numeric" source="db" dbname="TotOverd" constraint="S" />
+		<field name="OverdPrinc" describe="当前逾期本金" type="numeric" source="db" dbname="OverdPrinc" constraint="S" />
+		<field name="OverdDy" describe="当前逾期天数" type="numeric" source="db" dbname="OverdDy" constraint="S" />
+		<field name="LatRpyDate" describe="最近一次实际还款日期" type="text" source="db" dbname="LatRpyDate"  />
+		<field name="LatRpyAmt" describe="最近一次实际还款金额" type="numeric" source="db" dbname="LatRpyAmt"/>
+		<field name="LatRpyPrincAmt" describe="最近一次实际归还本金" type="numeric" source="db" dbname="LatRpyPrinc"  />
+		<field name="RpmtType" describe="还款形式" type="text" source="db" dbname="RpmtType" />
+		<field name="LatAgrrRpyDate" describe="最近一次约定还款日" type="text" source="db" dbname="LatAgrrRpyDate" constraint="S"/>
+		<field name="LatAgrrRpyAmt" describe="最近一次应还款金额" type="numeric" source="db" dbname="LatAgrrRpyAmt" constraint="S"/>
+		<field name="NxtAgrrRpyDate" describe="下一次约定还款日期" type="text" source="db" dbname="NxtAgrrRpyDate" constraint="S"/>
+		<field name="CloseDate" describe="账户关闭日期" type="text" source="db" dbname="CloseDate" />
+	</sgmt>
+	<sgmt name="AcctSpecTrstDspnSgmt" describe="特定交易说明段" type="N" ctable="ECR_Acct_SpecTrstDspn" htable="HECR_Acct_SpecTrstDspn" key="AcctCode,CagOfTrdSerialNo" flag="I">
+		<field name="CagOfTrdNm" describe="交易个数" type="num" source="count" />
+		<field name="CagOfTrdInf" describe="交易信息" type="node" source="table" >
+			<field name="ChanTranType" describe="交易类型" type="text" source="db" dbname="ChanTranType" />
+			<field name="TranDate" describe="交易日期" type="text" source="db" dbname="TranDate" />
+			<field name="TranAmt" describe="交易金额" type="numeric" source="db" dbname="TranAmt" />
+			<field name="DueTranMon" describe="到期日期变更月数" type="numeric" source="db" dbname="DueTranMon" />
+			<field name="DetInfo" describe="交易明细信息" type="text" source="db" dbname="DetInfo" />
+		</field>
+	</sgmt>
+</inf>

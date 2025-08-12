@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!-- 企业资产负债表信息记录 -->
+<inf>
+	<sgmt name="BalanceSheetBsSgmt" describe="基础段" type="B" ctable="ECR_FINANCE_REPORT_Bs" htable="HECR_FINANCE_REPORT_Bs" key="CUSTOMERID,SheetYear,SheetType,SheetTypeDivide,InfRecType">
+		<field name="InfRecType" describe="信息记录类型" type="text" source="db" dbname="InfRecType" />
+		<field name="EntName" describe="企业名称" type="text" source="db" dbname="EntName" isKey="true" />
+		<field name="EntCertType" describe="企业身份标识类型" type="text" source="db" dbname="EntCertType" isKey="true" />
+		<field name="EntCertNum" describe="企业身份标识号码" type="text" source="db" dbname="EntCertNum" isKey="true" />
+		<field name="RptDate" describe="信息报告日期" type="text" source="db" dbname="RptDate" isKey="true" />
+		<field name="SheetYear" describe="报表年份" type="text" source="db" dbname="SheetYear" isKey="true" />
+		<field name="SheetType" describe="报表类型" type="text" source="db" dbname="SheetType" isKey="true" />
+		<field name="SheetTypeDivide" describe="报表类型细分" type="text" source="db" dbname="SheetTypeDivide" isKey="true" />
+		<field name="AuditFirmName" describe="审计事务所名称" type="text" source="db" dbname="AuditFirmName" />
+		<field name="AuditorName" describe="审计人员名称" type="text" source="db" dbname="AuditorName" />
+		<field name="AuditTime" describe="审计时间" type="text" source="db" dbname="AuditTime" />
+		<field name="Cimoc" describe="客户资料维护机构代码" type="text" source="db" dbname="Cimoc" />
+		<field name="RptDateCode" describe="报告时点说明代码" type="text" source="db" dbname="RptDateCode" />
+	</sgmt>
+	<sgmt name="BalanceSheet2002Sgmt" describe="2002版资产负债表段" type="S" ctable="ECR_FINANCEBS_2002" htable="HECR_FINANCEBS_2002" key="CUSTOMERID,SheetYear,SheetType,SheetTypeDivide">
+		<field name="CurrencyFunds"        describe="货币资金" type="isodouble" source="db" dbname="CurrencyFunds" />
+		<field name="ShortTermInvestments" describe="短期投资" type="isodouble" source="db" dbname="ShortTermInvestments" />
+		<field name="NotesReceivable"      describe="应收票据 " type="isodouble" source="db" dbname="NotesReceivble" />
+		<field name="DividendsReceivable"  describe="应收股利 " type="isodouble" source="db" dbname="DividendsReceivble" />
+		<field name="InterestReceivable"   describe="应收利息" type="isodouble" source="db" dbname="InterestReceivble" />
+		<field name="AccountsReceivable"   describe="应收账款 " type="isodouble" source="db" dbname="AccountsReceivble" />
+		<field name="OtherReceivables"     describe="其他应收款 " type="isodouble" source="db" dbname="OtherReceivbles" />
+		<field name="Prepayments"          describe="预付账款 " type="isodouble" source="db" dbname="Prepyments" />
+		<field name="FutureGuarantee"      describe="期货保证金 " type="isodouble" source="db" dbname="FutureGurntee" />
+		<field name="AllowanceReceivable"  describe="应收补贴款" type="isodouble" source="db" dbname="AllownceReceivble" />
+		<field name="ExportDrawbackReceivable" describe="应收出口退税 " type="isodouble" source="db" dbname="ExportDrwbckReceivble" />
+		<field name="Inventories"          describe="存货 "     type="isodouble" source="db" dbname="Inventories" />
+		<field name="RawMaterials"         describe="存货原材料 " type="isodouble" source="db" dbname="RwMterils" />
+		<field name="FinishedProducts"     describe="存货产成品 " type="isodouble" source="db" dbname="FinishedProducts" />
+		<field name="DeferredExpenses"     describe="待摊费用 "   type="isodouble" source="db" dbname="DeferredExpenses" />
+		<field name="UnsettledGLOnCurrentAssets" describe="待处理流动资产净损失" type="isodouble" source="db" dbname="UnsettledGLOnCurrentssets" />
+		<field name="LongTermDebentureInvestmentFallingDueInAYear" describe="一年内到期的长期债权投资" type="isodouble" source="db" dbname="m9533" />
+		<field name="OtherCurrentAssets"  describe="其他流动资产 " type="isodouble" source="db" dbname="OtherCurrentssets" />
+		<field name="TotalCurrentAssets"  describe="流动资产合计" type="isodouble" source="db" dbname="TotlCurrentssets" />
+		<field name="LongTermInvestment"  describe="长期投资 "   type="isodouble" source="db" dbname="LongTermInvestment" />
+		<field name="LongTermEquityInvestment" describe="长期股权投资 "     type="isodouble" source="db" dbname="LongTermEquityInvestment" />
+		<field name="LongTermSecuritiesInvestment" describe="长期债权投资 " type="isodouble" source="db" dbname="LongTermSecuritiesInvestment" />
+		<field name="IncorporatingPriceDifference" describe="合并价差 "    type="isodouble" source="db" dbname="IncorportingPriceDifference" />
+		<field name="TotalLongTermInvestment" describe="长期投资合计 "      type="isodouble" source="db" dbname="TotlLongTermInvestment" />
+		<field name="OriginalCostOfFixedAsset" describe="固定资产原价 "     type="isodouble" source="db" dbname="OriginlCostOfFixedsset" />
+		<field name="FixedAssetAccumulatedDepreciation" describe="累计折旧 " type="isodouble" source="db" dbname="FixedssetccumultedDeprecition" />
+		<field name="FixedAssetsNetValue" describe="固定资产净值 "        type="isodouble" source="db" dbname="FixedssetsNetVlue" />
+		<field name="ProvisionForImpairmentOfFixedAssets" describe="固定资产值减值准备 " type="isodouble" source="db" dbname="m9555" />
+		<field name="NetValueOfFixedAssets" describe="固定资产净额 "      type="isodouble" source="db" dbname="NetVlueOfFixedssets" />
+		<field name="FixedAssetsPendingForDisposal" describe="固定资产清理 " type="isodouble" source="db" dbname="FixedssetsPendingForDisposl" />
+		<field name="ConstructionMaterials" describe="工程物资 " type="isodouble" source="db" dbname="ConstructionMterils" />
+		<field name="ConstructionInProgress" describe="在建工程 " type="isodouble" source="db" dbname="ConstructionInProgress" />
+		<field name="UnsettledGLOnFixedAssets" describe="待处理固定资产净损失" type="isodouble" source="db" dbname="UnsettledGLOnFixedssets" />
+		<field name="TotalFixedAssets" describe="固定资产合计" type="isodouble" source="db" dbname="TotlFixedssets" />
+		<field name="IntangibleAssets" describe="无形资产 " type="isodouble" source="db" dbname="Intngiblessets" />
+		<field name="LandUseRights" describe="（无形资产科目下）土地使用权" type="isodouble" source="db" dbname="LndUseRights" />
+		<field name="DeferredAssets" describe="递延资产 " type="isodouble" source="db" dbname="Deferredssets" />
+		<field name="IncludingFixedAssetsRepair" describe="（递延资产科目下）固定资产修理" type="isodouble" source="db" dbname="IncludingFixedssetsRepir" />
+		<field name="ImprovementExpenditureOfFixedAssets" describe="（递延资产科目下）固定资产改良支出" type="isodouble" source="db" dbname="m9577" />
+		<field name="OtherLongTermAssets" describe="其他长期资产 " type="isodouble" source="db" dbname="OtherLongTermssets" />
+		<field name="AmongItSpeciallyApprovedReservingMaterials" describe="（其他长期资产科目下）特准储备物资" type="isodouble" source="db" dbname="m9581" />
+		<field name="TotalIntangibleAssetsAndOtherAssets" describe="无形及其他资产合计 " type="isodouble" source="db" dbname="m9583" />
+		<field name="DeferredAssetsDebits" describe="递延税款借项 " type="isodouble" source="db" dbname="DeferredssetsDebits" />
+		<field name="TotalAssets" describe="资产总计" type="isodouble" source="db" dbname="Totlssets" />
+		<field name="ShortTermBorrowings" describe="短期借款 " type="isodouble" source="db" dbname="ShortTermBorrowings" />
+		<field name="NotesPayable" describe="应付票据 " type="isodouble" source="db" dbname="NotesPyble" />
+		<field name="AccountsPayable" describe="应付账款 " type="isodouble" source="db" dbname="AccountsPyble" />
+		<field name="ReceiptsInAdvance" describe="预收账款 " type="isodouble" source="db" dbname="ReceiptsIndvnce" />
+		<field name="WagesOrSalariesPayables" describe="应付工资 " type="isodouble" source="db" dbname="WgesOrSlriesPybles" />
+		<field name="EmployeeBenefits" describe="应付福利费 " type="isodouble" source="db" dbname="EmployeeBenefits" />
+		<field name="IncomePayable" describe="应付利润 " type="isodouble" source="db" dbname="IncomePyble" />
+		<field name="TaxesPayable" describe="应交税金 " type="isodouble" source="db" dbname="TxesPyble" />
+		<field name="OtherPayableToGovernment" describe="其他应交款 " type="isodouble" source="db" dbname="OtherPybleToGovernment" />
+		<field name="OtherPayable" describe="其他应付款 " type="isodouble" source="db" dbname="OtherPyble" />
+		<field name="ProvisionForExpenses" describe="预提费用 " type="isodouble" source="db" dbname="ProvisionForExpenses" />
+		<field name="Provisions" describe="预计负债 " type="isodouble" source="db" dbname="Provisions" />
+		<field name="LongTermLiabilitiesDueWithinOneYear" describe="一年内到期的长期负债" type="isodouble" source="db" dbname="m9613" />
+		<field name="OtherCurrentLiabilities" describe="其他流动负债 " type="isodouble" source="db" dbname="OtherCurrentLibilities" />
+		<field name="TotalCurrentLiabilities" describe="流动负债合计" type="isodouble" source="db" dbname="TotlCurrentLibilities" />
+		<field name="LongTermBorrowings" describe="长期借款 " type="isodouble" source="db" dbname="LongTermBorrowings" />
+		<field name="BondsPayable" describe="应付债券 " type="isodouble" source="db" dbname="BondsPyble" />
+		<field name="LongTermPayables" describe="长期应付款 " type="isodouble" source="db" dbname="LongTermPybles" />
+		<field name="GrantsPayable" describe="专项应付款 " type="isodouble" source="db" dbname="GrntsPyble" />
+		<field name="OtherLongTermLiabilities" describe="其他长期负债 " type="isodouble" source="db" dbname="OtherLongTermLibilities" />
+		<field name="SpecialReserveFund" describe="（其他长期负债科目下）特准储备基金" type="isodouble" source="db" dbname="SpecilReserveFund" />
+		<field name="TotalLongTermLiabilities" describe="长期负债合计" type="isodouble" source="db" dbname="TotlLongTermLibilities" />
+		<field name="DeferredTaxationCredit" describe="递延税款贷项 " type="isodouble" source="db" dbname="DeferredTxtionCredit" />
+		<field name="TotalLiabilities" describe="负债合计 " type="isodouble" source="db" dbname="TotlLibilities" />
+		<field name="MinorityInterest" describe="少数股东权益 " type="isodouble" source="db" dbname="MinorityInterest" />
+		<field name="PaidInCapital" describe="实收资本 " type="isodouble" source="db" dbname="PidInCpitl" />
+		<field name="NationalCapital" describe="国家资本 " type="isodouble" source="db" dbname="NtionlCpitl" />
+		<field name="CollectiveCapital" describe="集体资本 " type="isodouble" source="db" dbname="CollectiveCpitl" />
+		<field name="LegalPersonsCapital" describe="法人资本 " type="isodouble" source="db" dbname="LeglPersonsCpitl" />
+		<field name="StateOwnedLegalPersonsCapital" describe="（法人资本科目下）国有法人资本" type="isodouble" source="db" dbname="StteOwnedLeglPersonsCpitl" />
+		<field name="CollectiveLegalPersonsCapital" describe="（法人资本科目下）集体法人资本" type="isodouble" source="db" dbname="CollectiveLeglPersonsCpitl" />
+		<field name="PersonalCapital" describe="个人资本 " type="isodouble" source="db" dbname="PersonlCpitl" />
+		<field name="ForeignBusinessmensCapital" describe="外商资本 " type="isodouble" source="db" dbname="ForeignBusinessmensCpitl" />
+		<field name="CapitalrRserve" describe="资本公积 " type="isodouble" source="db" dbname="CpitlrRserve" />
+		<field name="SurplusReserve" describe="盈余公积 " type="isodouble" source="db" dbname="SurplusReserve" />
+		<field name="StatutorySurplusReserve" describe="（盈余公积科目下）法定盈余公积" type="isodouble" source="db" dbname="SttutorySurplusReserve" />
+		<field name="PublicWelfareFund" describe="（盈余公积科目下）公益金" type="isodouble" source="db" dbname="PublicWelfreFund" />
+		<field name="SupplermentaryCurrentCapital" describe="（盈余公积科目下）补充流动资本" type="isodouble" source="db" dbname="SupplermentryCurrentCpitl" />
+		<field name="UnaffirmedInvestmentLoss" describe="未确认的投资损失 " type="isodouble" source="db" dbname="UnffirmedInvestmentLoss" />
+		<field name="UnappropriatedProfit" describe="未分配利润 " type="isodouble" source="db" dbname="UnppropritedProfit" />
+		<field name="DifferenceOnTranslationOfForeignCurrencyFinancialStatements" describe="外币报表折算差额 " type="isodouble" source="db" dbname="m9669" />
+		<field name="TotalEquity" describe="所有者权益合计" type="isodouble" source="db" dbname="TotlEquity" />
+		<field name="TotalEquityAndLiabilities" describe="负债和所有者权益总计" type="isodouble" source="db" dbname="TotlEquityndLibilities" />
+	</sgmt>
+	<sgmt name="BalanceSheet2007Sgmt" describe="2007版资产负债表段" type="S" ctable="ECR_FINANCEBS_2007" htable="HECR_FINANCEBS_2007" key="CUSTOMERID,SheetYear,SheetType,SheetTypeDivide">
+		<field name="CurrencyFunds" describe="货币资金 " type="isodouble" source="db" dbname="CurrencyFunds" />
+		<field name="FinancialAssetsHeldForTrading" describe="交易性金融资产 " type="isodouble" source="db" dbname="m9101" />
+		<field name="NotesReceivable" describe="应收票据 " type="isodouble" source="db" dbname="NotesReceivable" />
+		<field name="AccountsReceivable" describe="应收账款 " type="isodouble" source="db" dbname="AccountsReceivable" />
+		<field name="Prepayments" describe="预付账款 " type="isodouble" source="db" dbname="Prepayments" />
+		<field name="InterestReceivable" describe="应收利息 " type="isodouble" source="db" dbname="InterestReceivable" />
+		<field name="DividendsReceivable" describe="应收股利 " type="isodouble" source="db" dbname="DividendsReceivable" />
+		<field name="OtherReceivables" describe="其他应收款 " type="isodouble" source="db" dbname="OtherReceivables" />
+		<field name="Inventories" describe="存货 " type="isodouble" source="db" dbname="Inventories" />
+		<field name="CurrentPortionOfNonCurrentAssets" describe="一年内到期的非流动资产" type="isodouble" source="db" dbname="m9109" />
+		<field name="OtherCurrentAssets" describe="其他流动资产 " type="isodouble" source="db" dbname="OtherCurrentAssets" />
+		<field name="TotalCurrentAssets" describe="流动资产合计" type="isodouble" source="db" dbname="TotalCurrentAssets" />
+		<field name="FinancialAssetsAvailableForSale" describe="可供出售的金融资产 " type="isodouble" source="db" dbname="m9112" />
+		<field name="HeldToMaturityInvestments" describe="持有至到期投资 " type="isodouble" source="db" dbname="m9113" />
+		<field name="LongTermEquityInvestment" describe="长期股权投资 " type="isodouble" source="db" dbname="LongTermEquityInvestment" />
+		<field name="LongTermReceivables" describe="长期应收款 " type="isodouble" source="db" dbname="LongTermReceivables" />
+		<field name="InvestmentProperties" describe="投资性房地产 " type="isodouble" source="db" dbname="InvestmentProperties" />
+		<field name="FixedAssets" describe="固定资产 " type="isodouble" source="db" dbname="FixedAssets" />
+
+		<field name="ConstructionInProgress" describe="在建工程 " type="isodouble" source="db" dbname="ConstructionInProgress" />
+		<field name="ConstructionMaterials" describe="工程物资 " type="isodouble" source="db" dbname="ConstructionMaterials" />
+		<field name="FixedAssetsPendingForDisposal" describe="固定资产清理 " type="isodouble" source="db" dbname="m9120" />
+		<field name="NonCurrentBiologicalAssets" describe="生产性生物资产 " type="isodouble" source="db" dbname="m9121" />
+		<field name="OilAndGasAssets" describe="油气资产 " type="isodouble" source="db" dbname="OilAndGasAssets" />
+		<field name="IntangibleAssets" describe="无形资产 " type="isodouble" source="db" dbname="IntangibleAssets" />
+		
+		<field name="DevelopmentDisbursements" describe="开发支出 " type="isodouble" source="db" dbname="DevelopmentDisbursements" />
+		<field name="Goodwill" describe="商誉 " type="isodouble" source="db" dbname="Goodwill" />
+		<field name="LongTermDeferredExpenses" describe="长期待摊费用 " type="isodouble" source="db" dbname="LongTermDeferredExpenses" />
+		<field name="DeferredTaxAssets" describe="递延所得税资产 " type="isodouble" source="db" dbname="DeferredTaxAssets" />
+		<field name="OtherNonCurrentAssets" describe="其他非流动资产 " type="isodouble" source="db" dbname="OtherNonCurrentAssets" />
+		<field name="TotalNonCurrentAssets" describe="非流动资产合计" type="isodouble" source="db" dbname="TotalNonCurrentAssets" />
+		<field name="TotalAssets" describe="资产总计" type="isodouble" source="db" dbname="TotalAssets" />
+		<field name="ShortTermBorrowings" describe="短期借款 " type="isodouble" source="db" dbname="ShortTermBorrowings" />
+		<field name="FinancialLiabilitiesHeldForTrading" describe="交易性金融负债 " type="isodouble" source="db" dbname="m9132" />
+		<field name="NotesPayable" describe="应付票据 " type="isodouble" source="db" dbname="NotesPayable" />
+		<field name="AccountsPayable" describe="应付账款 " type="isodouble" source="db" dbname="AccountsPayable" />
+		<field name="ReceiptsInAdvance" describe="预收账款 " type="isodouble" source="db" dbname="ReceiptsInAdvance" />
+		<field name="InterestPayable" describe="应付利息 " type="isodouble" source="db" dbname="InterestPayable" />
+		<field name="EmployeeBenefitsPayable" describe="应付职工薪酬 " type="isodouble" source="db" dbname="EmployeeBenefitsPayable" />
+		<field name="TaxsPayable" describe="应交税费 " type="isodouble" source="db" dbname="TaxsPayable" />
+		<field name="DividendsPayable" describe="应付股利 " type="isodouble" source="db" dbname="DividendsPayable" />
+		<field name="OtherPayables" describe="其他应付款 " type="isodouble" source="db" dbname="OtherPayables" />
+		<field name="CurrentPortionOfLongTermLiabilities" describe="一年内到期的非流动负债" type="isodouble" source="db" dbname="m9141" />
+		<field name="OtherCurrentLiabilities" describe="其他流动负债 " type="isodouble" source="db" dbname="OtherCurrentLiabilities" />
+		<field name="TotalCurrentLiabilities" describe="流动负债合计" type="isodouble" source="db" dbname="TotalCurrentLiabilities" />
+		<field name="LongTermBorrowings" describe="长期借款 " type="isodouble" source="db" dbname="LongTermBorrowings" />
+		<field name="BondsPayables" describe="应付债券 " type="isodouble" source="db" dbname="BondsPayables" />
+		<field name="LongTermPayables" describe="长期应付款 " type="isodouble" source="db" dbname="LongTermPayables" />
+		<field name="GrantsPayable" describe="专项应付款 " type="isodouble" source="db" dbname="GrantsPayable" />
+		<field name="Provisions" describe="预计负债 " type="isodouble" source="db" dbname="Provisions" />
+		<field name="DeferredTaxLiabilities" describe="递延所得税负债 " type="isodouble" source="db" dbname="DeferredTaxLiabilities" />
+		<field name="OtherNonCurrentLiabilities" describe="其他非流动负债 " type="isodouble" source="db" dbname="m9150" />
+		<field name="TotalNonCurrentLiabilities" describe="非流动负债合计" type="isodouble" source="db" dbname="m9151" />
+		<field name="TotalLiabilities" describe="负债合计 " type="isodouble" source="db" dbname="TotalLiabilities" />
+		<field name="PaidInCapitalOrShareCapital" describe="实收资本（或股本） " type="isodouble" source="db" dbname="m9153" />
+		<field name="CapitalrRserve" describe="资本公积 " type="isodouble" source="db" dbname="CapitalrRserve" />
+		<field name="LessTreasuryStocks" describe="减：库存股 " type="isodouble" source="db" dbname="LessTreasuryStocks" />
+		<field name="SurplusReserve" describe="盈余公积 " type="isodouble" source="db" dbname="SurplusReserve" />
+		<field name="UnappropriatedProfit" describe="未分配利润 " type="isodouble" source="db" dbname="UnappropriatedProfit" />
+		<field name="TotalEquity" describe="所有者权益合计" type="isodouble" source="db" dbname="TotalEquity" />
+		<field name="TotalEquityAndLiabilities" describe="负债和所有者权益合计" type="isodouble" source="db" dbname="TotalEquityAndLiabilities" />
+	</sgmt>
+</inf>

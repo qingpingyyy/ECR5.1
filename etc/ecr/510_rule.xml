@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<validator>
+	<code>
+		<!--段校验-->
+		 <rule name="R5100101-1" sgmtName="MotgaCltalCtrctBsSgmt" fieldName="N/A" level="2" type="SE" errorCode="CCR000"
+			  errorMsg="当抵（质）押合同信息记录上报时，基础段、合同基本信息段必须出现。@基础段必须出现。"/>
+		<rule name="R5100101-2" sgmtName="MotgaCltalBsInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CCR000"
+			  errorMsg="当抵（质）押合同信息记录上报时，基础段、合同基本信息段必须出现。@合同基本信息段必须出现。"/>
+		<rule name="R5100102-1" sgmtName="MotgaProptInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR000"
+			  errorMsg="当抵（质）押合同信息记录中“合同类型”为1-抵押合同”时，记录中必须有抵押物信息段且不能包含质押物信息段。@必须有抵押物信息段。">
+			<precondition>
+				<rule name="R5100102-1-P1" sgmtName="MotgaCltalBsInfSgmt" fieldName="GuarType" level="3" type="DL"
+					  dataList="1;"/>
+			</precondition>
+		</rule>
+		<rule name="R5100102-2" sgmtName="CltalInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true" errorCode="CLR000"
+			  errorMsg="当抵（质）押合同信息记录中“合同类型”为1-抵押合同”时，记录中必须有抵押物信息段且不能包含质押物信息段。@不能包含质押物信息段。">
+			<precondition>
+				<rule name="R5100102-2-P1" sgmtName="MotgaCltalBsInfSgmt" fieldName="GuarType" level="3" type="DL"
+					  dataList="1;"/>
+			</precondition>
+		</rule>
+		<rule name="R5100102-3" sgmtName="MotgaProptInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true" errorCode="CLR000"
+			  errorMsg="当抵（质）押合同信息记录中“合同类型”为2-质押合同”时，记录中必须有质押物信息段且不能包含抵押物信息段。@不能包含抵押物信息段。">
+			<precondition>
+				<rule name="R5100102-3-P1" sgmtName="MotgaCltalBsInfSgmt" fieldName="GuarType" level="3" type="DL"
+					  dataList="2;"/>
+			</precondition>
+		</rule>
+		<rule name="R5100102-4" sgmtName="CltalInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CLR000"
+			  errorMsg="当抵（质）押合同信息记录中“合同类型”为2-质押合同”时，记录中必须有质押物信息段且不能包含抵押物信息段。@必须有质押物信息段。">
+			<precondition>
+				<rule name="R5100102-4-P1" sgmtName="MotgaCltalBsInfSgmt" fieldName="GuarType" level="3" type="DL"
+					  dataList="2;"/>
+			</precondition>
+		</rule>
+		<!-- 数据校验 -->
+		<rule name="I5100B01-1" sgmtName="MotgaCltalCtrctBsSgmt" fieldName="CertType" level="3" type="DL" dataList="1;2;5;6;8;9;10;20;A;B;C;X;"
+		      errorCode="CLR000" errorMsg="“债务人身份类别”和“债务人身份标识类型”代码必须相匹配。">
+			<precondition>
+				<rule name="I5100B01-1-P1" sgmtName="MotgaCltalCtrctBsSgmt" fieldName="InfoIDType" level="3" type="DL"
+					  dataList="1;"/>
+			</precondition>
+		</rule>
+		<rule name="I5100B01-2" sgmtName="MotgaCltalCtrctBsSgmt" fieldName="CertType" level="3" type="DL" dataList="10;20;30;"
+		      errorCode="CLR000" errorMsg="“债务人身份类别”和“债务人身份标识类型”代码必须相匹配。">
+			<precondition>
+				<rule name="I5100B01-2-P1" sgmtName="MotgaCltalCtrctBsSgmt" fieldName="InfoIDType" level="3" type="DL"
+					  dataList="2;"/>
+			</precondition>
+		</rule>
+		<rule name="I5100C01-1" sgmtName="MotgaCltalBsInfSgmt" fieldName="CcValDate" level="3" type="DTR"
+			  dataEndValue="{$MotgaCltalBsInfSgmt.CcExpDate}" errorCode="CBE011"
+			  errorMsg="抵（质）押合同信息记录中“生效日期”不晚于“抵（质）押合同到期日期”。">
+		</rule>
+		<rule name="I5100D01-1" sgmtName="ComRecInfSgmt" fieldName="N/A" level="2"
+			  groupList="ComRecInfSgmt.OtrRec:InfoIDType;GuarCertType" type="TM"
+			  dataList="1[1|2|5|6|8|9|10|20|A|B|C|X];2[10|20|30]" errorCode="CAE003"
+			  errorMsg="“其他债务人身份类别”和“其他债务人身份标识类型”的代码必须相匹配。">
+		</rule>
+		<rule name="I5100D02-1" sgmtName="ComRecInfSgmt" fieldName="GrtdNum" level="3" type="DRN"
+			  dataStartValue="0" errorCode="CLE023" errorMsg="“其他债务人个数”应大于0。"/>
+		<rule name="I5100E02-1" sgmtName="MotgaProptInfSgmt" fieldName="PleNum" level="3" type="DRN"
+			  dataStartValue="0" errorCode="CLE023" errorMsg="“抵押物个数”应大于0。"/>	
+		<rule name="I5100F02-1" sgmtName="CltalInfSgmt" fieldName="ImpNum" level="3" type="DRN"
+			  dataStartValue="0" errorCode="CLE023" errorMsg="“质物种类个数”应大于0。"/>		   
+		<rule name="I5100A01-1" sgmtName="ComRecInfSgmt" fieldName="N/A" level="2" type="GE"
+			  groupList="ComRecInfSgmt.OtrRec:GuarCertType+GuarCertNum=MotgaCltalCtrctBsSgmt.CertType+CertNum"
+			  errorCode="CLE030" errorMsg="债务人两标与其他债务人两标不能相同。"/> 
+		
+		<rule name="I0000201-1" sgmtName="MotgaCltalCtrctBsSgmt" fieldName="RptDateCode" level="3" type="DIC" dataList="RptDateCode510"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报告时点说明代码”取值需要在代码表中。"/>
+		<rule name="I0000201-2" sgmtName="MotgaCltalCtrctBsSgmt" fieldName="InfoIDType" level="3" type="DIC" dataList="IDCategory"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“债务人身份类别”取值需要在代码表中。"/>
+		<rule name="I0000201-3" sgmtName="MotgaCltalCtrctBsSgmt" fieldName="CertType" level="3" type="DIC" dataList="ICertType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“债务人身份标识类型”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-3-P1" sgmtName="MotgaCltalCtrctBsSgmt" fieldName="InfoIDType" level="3" type="DL" dataList="1"/>
+			</precondition>
+		</rule>
+		<rule name="I0000201-4" sgmtName="MotgaCltalCtrctBsSgmt" fieldName="CertType" level="3" type="DL" dataList="10;20;30;"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“债务人身份标识类型”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-4-P1" sgmtName="MotgaCltalCtrctBsSgmt" fieldName="InfoIDType" level="3" type="DL" dataList="2"/>
+			</precondition>
+		</rule>		  	  
+		<rule name="I0000201-5" sgmtName="MotgaCltalBsInfSgmt" fieldName="GuarType" level="3" type="DIC" dataList="PawnPledgeContractType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“合同类型”取值需要在代码表中。"/>
+		<rule name="I0000201-6" sgmtName="MotgaCltalBsInfSgmt" fieldName="Cy" level="3" type="DIC" dataList="Currency"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“币种”取值需要在代码表中。"/>	  
+		<rule name="I0000201-7" sgmtName="MotgaCltalBsInfSgmt" fieldName="MaxGuar" level="3" type="DIC" dataList="MaximumGuaranteeMark"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“最高额担保标志”取值需要在代码表中。"/>
+		<rule name="I0000201-8" sgmtName="MotgaCltalBsInfSgmt" fieldName="CcStatus" level="3" type="DIC" dataList="PawnPledgeContractStatus"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“抵（质）押合同状态”取值需要在代码表中。"/>
+		<rule name="I0000201-9" sgmtName="ComRecInfSgmt" fieldName="OtrRec:InfoIDType" level="3" type="DIC" dataList="IDCategory"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“身份类别”取值需要在代码表中。"/>
+		<rule name="I0000201-10" sgmtName="ComRecInfSgmt" fieldName="OtrRec:GuarCertType" level="3" type="DIC" dataList="ICertType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“其他债务人身份标识类型”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-10-P1" sgmtName="ComRecInfSgmt" fieldName="OtrRec:InfoIDType" level="3" type="DL" dataList="1"/>
+			</precondition>
+		</rule>
+		<rule name="I0000201-11" sgmtName="ComRecInfSgmt" fieldName="OtrRec:GuarCertType" level="3" type="DL" dataList="10;20;30;"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“其他债务人身份标识类型”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-11-P1" sgmtName="ComRecInfSgmt" fieldName="OtrRec:InfoIDType" level="3" type="DL" dataList="2"/>
+			</precondition>
+		</rule>	  
+		<rule name="I0000201-12" sgmtName="MotgaProptInfSgmt" fieldName="PleInf:PleType" level="3" type="DIC" dataList="PawnSort"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“抵押物种类”取值需要在代码表中。"/>
+		<rule name="I0000201-13" sgmtName="MotgaProptInfSgmt" fieldName="PleInf:MotgaProptIDType" level="3" type="DIC" dataList="PawnIdentifierType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“抵押物识别号类型”取值需要在代码表中。"/>
+		<rule name="I0000201-14" sgmtName="MotgaProptInfSgmt" fieldName="PleInf:PleDistr" level="3" type="DIC" dataList="AdminDiv"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“抵押物位置所在地行政区划”取值需要在代码表中。"/>
+		<rule name="I0000201-15" sgmtName="MotgaProptInfSgmt" fieldName="PleInf:PleCy" level="3" type="DIC" dataList="Currency"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“抵押物币种”取值需要在代码表中。"/>
+		<rule name="I0000201-16" sgmtName="MotgaProptInfSgmt" fieldName="PleInf:ValOrgType" level="3" type="DIC" dataList="EvaluateOfficeType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“评估机构类型”取值需要在代码表中。"/>
+		<rule name="I0000201-17" sgmtName="MotgaProptInfSgmt" fieldName="PleInf:PledgorType" level="3" type="DIC" dataList="IDCategory"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“抵押人类型”取值需要在代码表中。"/>
+		<rule name="I0000201-18" sgmtName="MotgaProptInfSgmt" fieldName="PleInf:PleorCertType" level="3" type="DIC" dataList="ICertType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“抵押人身份标识类型”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-18-P1" sgmtName="MotgaProptInfSgmt" fieldName="PleInf:PledgorType" level="3" type="DL" dataList="1"/>
+			</precondition>
+		</rule>
+		<rule name="I0000201-19" sgmtName="MotgaProptInfSgmt" fieldName="PleInf:PleorCertType" level="3" type="DIC" dataList="ECertType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“抵押人身份标识类型”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-19-P1" sgmtName="MotgaProptInfSgmt" fieldName="PleInf:PledgorType" level="3" type="DL" dataList="2"/>
+			</precondition>
+		</rule>	  
+		<rule name="I0000201-20" sgmtName="CltalInfSgmt" fieldName="ImpInf:ImpType" level="3" type="DIC" dataList="PledgeSort"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“质物种类”取值需要在代码表中。"/>
+		<rule name="I0000201-21" sgmtName="CltalInfSgmt" fieldName="ImpInf:ImpCy" level="3" type="DIC" dataList="Currency"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“质物币种”取值需要在代码表中。"/>
+		<rule name="I0000201-22" sgmtName="CltalInfSgmt" fieldName="ImpInf:Ippc" level="3" type="DIC" dataList="IDCategory"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“出质人类型”取值需要在代码表中。"/>	  
+		<rule name="I0000201-23" sgmtName="CltalInfSgmt" fieldName="ImpInf:PawnCertType" level="3" type="DIC" dataList="ICertType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“出质人身份标识类型”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-23-P1" sgmtName="CltalInfSgmt" fieldName="ImpInf:Ippc" level="3" type="DL" dataList="1"/>
+			</precondition>
+		</rule>
+		<rule name="I0000201-24" sgmtName="CltalInfSgmt" fieldName="ImpInf:PawnCertType" level="3" type="DIC" dataList="ECertType"
+			  errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“出质人身份标识类型”取值需要在代码表中。">
+			<precondition>
+				<rule name="I0000201-24-P1" sgmtName="CltalInfSgmt" fieldName="ImpInf:Ippc" level="3" type="DL" dataList="2"/>
+			</precondition>
+		</rule>
+	</code>
+</validator>		    	  	    		    	  	  		      	  	  	  	   

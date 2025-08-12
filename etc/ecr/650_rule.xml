@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="GBK" ?>
+<validator>
+	<code>
+		<rule name="I0000201-1" sgmtName="IncomeAndExpenseStatementBsSgmt" fieldName="EntCertType" level="3" type="DL"
+			  dataList="10;20;30;" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“企业身份标识类型”取值需要在代码表中。"/>
+		<rule name="I0000201-2" sgmtName="IncomeAndExpenseStatementBsSgmt" fieldName="SheetType" level="3" type="DIC"
+			  dataList="SheetType" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报表类型”取值需要在代码表中。"/>
+		<rule name="I0000201-3" sgmtName="IncomeAndExpenseStatementBsSgmt" fieldName="SheetTypeDivide" level="3" type="DIC"
+			  dataList="SheetTypeDivide" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报表类型细分”取值需要在代码表中。"/>
+		<rule name="I0000201-4" sgmtName="IncomeAndExpenseStatementBsSgmt" fieldName="RptDateCode" level="3" type="DIC"
+			  dataList="RptDateCode610" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报告时点说明代码”取值需要在代码表中。"/>
+
+		<rule name="I6500B01" sgmtName="IncomeAndExpenseStatementBsSgmt" fieldName="SheetType" level="3"
+			  type="DE" dataList="10" errorCode="CRE300"
+			  errorMsg="“报表类型”必须填写“10”。">
+		</rule>
+		<rule name="I6500C01" sgmtName="IncomeAndExpenseStatementSgmt"
+			  fieldName="CurrentFinancialSubsidyCarriedOverBalance" level="3"
+			  type="DE" compareWay="number"
+			  dataList="{$IncomeAndExpenseStatementSgmt.FinancialSubsidyRevenue}-{$IncomeAndExpenseStatementSgmt.UndertakingsExpenditureFinancialSubsidyExpenditure}-{$IncomeAndExpenseStatementSgmt.UndertakingsExpenditureNonFinancialSubsidyExpenditure}"
+			  errorCode="CRE301"
+			  errorMsg="在事业单位收入支出表信息中数据项“本期财政补助结转结余=财政补助收入-事业支出”。">
+		</rule>
+		<rule name="I6500C02" sgmtName="IncomeAndExpenseStatementSgmt" fieldName="CurrentUndertakingsCarriedOverBalance"
+			  level="3"
+			  type="DE" compareWay="number"
+			  dataList="{$IncomeAndExpenseStatementSgmt.UndertakingsClassRevenue}-{$IncomeAndExpenseStatementSgmt.UndertakingsClassExpenditure}"
+			  errorCode="CRE302"
+			  errorMsg="在事业单位收入支出表信息中数据项“本期事业结转结余=事业类收入-事业类支出”。">
+		</rule>
+		<rule name="I6500C03" sgmtName="IncomeAndExpenseStatementSgmt" fieldName="CurrentOperatingBalance" level="3"
+			  type="DE" compareWay="number"
+			  dataList="{$IncomeAndExpenseStatementSgmt.OperatingRevenue}-{$IncomeAndExpenseStatementSgmt.OperatingExpenditure}"
+			  errorCode="CRE303"
+			  errorMsg="在事业单位收入支出表信息中数据项“本期经营结余=经营收入-经营支出”。">
+		</rule>
+	</code>
+</validator>

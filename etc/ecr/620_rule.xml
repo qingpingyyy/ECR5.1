@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="GBK" ?>
+<validator>
+	<code>
+		<rule name="I0000201-1" sgmtName="IncomeStatementProfitAppropriationBsSgmt" fieldName="EntCertType" level="3" type="DL"
+			  dataList="10;20;30;" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“企业身份标识类型”取值需要在代码表中。"/>
+		<rule name="I0000201-2" sgmtName="IncomeStatementProfitAppropriationBsSgmt" fieldName="SheetType" level="3" type="DIC"
+			  dataList="SheetType" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报表类型”取值需要在代码表中。"/>
+		<rule name="I0000201-3" sgmtName="IncomeStatementProfitAppropriationBsSgmt" fieldName="SheetTypeDivide" level="3" type="DIC"
+			  dataList="SheetTypeDivide" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报表类型细分”取值需要在代码表中。"/>
+		<rule name="I0000201-4" sgmtName="IncomeStatementProfitAppropriationBsSgmt" fieldName="RptDateCode" level="3" type="DIC"
+			  dataList="RptDateCode610" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报告时点说明代码”取值需要在代码表中。"/>
+	</code>
+</validator>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="GB2312"?>
+<databaseConfig>
+	<!--  资源一节包含了所有的下面要引用的系统资源，目前只有jdbc一种资源可以使用               -->
+	<!--  jdbc资源定义需要driver类、url和用户名、密码构成，可以采用加密和不加密的形式保存信息， -->
+	<!--  加密需要使用本程序自带的加密、解密工具使用。                                     -->
+	<resources>
+		<!-- 个人数据库 ，需要在ARE中配置-->
+			<!-- Oracle 
+ 
+	    <resource type="jdbc" name="ecr"  encrypt="false">
+            <driver>oracle.jdbc.driver.OracleDriver</driver>
+            <url>jdbc:oracle:thin:@192.168.65.214:1521:als</url>
+            <user>amarecr51</user>
+            <password>amarecr51</password>
+            <loginTimeout>0</loginTimeout>
+            <logWriter>system.out</logWriter>
+            <maxActive>50</maxActive>
+            <maxWait>2000</maxWait>
+            <maxIdle>20</maxIdle>
+        </resource>
+-->
+			<!-- mysql-->
+			<!--
+			<resource type="jdbc" encrypt="false" name="ecr">
+						<driver>com.mysql.jdbc.Driver</driver>
+						<url>jdbc:mysql://192.168.65.214:3306/ECR5_DEV?useUnicode=yes&amp;characterEncoding=UTF-8&amp;useOldAliasMetadataBehavior=true</url>
+						<user>cfs</user>
+						<password>mysql</password>
+						<logWriter>system.err</logWriter>
+						<loginTimeout>0</loginTimeout>
+						<maxActive>20</maxActive>
+						<maxIdle>20</maxIdle>
+						<maxWait>3000</maxWait>
+			</resource>
+
+         -->
+			<!-- DB2 -->
+<!--  -->	
+      <resource type="jdbc" encrypt="false" name="ecr">
+						<driver>com.ibm.db2.jcc.DB2Driver</driver>
+						<url>jdbc:db2://81.2.131.131:50000/ecr:useJDBC4ColumnNameAndLabelSemantics=2;</url>
+						<user>db2inst1</user>
+						<password>db2inst1</password>
+						<logWriter>system.err</logWriter>
+						<loginTimeout>0</loginTimeout>
+						<maxActive>80</maxActive>
+						<maxIdle>80</maxIdle>
+						<maxWait>5000</maxWait>
+			</resource>	
+			
+			
+		
+		
+		<resource type="jdbc" encrypt="false" name="loan">
+						<driver>com.ibm.db2.jcc.DB2Driver</driver>
+						<url>jdbc:db2://81.3.67.20:60000/ecr1202:useJDBC4ColumnNameAndLabelSemantics=2;</url>
+						<user>db2inst1</user>
+						<password>db2inst1</password>
+						<logWriter>system.err</logWriter>
+						<loginTimeout>0</loginTimeout>
+						<maxActive>20</maxActive>
+						<maxIdle>20</maxIdle>
+						<maxWait>5000</maxWait>
+			</resource>	
+			<!--
+		<resource type="jdbc" encrypt="false" name="loan">
+						<driver>com.ibm.db2.jcc.DB2Driver</driver>
+						<url>jdbc:db2://81.4.131.55:60000/jlnx1117:useJDBC4ColumnNameAndLabelSemantics=2;</url>
+						<user>db2inst1</user>
+						<password>db2inst1</password>
+						<logWriter>system.err</logWriter>
+						<loginTimeout>0</loginTimeout>
+						<maxActive>20</maxActive>
+						<maxIdle>20</maxIdle>
+						<maxWait>5000</maxWait>
+			</resource>	
+-->
+	</resources>
+
+</databaseConfig>

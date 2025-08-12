@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="GB2312" standalone="no"?>
+<task describe="企业信息段校验" name="ECRValidateTask"  recovery="false"  saveHistory="false"  historyFolder="./his">
+	<executeUnits>
+		<taskContainer name="ecr_validate" describe="调用校验" taskRef="task_validate"/>
+	</executeUnits>
+	<routeMap start="ecr_validate"></routeMap>
+	<subTasks>
+		<subTask name="task_validate">
+			<!-- taskThreaNumber:任务线程数；queueSize:队列大小，startArgName:池中的在task里变量-->
+		    <pool taskThreadNumber="10" queueSize="20" startArgName="RuleObject">
+		       <producer className="com.amarsoft.app.pbc.ecr.validate.unit.DeleteProducer">
+			       <extendProperties>
+			           <property name="bizObjectClass" value="jbo.ecr.ECR_VALIDATE_LIBRARY" />
+			           <property name="query" value="select * from o where o.Status = '1' and o.ApplicationCode = '1' " />
+			       </extendProperties>
+		       </producer>
+		    </pool> 
+		    
+			<executeUnits>	
+				<executeUnit name="SetParam" describe="初始化单元" executeClass="com.amarsoft.app.pbc.ecr.validate.unit.SetParam"/>
+				
+				<executeUnit name="ValidateUnit" describe="普遍的校验规则" executeClass="com.amarsoft.app.pbc.ecr.validate.unit.ValidatePRHUnit" allowManualExecute="true">
+					<extendProperties>
+						<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/>
+						<property name="unit.RuleNo" value="{$TASK.RuleNo}"/>
+						<property name="unit.InfrecType" value="{$TASK.InfrecType}"/>
+						<property name="unit.type" value="ECR"/>
+						<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+						value="datasource:db:ecr:{$TASK.rule}"/>
+					</extendProperties>
+				</executeUnit>
+			</executeUnits>
+			
+			<routeMap start="ValidateUnit" setup="SetParam" >
+		    </routeMap>
+		</subTask>
+	</subTasks>
+</task>	
+	

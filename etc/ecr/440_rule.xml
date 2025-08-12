@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="GBK" ?>
+<validator>
+	<code>
+		<rule name="R4400101-1" sgmtName="GuarAcctBsInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CAR000"
+			  errorMsg="“报告时点说明代码”为“10-开户/首次上报”时，至少应包含基本信息段、在保责任信息段。@缺少基本信息段。">
+			<precondition>
+				<rule name="R4400101-1-P1" sgmtName="GuarAcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+			</precondition>
+		</rule>
+		<rule name="R4400101-2" sgmtName="GuarRltRepymtInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CAR000"
+			  errorMsg="“报告时点说明代码”为“10-开户/首次上报”时，至少应包含基本信息段、在保责任信息段。@缺少在保责任信息段。">
+			<precondition>
+				<rule name="R4400101-2-P1" sgmtName="GuarAcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+			</precondition>
+		</rule>
+		<rule name="R4400102-1" sgmtName="GuarRltRepymtInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CAR001"
+			  errorMsg="“报告时点说明代码”为“20-账户关闭”时，至少包含在保责任信息段。">
+			<precondition>
+				<rule name="R4400102-1-P1" sgmtName="GuarAcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="20;"/>
+			</precondition>
+		</rule>
+		<rule name="R4400103-1" sgmtName="GuarRltRepymtInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CAR002"
+			  errorMsg="“报告时点说明代码”为“30-在保责任变化”时，至少包含在保责任信息段。">
+			<precondition>
+				<rule name="R4400103-1-P1" sgmtName="GuarAcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="30;"/>
+			</precondition>
+		</rule>
+		<rule name="R4400104-1" sgmtName="RltRepymtInfSgmt" fieldName="N/A" level="2" type="SE" errorCode="CAR003"
+			  errorMsg="“报告时点说明代码”为“10-新开户/首次上报”且“反担保方式”为“1-保证”时，至少包含相关还款责任人段。">
+			<precondition>
+				<rule name="R4400104-1-P1" sgmtName="GuarAcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="10;"/>
+				<rule name="R4400104-1-P2" sgmtName="GuarAcctBsInfSgmt" fieldName="GuarMode" level="3" type="DL"
+					  dataList="1;"/>
+			</precondition>
+		</rule>
+		
+		<rule name="R4400106-1" sgmtName="GuarRltRepymtInfSgmt" fieldName="N/A" level="2" type="SE" reverseCheck="true" 
+		      errorCode="CAR000" errorMsg="“报告时点说明代码”为“50-其他信息变化”时，不包括在保责任信息段。">
+			<precondition>
+				<rule name="R4400106-1-P1" sgmtName="GuarAcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="50;"/>
+			</precondition>
+		</rule>
+		
+		<rule name="R4400107-1" sgmtName="GuarRltRepymtInfSgmt" fieldName="N/A" level="2" type="SE"
+		      errorCode="CAR000" errorMsg="“报告时点说明代码”为“40-五级分类调整”时，至少包含保责任信息段。">
+			<precondition>
+				<rule name="R4400107-1-P1" sgmtName="GuarAcctBsSgmt" fieldName="RptDateCode" level="3" type="DL"
+					  dataList="40;"/>
+			</precondition>
+		</rule>
+		<rule name="R4400105-1" sgmtName="GuarAcctBsSgmt" fieldName="N/A" level="2" type="SE" errorCode="CAR004"
+			  errorMsg="企业担保账户信息记录必须包含基础段。"/>
+
+		<rule name="I0000201-1" sgmtName="GuarAcctBsSgmt" fieldName="AcctType" level="3" type="DIC"
+			  dataList="EGuarAcctType" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“账户类型”取值需要在代码表中。"/>
+		<rule name="I0000201-2" sgmtName="GuarAcctBsSgmt" fieldName="RptDateCode" level="3" type="DIC"
+			  dataList="RptDateCode440" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报告时点说明代码”取值需要在代码表中。"/>
+		<rule name="I0000201-3" sgmtName="GuarAcctBsSgmt" fieldName="IDType" level="3" type="DL"
+			  dataList="10;20;30;" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“债务人身份标识类型”取值需要在代码表中。"/>
+
+		<rule name="I0000201-4" sgmtName="GuarAcctBsInfSgmt" fieldName="BusiLines" level="3" type="DIC"
+			  dataList="BusiLines" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“担保业务大类”取值需要在代码表中。"/>
+		<rule name="I4400C02-1" sgmtName="GuarAcctBsInfSgmt" fieldName="BusiDtilLines" level="3" type="DIC"
+			  dataList="BusiDtilLines1" errorCode="ABE001" errorMsg="基本信息段中“担保业务大类”和“担保业务种类细分”代码相匹配。">
+			<precondition>
+				<rule name="I4400C02-1-P1" sgmtName="GuarAcctBsInfSgmt" fieldName="BusiLines" level="3" type="DL"
+					  dataList="1"/>
+			</precondition>
+		</rule>
+		<rule name="II4400C02-2" sgmtName="GuarAcctBsInfSgmt" fieldName="BusiDtilLines" level="3" type="DIC"
+			  dataList="BusiDtilLines2" errorCode="ABE001" errorMsg="基本信息段中“担保业务大类”和“担保业务种类细分”代码相匹配。">
+			<precondition>
+				<rule name="II4400C02-2-P1" sgmtName="GuarAcctBsInfSgmt" fieldName="BusiLines" level="3" type="DL"
+					  dataList="2"/>
+			</precondition>
+		</rule>
+		<rule name="II4400C02-3" sgmtName="GuarAcctBsInfSgmt" fieldName="BusiDtilLines" level="3" type="DIC"
+			  dataList="BusiDtilLines3" errorCode="ABE001" errorMsg="基本信息段中“担保业务大类”和“担保业务种类细分”代码相匹配。">
+			<precondition>
+				<rule name="II4400C02-3-P1" sgmtName="GuarAcctBsInfSgmt" fieldName="BusiLines" level="3" type="DL"
+					  dataList="3"/>
+			</precondition>
+		</rule>
+		<rule name="II4400C02-4" sgmtName="GuarAcctBsInfSgmt" fieldName="BusiDtilLines" level="3" type="DIC"
+			  dataList="BusiDtilLines4" errorCode="ABE001" errorMsg="基本信息段中“担保业务大类”和“担保业务种类细分”代码相匹配。">
+			<precondition>
+				<rule name="II4400C02-4-P1" sgmtName="GuarAcctBsInfSgmt" fieldName="BusiLines" level="3" type="DL"
+					  dataList="4"/>
+			</precondition>
+		</rule>
+		<rule name="II4400C02-5" sgmtName="GuarAcctBsInfSgmt" fieldName="BusiDtilLines" level="3" type="DIC"
+			  dataList="BusiDtilLines5" errorCode="ABE001" errorMsg="基本信息段中“担保业务大类”和“担保业务种类细分”代码相匹配。">
+			<precondition>
+				<rule name="II4400C02-5-P1" sgmtName="GuarAcctBsInfSgmt" fieldName="BusiLines" level="3" type="DL"
+					  dataList="5"/>
+			</precondition>
+		</rule>
+		<rule name="II4400C02-6" sgmtName="GuarAcctBsInfSgmt" fieldName="BusiDtilLines" level="3" type="DIC"
+			  dataList="BusiDtilLines6" errorCode="ABE001" errorMsg="基本信息段中“担保业务大类”和“担保业务种类细分”代码相匹配。">
+			<precondition>
+				<rule name="II4400C02-6-P1" sgmtName="GuarAcctBsInfSgmt" fieldName="BusiLines" level="3" type="DL"
+					  dataList="6"/>
+			</precondition>
+		</rule>
+		<rule name="II4400C02-7" sgmtName="GuarAcctBsInfSgmt" fieldName="BusiDtilLines" level="3" type="DIC"
+			  dataList="BusiDtilLines7" errorCode="ABE001" errorMsg="基本信息段中“担保业务大类”和“担保业务种类细分”代码相匹配。">
+			<precondition>
+				<rule name="II4400C02-7-P1" sgmtName="GuarAcctBsInfSgmt" fieldName="BusiLines" level="3" type="DL"
+					  dataList="7"/>
+			</precondition>
+		</rule>
+		<rule name="I0000201-6" sgmtName="GuarAcctBsInfSgmt" fieldName="Cy" level="3" type="DIC"
+			  dataList="Currency" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“币种”取值需要在代码表中。"/>
+		<rule name="I0000201-7" sgmtName="GuarAcctBsInfSgmt" fieldName="GuarMode" level="3" type="DIC"
+			  dataList="GuarMode" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“反担保方式”取值需要在代码表中。"/>
+		<rule name="I0000201-8" sgmtName="GuarAcctBsInfSgmt" fieldName="OthRepyGuarWay" level="3" type="DIC"
+			  dataList="OthRepyGuarWay" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“其他还款保证方式”取值需要在代码表中。"/>
+
+		<rule name="I0000201-9" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:InfoIDType" level="3" type="DIC"
+			  dataList="IDCategory" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“身份类别”取值需要在代码表中。"/>
+		<rule name="I0000201-10" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:ArlpType" level="3" type="DIC"
+			  dataList="EGuarAcctRltArlpType" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“还款责任类型”取值需要在代码表中。"/>
+
+		<rule name="I0000201-11" sgmtName="GuarRltRepymtInfSgmt" fieldName="AcctStatus" level="3" type="DIC"
+			  dataList="EGuarRltAcctStatus" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“账户状态”取值需要在代码表中。"/>
+		<rule name="I0000201-12" sgmtName="GuarRltRepymtInfSgmt" fieldName="FiveCate" level="3" type="DIC"
+			  dataList="FiveCate" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“五级分类”取值需要在代码表中。"/>
+		<rule name="I0000201-13" sgmtName="GuarRltRepymtInfSgmt" fieldName="CompAdvFlag" level="3" type="DIC"
+			  dataList="CompAdvFlag" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“代偿（垫款）标识”取值需要在代码表中。"/>
+
+		<rule name="I4400C01-1" sgmtName="GuarAcctBsInfSgmt" fieldName="OpenDate" level="3" type="DTR"
+			  dataEndValue="{$GuarAcctBsInfSgmt.DueDate}" errorCode="CAE000" errorMsg="“开户日期”应不晚于“到期日期”。">
+		</rule>
+		<rule name="I4400D01-1" sgmtName="GuarRltRepymtInfSgmt" fieldName="CloseDate" level="3" type="NA"
+			  errorCode="CAE001" errorMsg="当“账户状态”为“2-关闭”，“账户关闭日期”不能为空值。">
+			<precondition>
+				<rule name="I4400D01-1-P1" sgmtName="GuarRltRepymtInfSgmt" fieldName="AcctStatus" level="3" type="DE"
+					  dataList="2"/>
+			</precondition>
+		</rule>
+		<rule name="I4400D01-2" sgmtName="GuarRltRepymtInfSgmt" fieldName="AcctStatus" level="3" type="DE" dataList="2"
+			  errorCode="CAE001" errorMsg="当“账户关闭日期”不为空值，“账户状态”必须为“2-关闭”。">
+			<precondition>
+				<rule name="I4400D01-2-P1" sgmtName="GuarRltRepymtInfSgmt" fieldName="CloseDate" level="3" type="NA"/>
+			</precondition>
+		</rule>
+		<rule name="I4400D02-1" sgmtName="GuarRltRepymtInfSgmt" fieldName="CloseDate" level="3" type="DTR"
+			  dataStartValue="{$GuarRltRepymtInfSgmt.RepayPrd}" errorCode="CAE002"
+			  errorMsg="账户信息记录中如果“账户关闭日期”数据项不为空，账户关闭日期应不早于“余额变化日期”、“五级分类认定日期”。@应不早于“余额变化日期”.">
+			<precondition>
+				<rule name="I4400D02-1-P1" sgmtName="GuarRltRepymtInfSgmt" fieldName="CloseDate" level="3" type="NA"/>
+			</precondition>
+		</rule>
+		<rule name="I4400D02-1" sgmtName="GuarRltRepymtInfSgmt" fieldName="CloseDate" level="3" type="DTR"
+			  dataStartValue="{$GuarRltRepymtInfSgmt.FiveCateAdjDate}" errorCode="CAE002"
+			  errorMsg="账户信息记录中如果“账户关闭日期”数据项不为空，账户关闭日期应不早于“余额变化日期”、“五级分类认定日期”。@应不早于“五级分类认定日期”.">
+			<precondition>
+				<rule name="I4400D02-1-P1" sgmtName="GuarRltRepymtInfSgmt" fieldName="CloseDate" level="3" type="NA"/>
+			</precondition>
+		</rule>
+		<rule name="I4400E01" sgmtName="RltRepymtInfSgmt" fieldName="N/A" level="2"
+			  groupList="RltRepymtInfSgmt.RltRepymtInf:InfoIDType;ArlpCertType" type="TM"
+			  dataList="1[1|2|5|6|8|9|10|20|A|B|C|X];2[10|20|30]" errorCode="CAE003"
+			  errorMsg="相关还款责任人段中“身份类别”和“责任人身份标识类型”代码相匹配。">
+		</rule>
+		<rule name="I4400E02-1" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtNm" level="3" type="DRN"
+			  dataStartValue="0" errorCode="CAE004" errorMsg="“责任人个数”应大于0。">
+		</rule>
+		<rule name="I4400F01-1" sgmtName="GuarMotgaCltalCtrctInfSgmt" fieldName="CcNm" level="3" type="DRN"
+			  dataStartValue="0" errorCode="CAE005" errorMsg="“抵质押合同个数”应大于0。">
+		</rule>
+		<rule name="I4400A01-1" sgmtName="GuarAcctBsInfSgmt" fieldName="OpenDate" level="3" type="DTR"
+			  dataEndValue="{$GuarRltRepymtInfSgmt.RepayPrd}" errorCode="CAE006"
+			  errorMsg="账户信息记录中的“开户日期”应不晚于“余额变化日期”、“五级分类认定日期”、“账户关闭日期”（若不为空）。@应不晚于“余额变化日期”。">
+			<precondition>
+				<rule name="I4400A01-1-P1" sgmtName="GuarAcctBsInfSgmt" fieldName="OpenDate" level="3" type="NA"/>
+			</precondition>
+		</rule>
+		<rule name="I4400A01-2" sgmtName="GuarAcctBsInfSgmt" fieldName="OpenDate" level="3" type="DTR"
+			  dataEndValue="{$GuarRltRepymtInfSgmt.FiveCateAdjDate}" errorCode="CAE006"
+			  errorMsg="账户信息记录中的“开户日期”应不晚于“余额变化日期”、“五级分类认定日期”、“账户关闭日期”（若不为空）。@应不晚于“五级分类认定日期”。">
+			<precondition>
+				<rule name="I4400A01-2-P1" sgmtName="GuarAcctBsInfSgmt" fieldName="OpenDate" level="3" type="NA"/>
+			</precondition>
+		</rule>
+		<rule name="I4400A01-3" sgmtName="GuarAcctBsInfSgmt" fieldName="OpenDate" level="3" type="DTR"
+			  dataEndValue="{$GuarRltRepymtInfSgmt.CloseDate}" errorCode="CAE006"
+			  errorMsg="账户信息记录中的“开户日期”应不晚于“余额变化日期”、“五级分类认定日期”、“账户关闭日期”（若不为空）。@应不晚于“账户关闭日期”。">
+			<precondition>
+				<rule name="I4400A01-3-P1" sgmtName="GuarAcctBsInfSgmt" fieldName="OpenDate" level="3" type="NA"/>
+				<rule name="I4400A01-3-P2" sgmtName="GuarRltRepymtInfSgmt" fieldName="CloseDate" level="3" type="NA"/>
+			</precondition>
+		</rule>
+		<rule name="I4400A02-1" sgmtName="RltRepymtInfSgmt" fieldName="N/A" level="2" type="GE"
+			  groupList="RltRepymtInfSgmt.RltRepymtInf:ArlpCertType+ArlpCertNum=GuarAcctBsSgmt.IDType+IDNum"
+			  errorCode="CAE007" errorMsg="债务人两标与相关还款责任人两标不能相同。">
+		</rule>
+		
+		<rule name="I4400E03-1" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:WartySign" level="3" type="NA" errorCode="CAE009"
+			  errorMsg="当“还款责任人类型”为“2-反担保人”时，“联保标志”、“保证合同编号”不应为空。">
+			<precondition>
+				<rule name="I4400E03-1-P1" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:ArlpType" level="3" type="DE"
+					  dataList="2"/>
+			</precondition>
+		</rule>
+		<rule name="I4400E03-2" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:MaxGuarMcc" level="3" type="NA" errorCode="CAE009"
+			  errorMsg="当“还款责任人类型”为“2-反担保人”时，“联保标志”、“保证合同编号”不应为空。">
+			<precondition>
+				<rule name="I4400E03-2-P1" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:ArlpType" level="3" type="DE"
+					  dataList="2"/>
+			</precondition>
+		</rule>	
+		<rule name="I4400E03-3" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:ArlpType" level="3" type="DE" dataList="2" 
+		      errorCode="CAE009" errorMsg="当“联保标志”、“保证合同编号”不应为空,“还款责任人类型必须”为“2-反担保人”。">
+			<precondition>
+				<rule name="I4400E03-3-P1" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:WartySign" level="3" type="NA"/>
+			</precondition>
+		</rule>	
+		<rule name="I4400E03-4" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:ArlpType" level="3" type="DE" dataList="2" 
+		      errorCode="CAE009" errorMsg="当“联保标志”、“保证合同编号”不应为空,“还款责任人类型必须”为“2-反担保人”。">
+			<precondition>
+				<rule name="I4400E03-4-P1" sgmtName="RltRepymtInfSgmt" fieldName="RltRepymtInf:MaxGuarMcc" level="3" type="NA"/>
+			</precondition>
+		</rule>	
+	</code>
+</validator>

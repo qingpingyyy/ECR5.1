@@ -1,0 +1,1888 @@
+<?xml version="1.0" encoding="GB2312"?>
+
+<!-- 
+	企业征信数据文件加载
+ -->
+<!-- 任务定义文件,每个任务有一个文件构成，任务构造器可以根据此文件构造一个任务出来 -->
+<task name="ECRDataCopyTask" describe="企业数据文件加载" recovery="false"  saveHistory="true"  historyFolder="./his">
+	<executeUnits>
+         <executeUnit name="ImportBusinessDuebill" describe="处理借据信息" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from BUSINESS_DUEBILL_TEMP"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select * from business_duebill where businesstype not like '3%' and (finishdate is null  or finishdate ='' or finishdate >='2019/11/17')
+					"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="BUSINESS_DUEBILL_TEMP" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="SERIALNO" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!--<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.startSql" value="alter  table BUSINESS_DUEBILL_TEMP activate not logged initially with empty table"/> -->
+			</extendProperties>
+		 </executeUnit>
+          
+         <executeUnit name="ImportBusinessContract" describe="处理合同信息" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from BUSINESS_CONTRACT_temp"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select bc.* from business_contract bc where serialno in (select relativeserialno2 from  BUSINESS_DUEBILL_TEMP )  and bc.businesstype not like '3%' 
+					"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="BUSINESS_CONTRACT_TEMP" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="SERIALNO" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!--<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.startSql" value="alter table BUSINESS_CONTRACT_TEMP activate not logged initially with empty table"/>-->
+			</extendProperties>
+		</executeUnit>
+         
+         <executeUnit name="ImportContractRelative" describe="处理合同关联信息" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from CONTRACT_RELATIVE_TEMP"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select * from CONTRACT_RELATIVE gc  where not exists (select 1 from business_contract_temp bc where bc.serialno=gc.serialno and  bc.businesstype like '3%')
+					"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="CONTRACT_RELATIVE_TEMP" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="SERIALNO, OBJECTTYPE, OBJECTNO" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!--<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.startSql" value="alter table CONTRACT_RELATIVE_TEMP activate not logged initially with empty table"/>-->
+			</extendProperties>
+		</executeUnit>        
+
+         <executeUnit name="ImportCustomerInfo" describe="处理客户基本信息" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from CUSTOMER_INFO_TEMP"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select * from CUSTOMER_INFO ci where  not exists (select 1 from db2inst1.business_contract bc where businesstype like '3%' and ci.customerid =bc.customerid  )
+					"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="CUSTOMER_INFO_TEMP" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CUSTOMERID" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!--<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.startSql" value="alter table CUSTOMER_INFO_TEMP activate not logged initially with empty table"/>-->
+			</extendProperties>
+		</executeUnit>    
+         
+         <executeUnit name="ImportGuarantyContract" describe="处理担保合同信息" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from GUARANTY_CONTRACT_TEMP"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select * from GUARANTY_CONTRACT gc where  not exists (
+										select  1  from business_contract_TEMP bc ,CONTRACT_RELATIVE_TEMP cr
+										 where bc.serialno=cr.serialno
+										 and CR.ObjectNo = gc.serialno 
+										  and  bc.businesstype  like '3%' )
+					"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="GUARANTY_CONTRACT_TEMP" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="SERIALNO" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!--<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.startSql" value="alter table GUARANTY_CONTRACT_TEMP activate not logged initially with empty table"/>-->
+			</extendProperties>
+		</executeUnit> 
+         
+         <executeUnit name="ImportGuarantyInfo" describe="处理担保物信息" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from GUARANTY_INFO_temp"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select * from GUARANTY_INFO gi where  not exists (
+										select  1 from  business_contract_temp bc ,CONTRACT_RELATIVE_temp cr,GUARANTY_CONTRACT_temp gc 
+										 where bc.serialno=cr.serialno
+										 and CR.ObjectNo = GC.SerialNo
+										 and gi.ObjectNo = GC.SerialNO
+										 and  businesstype  like '3%' )
+					"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="GUARANTY_INFO_temp" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="OBJECTNO,GUARANTYID" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!--<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.startSql" value="alter table GUARANTY_INFO_temp activate not logged initially with empty table"/>-->
+			</extendProperties>
+		</executeUnit> 
+		         
+         <executeUnit name="ImportLnsfmlas" describe="Lnsfmlas" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from Lnsfmlas_temp"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select lf.* from Lnsfmlas lf ,business_duebill_temp bd where lf.acct =BD.SERIALNO
+					"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="Lnsfmlas_temp" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="ACCT" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!--<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.startSql" value="alter table Lnsfmlas_temp activate not logged initially with empty table"/>-->
+			</extendProperties>
+		</executeUnit> 
+		
+		<executeUnit name="ImportLnsfmamt" describe="Lnsfmamt" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from Lnsfmamt_temp"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select lt.* from Lnsfmamt lt ,business_duebill_temp bd where lt.acct =BD.SERIALNO
+					"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="Lnsfmamt_temp" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="ACCT, NHBB" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!--<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.startSql" value="alter table Lnsfmamt_temp activate not logged initially with empty table"/>-->
+			</extendProperties>
+		</executeUnit> 
+		
+		
+		<executeUnit name="Importlnsfmlst" describe="lnsfmlst" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from lnsfmlst_temp"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select * from lnsfmlst lsf  where  exists (select 1 from business_duebill_temp bd where lsf.acct =BD.SERIALNO ) 
+					"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="lnsfmlst_temp" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="ACCT, CHAT, SUBN, TXDT, PTXSQ, CTXSQ" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!--<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.startSql" value="alter table lnsfmlst_temp activate not logged initially with empty table"/>-->
+			</extendProperties>
+		</executeUnit> 
+		
+		<executeUnit name="Importlnsfmlad" describe="lnsfmlad" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from lnsfmlad_temp"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select * from lnsfmlad ld  where exists (select 1 from business_duebill_temp bd where ld.acct =BD.SERIALNO)
+					"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="lnsfmlad_temp" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="ACCT, CHAT" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!--<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.startSql" value="alter table lnsfmlad_temp activate not logged initially with empty table"/>-->
+			</extendProperties>
+		</executeUnit> 
+
+	 	<executeUnit name="ImportCustomerRelative" describe="处理客户关联关系" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from CUSTOMER_RELATIVE_TEMP"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select * from CUSTOMER_RELATIVE  where customerid in (select customerid from business_contract_temp)"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="CUSTOMER_RELATIVE_TEMP" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CUSTOMERID,RELATIONSHIP,RELATIVEID" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!--<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.startSql" value="alter table CUSTOMER_RELATIVE_TEMP activate not logged initially with empty table"/>-->
+			</extendProperties>
+		</executeUnit> 
+         
+        <executeUnit name="ImportCisfmscbi" describe="处理CISFMSCBI只是用来测试用" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from CISFMSCBI_TEMP"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select * from CISFMSCBI  where ORGNUM is not null "/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="CISFMSCBI_TEMP" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="BRHNO,CUSNO" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!--<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.startSql" value="alter table CISFMSCBI_TEMP activate not logged initially with empty table"/>-->
+			</extendProperties>
+		</executeUnit> 
+         
+        <executeUnit name="ImportCIFM51" describe="处理CIFM51只是用来测试用" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from CIFM51_temp"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select * from CIFM51  where C51LOADNO is not null "/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="CIFM51_temp" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="C51MFCUSI, C51BRHNO" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!--<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.startSql" value="alter table ecr_CIFM51 activate not logged initially with empty table"/>-->
+			</extendProperties>
+		</executeUnit> 
+         <!-- 
+        <executeUnit name="ImportCISFMBBIF" describe="处理CISFMBBIF" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from CISFMBBIF_TEMP"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select brhno,replace(cusno,'#','$') as cusno ,custyp,cusnam,cusena,cusona,cussna,pbktyp,pbknum,visdat ,losdat,visdpt,ctycod,traty,jkrtype,
+											cussts,custypn,serlev,cltlon,cltdtl,cuslxs,cusldat,crtdpt,crttlr,crtdat,auttlr,cusnam_long
+											 from CISFMBBIF "/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="CISFMBBIF_TEMP" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="BRHNO, CUSNO" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+			</extendProperties>
+		</executeUnit> 
+		-->
+         
+		<executeUnit name="ImportECREntInfo" describe="加载企业基本信息(信贷)" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_ENTINFO:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select distinct EI.CustomerID	as CUSTOMERID,{#客户编号}
+													EI.EnterpriseName as ENTNAME,{#企业名称}
+													EI.LoancardNo as LOANCARDNO,{#中征码}
+													case when length(EI.corpid)=18 then EI.corpid end as USCCID,{#统一社会信用代码}
+													case when length(EI.corpid)=18 then substr(EI.corpid,9,8)||substr(EI.corpid,17,1) else replace(EI.corpid,'-','') end  as CORPID,{#组织机构代码}  		  
+													substr(EI.TaxNo,1,30) as NATIONALTAXNO,{#纳税人识别号(国税)}
+													substr(EI.TaxNo1,1,30) as LOCALTAXNO,{#纳税人识别号(地税)}	 
+													'2'	as CUSTOMERTYPE,{#客户资料类型}
+													'1' as ETPSTS,{#存续状态 以企业'营业执照'有效期取值，期限内-正常；期限外-其他}  	  
+													EI.ORGNATURE as ORGTYPE,{#组织机构类型}	
+													EI.CountryCode as NATIONALITY,{#国别代码}
+													case when EI.RegisterAdd is null or EI.RegisterAdd ='' then '暂缺' else EI.RegisterAdd end  as REGADD,{#登记地址}
+													EI.RegionCode as ADMDIVOFREG ,{#登记地行政区划代码}  	 
+													replace(EI.SetupDate ,'/','-') as ESTABLISHDATE,{#成立日期}  	  
+													Replace(EI.LicenseDate,'/','-')	as BIZENDDATE,{#营业许可证到期日}
+													EI.MostBusiness as BIZRANGE,{#业务范围}
+													EI.IndustryType as ECOINDUSCATE,{#行业分类代码}	
+													EI.OrgType as ECOTYPE,{#经济类型代码}	
+													case when length( EI.SCOPE) =0 then 'X' else EI.SCOPE end as ENTSCALE,{#企业规模-------------------不能为空}	
+													EI.RCCurrency as REGCAPCURRENCY,{#注册资本币种}	
+													EI.RegisterCapital as REGCAP,{#注册资本}	
+													'110106' as CONADDDISTRICTCODE,{#联系地址行政区划代码EI.RegionCode} 		
+													EI.OfficeAdd as CONADD,{#联系地址}	
+													substr(EI.OFFICETEL,1,25) as CONPHONE,{#联系电话}	
+													EI.FINTELSPE as FINCONPHONE,{#财务部门联系电话} 	 
+													EI.INPUTORGID as MANAGERORGID,{#管户机构编号} 	 
+													EI.INPUTUSERID as MANAGERUSERID,{#管户用户编号} 	 
+													Replace(EI.Updatedate,'/','-')	as UPDATEDATE,{#更新日期}   
+													'{$ARE.bizDate}' as OCCURDATE{#数据日期}
+												from ENT_INFO EI ,customer_info ci left join CISFMBBIF on replace(CI.FCustomerID,'$','#') = CISFMBBIF.CusNo 
+											where ei.customerid =ci.customerid 
+											and exists (select 1 from Business_Contract_temp BC where BC.CustomerID=EI.CustomerID )
+				                            and EI.LoanCardNo is not null and length(EI.LoanCardNo)>=16 
+				                            and EI.InputOrgID is not null and EI.InputOrgID not in ('')
+                            "/>
+						<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" 
+						 	   value="{ORGTYPE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='OrgType'}{#组织机构类型---无问题}		
+						 	   		  {ECOTYPE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='EcoType'}{#经济类型代码}		
+						 			  {NATIONALITY,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='Nation'}{#国别代码---无问题}
+						 			  {ECOINDUSCATE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName ='EcoIndusCate'}{#行业分类代码-----未修改 }
+						 			  {ADMDIVOFREG,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName ='Dist'}{#登记地行政区划代码-----未修改}  	
+						 			  {REGCAPCURRENCY,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName ='Currency'}{#注册资本币种--无问题}  
+						 			  {CONADDDISTRICTCODE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName ='Dist'}{#联系地址行政区划代码----未修改}  	
+						 			  {ENTSCALE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='EntScale'}{#企业规模---无问题}	
+						 			  {MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}
+						 			  "/>
+					
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_ENTINFO" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CUSTOMERID" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_INDINFO' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/>  -->
+			</extendProperties>
+		</executeUnit>
+
+		<executeUnit name="ImportECREntInfoHX" describe="加载企业基本信息(核心)" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_ENTINFO:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:loan:select distinct trim(replace(CISFMBBIF.CusNo,'#','$')) as CUSTOMERID,
+													trim(CISFMBBIF.CUSNAM)  as ENTNAME,{#企业名称} 	
+													trim(CIFM51.C51LOADNO)	as LOANCARDNO,{#中征码} 		
+													'' as USCCID,{#统一社会信用代码-核心无}  		 
+													replace(CISFMSCBI.ORGNUM,'-','') as CORPID,{#组织机构代码}  		  
+													trim(CISFMSCBI.CTYTAX) as NATIONALTAXNO,{#纳税人识别号(国税)}		 
+													trim(CISFMSCBI.REGTAX) as LOCALTAXNO,{#纳税人识别号(地税)}		 
+													'1'	as CUSTOMERTYPE,{#客户资料类型}
+													'X' as ETPSTS,{#存续状态}
+													'99' as ORGTYPE,{#组织机构类型---------业务确认后续核心增加字段 ，存量数据用99}	
+													case when trim(CISFMBBIF.CTYCOD) = '' then 'CHN' else trim(CISFMBBIF.CTYCOD) end as NATIONALITY,{#国别代码}
+													case when trim(CISFMSCBI.JKREADR) is null or trim(CISFMSCBI.JKREADR) ='' then '暂缺' else trim(CISFMSCBI.JKREADR) end  as REGADD,{#登记地址}
+													'110106'	as ADMDIVOFREG,{#登记地行政区划代码case when trim(CIFM51.C51REGARE) = '' then null else trim(CIFM51.C51REGARE) end}  	 
+													case when trim(CIFM51.C51REGDAT) = '' or trim(CIFM51.C51REGDAT) = '0001-01-01' then null else trim(CIFM51.C51REGDAT) end as ESTABLISHDATE,{#成立日期}  	  
+													case when trim(CISFMSCBI.LNUMDAT2) = '' or trim(CISFMSCBI.LNUMDAT2) = '0001-01-01' then null else trim(CISFMSCBI.LNUMDAT2) end 	as BIZENDDATE,{#营业许可证到期日}
+													trim(CIFM51.C51BISCPE) as BIZRANGE,{#业务范围} 
+													trim(CIFM51.C51INDSUB) as ECOINDUSCATE,{#行业分类代码}	
+													'900' as ECOTYPE,{#经济类型代码CISFMSCBI.ORGTYP}	
+													case when length(trim(CIFM51.C51SCOPE)) =0 or CIFM51.C51SCOPE is null  then 'X' else trim(CIFM51.C51SCOPE) end as ENTSCALE,{#企业规模------------------------不能为空}	
+													case when trim(CIFM51.C51CPCRNC) is null or trim(CIFM51.C51CPCRNC) = '' then 'CNY' else trim(CIFM51.C51CPCRNC) end 	as REGCAPCURRENCY,{#注册资本币种}	
+													case when round(CISFMSCBI.ERLAMT) = 0 then null when round(CISFMSCBI.ERLAMT)>=100000000 then 99999999 else round(CISFMSCBI.ERLAMT) end as REGCAP,{#注册资本}	
+													'' as CONADDDISTRICTCODE,{#联系地址行政区划代码}
+													{#(select trim(CISFMSFFI.FAREADR) from CISFMSFFI where  CISFMBBIF.CusNo = CISFMSFFI.CusNo)  as CONADD,联系地址}	
+													trim(CISFMSCBI.JKRTELL) as CONPHONE,{#联系电话}	
+													{#(select trim(CISFMSFFI.FACTEL) from CISFMSFFI where  CISFMBBIF.CusNo = CISFMSFFI.CusNo)  as FINCONPHONE,财务部门联系电话} 	 
+													CISFMBBIF.CRTDPT as MANAGERORGID,{#管户机构编号} 	 
+													CISFMBBIF.CRTTLR as MANAGERUSERID,{#管户用户编号} 	 
+													'{$ARE.bizDate}' as UPDATEDATE,{#更新日期}   
+													'{$ARE.bizDate}' as OCCURDATE{#数据日期}
+												from CISFMSCBI CISFMSCBI,BISFMNOD,CISFMBBIF left outer join CIFM51 CIFM51 on CISFMBBIF.CusNo = CIFM51.C51MFCUSI
+												where CISFMBBIF.CusNo = CISFMSCBI.CusNo
+												and CISFMBBIF.ACTUALCRTDPT=BISFMNOD.ORG 
+												and (length(trim(CIFM51.C51LOADNO))=16 or length(CISFMSCBI.ORGNUM)=10 and CISFMSCBI.ORGNUM like '%-%')
+												and not exists (select 1 from customer_info CI where CI.FCustomerID = replace(CISFMBBIF.CusNo,'#','$')){#只要核心客户号不存在customer_info表中}  
+												and Substr(BISFMNOD.RMK1,9,1) in ('1','2','4') {#BISFMNOD 第９位：银行性质  1: 信用社  2: 农商行  3: 村镇银行 4: 合行 } 
+                            "/>
+						<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" 
+						 value="{NATIONALITY,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='Nation' and subcodeno ='NationHX'}{#国别代码--无问题}
+						 			  {ECOINDUSCATE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName ='EcoIndusCate'}{#行业分类代码  --未确认  ECOTYPE 未写}
+						 			  {ADMDIVOFREG,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName ='Dist'}{#登记地行政区划代码  --未确认}  	
+						 			  {REGCAPCURRENCY,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName ='Currency'}{#注册资本币种 --无问题}  
+						 			  {CONADDDISTRICTCODE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName ='Dist'}{#联系地址行政区划代码--未确认}  	
+						 			  {ENTSCALE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='EntScale' and subcodeno ='EntScaleHX'}{#企业规模}
+						 			  {MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+						 			  "/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_ENTINFO" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CUSTOMERID" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_INDINFO' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/>  -->
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="ImportECRReltInfo" describe="加载企业关联信息(信贷)" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_RELTINFO:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select distinct CR.CustomerID as CUSTOMERID,{#客户号} 
+													CR.RelativeID as RELATIVEID,{#关联序号}
+													case when length(CR.CertType)=1 then '1' else '2' end	as RELTTYPE,{#身份类别}   	 
+													case when CR.RelationShip like '01%' and CR.RelationShip &lt;&gt; '0110'  then '10' {#主要组成成员}
+													when CR.RelationShip = '0110' then '20' {#出资人-只上报股东} 
+													when CR.RelationShip in ('9901','9951') then '40' {#上集机构} 
+													end as RELTRELTYPE,{#关系类型} 
+													case when CR.RelationShip like '01%' and CR.RelationShip &lt;&gt; '0110'  then CR.RelationShip {#主要组成成员}
+													when CR.RelationShip = '0110' then '10' {#20出资人-只上报股东10} 
+													when CR.RelationShip in ('9901','9951') then '1' {#上集机构}
+													end  as RELTINFO,{#关系信息}   	 
+													CR.CustomerName	as RELTNAME,{#名称}      	 
+													CR.CertType	as RELTIDTYPE,{#身份识别类型} 	
+													CR.CertId as RELTIDNUM,{#身份识别号码}  
+													CR.InvestmentSum as INVAMT,{#出资金额}    	
+													CR.InvestmentProp as INVRATIO,{#出资比例}    	
+													'1' as EFFSTATUS,{#有效标志}    	
+													CR.InputOrgID	as MANAGERORGID,{#管户机构编号} 	
+													CR.InputUserID	as MANAGERUSERID,{#管户用户编号} 	
+													replace(CR.UpdateDate,'/','-') as UPDATEDATE,{#更新日期}    	
+													'{$ARE.bizDate}' as OCCURDATE{#数据日期}   
+													from  Customer_relative_temp cr ,ent_info ei,customer_info ci  left outer join CISFMBBIF  on replace(CI.FCustomerID,'$','#') = CISFMBBIF.CusNo
+													where ei.customerid =cr.customerid 
+													and ci.customerid =ei.customerid 
+													and ( CR.RelationShip like '01%' or CR.RelationShip in ('9901','9951'))
+													and length(ei.loancardno) &gt;=16
+													and ci.customerid not in ('20180105000047'){#主键冲突一个人两个职位正好对应人行一个码值}
+					"/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors"  
+						value="{RELTINFO,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='MmbPstn' or ColName='SharHodType' or ColName ='SupOrgType' }{#主要组成人员}		
+				 			  {RELTIDTYPE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName ='IndIDType' or ColName ='EntCertType'}{#身份识别类型 }
+				 			  {MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				 			  "/>
+					
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_RELTINFO" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CUSTOMERID, RELATIVEID,RELTINFO, RELTRELTYPE, RELTIDNUM" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_RELTINFO' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+		</executeUnit> 
+	    
+		<executeUnit name="ImportECRReltInfoHX" describe="加载企业关联信息(核心)11:06:42-11:06:50(必须得有主要组成成员)" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_RELTINFO:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select distinct replace(CISFMBBIF.CusNo,'#','$') as CUSTOMERID,{#客户号} 
+													CIFM52.C52MFCUSID as RELATIVEID,{#关联序号}
+													case when trim(CIFM52.C52CERTYPE)='0' then '1' else '2' end as RELTTYPE,{#身份类别}  
+													case when CIFM52.C52RLTYPE in ('1010','1011','1012','1013','1014','1015') then '10' {#主要组成成员}
+													when CIFM52.C52RLTYPE in ('2010','2012') then '20' {#出资人-只上报股东} 
+													when CIFM52.C52RLTYPE in ('3021','3022','3023','3024') then '50'{#关联企业}
+													end as RELTRELTYPE,{#关系类型} 
+													case when CIFM52.C52RLTYPE in ('1010','1011','1012','1013','1014','1015') then CIFM52.C52RLTYPE {#主要组成成员}
+													when CIFM52.C52RLTYPE in ('2010','2012') then '10' {#20出资人-只上报股东10} 
+													when CIFM52.C52RLTYPE in ('3021','3022','3023','3024') then '50'{#关联企业}
+													end  as RELTINFO,{#关系信息}
+													CIFM52.C52NAME	as RELTNAME,{#名称}      	 
+													CIFM52.C52CERTYPE	as RELTIDTYPE,{#身份识别类型} 	
+													CIFM52.C52CERTID as RELTIDNUM,{#身份识别号码}  
+													'' as INVAMT,{#出资金额}    	
+													CIFM52.C52SHRATIO as INVRATIO,{#出资比例}    	
+													'1' as EFFSTATUS,{#有效标志}    	
+													CISFMBBIF.CRTDPT as MANAGERORGID,{#管户机构编号} 	
+													CISFMBBIF.CRTTLR as MANAGERUSERID,{#管户用户编号} 	
+													'' as UPDATEDATE,{#更新日期}    	
+													'{$ARE.bizDate}' as OCCURDATE{#数据日期}   
+													from CIFM52,CISFMBBIF
+													where CISFMBBIF.CusNo = CIFM52.C52MFCUSID
+													and not exists (select 1 from customer_info CI where CI.FCustomerID = replace(CISFMBBIF.CusNo,'#','$')){#只要核心客户号不存在customer_info表中}
+													and ( CIFM52.C52RLTYPE in ('1010','1011','1012','1013','1014','1015') or CIFM52.C52RLTYPE in ('2010','2012') or CIFM52.C52RLTYPE in ('3021','3022','3023','3024') )
+					"/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors"  
+						value="{RELTINFO,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='MmbPstn' or ColName='SharHodType' or ColName ='SupOrgType' }{#主要组成人员}		
+				 			  {RELTIDTYPE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName ='IndIDType' or ColName ='EntCertType'}{#身份识别类型}
+				 			  {MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				 			  "/>
+					
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_RELTINFO" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CUSTOMERID, RELATIVEID,RELTINFO, RELTRELTYPE, RELTIDNUM" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_RELTINFO' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+		</executeUnit> 
+	    
+		<executeUnit name="ImportECRAcctInfo" describe="加载企业贷款借据信息18:32:25-18:32:39" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_ACCTINFO:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select BD.Serialno as BACCTCODE, {#借据流水号}         
+											bc.SerialNo as BCTRCTCODE, {#合同号}            	
+											bd.CustomerId as CUSTOMERID, {#客户号}            	
+											case when BT.Attribute16='21' then '' else nvl(bc.CorpusPayMethod,'050') end as REPAYMODE, {#还款方式  适用于 D1/R1/R4 类账户。21-票据贴现}          	
+										    case when bc.CorpusPayMethod in ('030','040','050') then '99' 										    
+										    	when substr(ls.flag01,1,1) = '1' then '10'{#月} 
+			     								 when substr(ls.flag01,3,1) = '1' then '07'{#一次性}
+											     when substr(ls.flag01,3,1) = '0' and ls.BBWAY = '33' then '22'{#季}
+											     when ls.BBWAY = '34' and ls.INTWAY = '101' then '99'{#一次性}
+											     when ls.BBWAY = '34' and ls.INTWAY = '102' then '10'{#月} 
+											     when ls.BBWAY = '34' and ls.INTWAY = '103' then '22' {#季}
+											     when ls.BBWAY = '34' and (ls.INTWAY = '104' or ls.INTWAY ='111' or ls.INTWAY ='112') then '24' {#年}
+											     when ls.BBWAY = '34' and (ls.INTWAY = '105' or ls.INTWAY ='107') then '10'{#月} 
+											     when ls.BBWAY = '35' then '40'{#还款间隔不固定}
+											     else '99' end as REPAYFREQCY, {#还款频率 (只适用于D1/R1)}         
+											ls.FRTIM as PYMTPRD, {#剩余还款月数}
+											case when substr(BT.Attribute15,1,1) ='3' then '' else
+											case when months_between(to_date(BD.Maturity,'yyyy/mm/dd'),to_date(BD.PutoutDate,'yyyy/mm/dd')) &lt;=12 then '10'	
+					     						 when months_between(to_date(BD.Maturity,'yyyy/mm/dd'),to_date(BD.PutoutDate,'yyyy/mm/dd')) &gt;12 and months_between(to_date(BD.Maturity,'yyyy/mm/dd'),to_date(BD.PutoutDate,'yyyy/mm/dd'))&lt;=60 then '20'
+							                     when months_between(to_date(BD.Maturity,'yyyy/mm/dd'),to_date(BD.PutoutDate,'yyyy/mm/dd')) &gt;60 then '30'end  end as LOANTIMELIMCAT, {#借款期限分类   适用于 D1/R4 类账户。 }       
+											replace(BD.PutOutDate,'/','-') as OPENDATE, {#开户日期}
+											replace(BD.ActualMaturity,'/','-') as DUEDATE, {#到期日期}
+											BC.BusinessCurrency	as CY, {#币种}
+											BD.BusinessSum as LOANAMT, {#借款金额}
+											BD.Balance as ACCTBAL, {#余额}
+											case when bd.finishdate is not null and bd.finishdate &lt;&gt; ''  and '{$ARE.bizDate}'> replace(bd.FINISHDATE,'/','-')  then replace(bd.FINISHDATE,'/','-')  else '{$ARE.bizDate}' end as BALCHGDAT, {#余额变化日期 }
+											case when (BD.FinishType is null or BD.FinishType not in ('045','050')) then BD.NormalBalance else 0 end as NORMALBAL, {#正常本金余额}
+											case when BD.FinishType = '045' then coalesce(BD.ReplaceOverdueBalance,0)+coalesce(BD.ReplaceDullBalance,0)+coalesce(BD.ReplaceBadBalance,0)
+											when BD.FinishType = '050' then coalesce(CancelBalance,0)
+											else coalesce(BD.OverDueBalance,0) + coalesce(BD.DullBalance,0) + coalesce(BD.BadBalance,0) end  as OVERDBAL, {#逾期本金余额}     
+											case when BD.FinishType = '045' then coalesce(ReplaceInterestBalance,0)
+											when BD.FinishType = '050' then coalesce(CancelInterest,0)
+											else coalesce(BD.Interestbalance1,0) + coalesce(BD.Interestbalance2,0)+coalesce(bd.FineBalance1,0)+coalesce(bd.FineBalance2,0) end as INTEREST, {#利息}             
+											case when (coalesce(BD.ReplaceOverdueBalance,0)+coalesce(BD.ReplaceDullBalance,0)+coalesce(BD.ReplaceBadBalance,0) + coalesce(CancelBalance,0)+  coalesce(BD.OverDueBalance,0) + coalesce(BD.DullBalance,0) + coalesce(BD.BadBalance,0)+ coalesce(BD.Interestbalance1,0) + coalesce(BD.Interestbalance2,0)+coalesce(bd.FineBalance1,0)+coalesce(bd.FineBalance2,0)+coalesce(ReplaceInterestBalance,0)+coalesce(CancelInterest,0) )>0 then '1' else 0 end as OVERDDY, {#0790402012010000212980当前逾期天数}
+											case when BD.ClassifyResult is null or BD.ClassifyResult = '' then '9' else coalesce(BD.ClassifyResult,'9') end as FIVECATE, {#五级分类}     
+											case when bd.finishdate is not null and bd.finishdate &lt;&gt;'' and  bd.CLASSIFYDATE is not null and bd.CLASSIFYDATE &lt;&gt;''  and bd.CLASSIFYDATE>bd.FINISHDATE then replace(bd.FINISHDATE,'/','-') when (BD.CLASSIFYDATE is null or BD.CLASSIFYDATE='') then replace(BD.PutOutDate,'/','-') else replace(BD.CLASSIFYDATE,'/','-') end  as FIVECATEADJDATE, {#五级分类认定日期} 
+											'' as NxtAgrrRpyDate, {#下一次约定还款日期   -------核心取        还款计划  系统时间=应还款日期 期次+1 = 下一次约定还款日期}
+											case when BD.Finishdate is not null and BD.Finishdate &lt;&gt; '' then '21' {#21 关闭}
+											when (coalesce(BD.OverDueBalance,0) + coalesce(BD.DullBalance,0) + coalesce(BD.BadBalance,0)+coalesce(BD.ReplaceOverdueBalance,0)+coalesce(BD.ReplaceDullBalance,0)+coalesce(BD.ReplaceBadBalance,0)+coalesce(CancelBalance,0)+coalesce(BD.Interestbalance1,0) + coalesce(BD.Interestbalance2,0)+coalesce(bd.FineBalance1,0)+coalesce(bd.FineBalance2,0)+coalesce(bd.ReplaceInterestBalance,0)+coalesce(bd.CancelInterest,0)) &gt; 0 then '2'
+											else '1' end as ACCTSTATUS, {#账户状态 }         
+											replace(BD.FinishDate,'/','-') as CLOSEDATE, {#账户关闭日期}     
+											BD.CustomerName	as NAME, {#借款人名称}       
+											case when length(trim(EI.LoancardNo))=16 then EI.LoancardNo 
+											     when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then EI.Corpid
+											     when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then EI.Corpid end as IDNUM  ,{#借款人身份标识号码}
+											case when length(trim(EI.LoancardNo))=16 then '10' 
+											     when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then '20'
+											     when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then '30' end	as IDTYPE,  {#借款人身份标识类型}
+											case when substr(ls.flag05,2,1) = '1' then '1' else '0' end 	as ASSETTRANDFLAG, {#资产转让标志  --------------核心取 insfmlas.flag05   核心确认：取第三位，值为1}     
+											bc.ManageOrgID	as MANAGERORGID, {#管户机构编号}
+											bc.ManageUserID	as MANAGERUSERID, {#管户用户编号}
+											 replace(bd.UpdateDate,'/','-')	as UPDATEDATE, {#更新日期}
+											'{$ARE.bizDate}'  as OCCURDATE {#数据日期}  
+										from BUSINESS_DUEBILL_temp BD left join LNSFMLAS ls 
+										on ls.acct=BD.SerialNo, BUSINESS_CONTRACT_temp BC,BUSINESS_TYPE BT,ENT_INFO EI
+										where bd.relativeserialno2=bc.serialno
+										  and bd.customerid = ei.customerid
+										  and bd.businesstype =bt.typeno
+										  {#and substr(BT.Attribute15,1,1) in ('1','2','3','4','9') 1贷款业务 2保理 3票据贴现  按照D2报送4贸易融资  9垫款---没有垫款数据}
+										  and BT.Attribute16 in ('11','13','21','12') {#11贷款业务 13保理 21票据贴现 按照D2报送 12贸易融资  }
+										  and length(ei.loancardno) &gt;=16	
+										  
+					"/>
+					<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" 
+						 value="{REPAYMODE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='EnRepayMode'}{#还款方式 ---需确认}
+						 		{FIVECATE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='FiveCate'}{#五级分类----无问题}
+						 		{CY,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='Currency'}{#币种----无问题}
+						 		{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+						 
+				 "/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_ACCTINFO" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="BACCTCODE" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_ACCTINFO' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+        </executeUnit>
+		
+		<executeUnit name="ImportECRAcctCtrct" describe="加载企业贷款合同信息19:29:38-19:29:55" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_ACCTCTRCT:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select BCTRCTCODE,CUSTOMERID,CONTRACTCODE,ACCTTYPE,FLAG,NAME,IDNUM,IDTYPE,BUSILINES,BUSIDTLLINES,OPENDATE,DUEDATE,CTRCTAMT,CTRCTREMAMT,min(CONSTATUS),min(CONCLOSEDATE),
+										GUARMODE,SECDEP,OTHREPYGUARWAY ,max(FIVECATE),max(FIVECATEADJDATE),ACTINVEST,LOAFRM,CY, CYCFLAG,FUNDSOU ,MANAGERORGID,MANAGERUSERID, UPDATEDATE , OCCURDATE  
+										from(select distinct BC.SerialNo as BCTRCTCODE ,{#合同号}        		 
+													BC.CustomerId as  CUSTOMERID ,{#客户号}             
+													BC.SerialNo	as CONTRACTCODE ,{#授信协议标识码}      	
+													case when BT.Attribute16='21'  and  bc.businesstype like '1035%' then 'R4' else 'D1' end  as  ACCTTYPE ,{#账户类型    D1非循环 D2贴现   循环额度下分账户R4}         	 
+													case when bc.businesstype not like '1035%' and BC.BusinessSum=BD.BusinessSum then '0' else '1' end as FLAG ,{#分次放款标志}
+													BC.CustomerName	as NAME ,{#借款人名称}
+													case when length(trim(EI.LoancardNo))=16 then EI.LoancardNo 
+														 when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then EI.Corpid
+														 when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then EI.Corpid end	as IDNUM, {#借款人身份标识号码}	
+													case when length(trim(EI.LoancardNo))=16 then '10' 
+													     when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then '20'
+													     when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then '30' end	as IDTYPE, {#借款人身份标识类型}
+													BT.Attribute16 as  BUSILINES ,{#借贷业务大类}       	 
+													bc.businesstype as  BUSIDTLLINES ,{#借贷业务种类细分}     	
+													replace(BC.PutoutDate,'/','-') as  OPENDATE ,{#开户日期}           
+													replace(BC.Maturity,'/','-') as  DUEDATE ,{#到期日期}  		 
+													BC.BusinessCurrency as  CY ,{#币种}      	     
+													BC.BusinessSum  as  CTRCTAMT ,{#合同金额}  			 
+													BC.Balance as  CTRCTREMAMT ,{#合同可用余额} 	 
+													case when (BC.FinishDate is null or BC.FinishDate = '') then '1' else '2' end  as CONSTATUS ,{#合同状态}			 
+													bc.finishdate  as CONCLOSEDATE ,{#合同关闭日期 } 	 
+													case when BC.VouchType ='005'	then '0' {#0-信用/免担保}
+													     when BC.VouchType like '010%' then '1' {#1-保证}
+													     when BC.VouchType like '040%' then '2' {#2-质押}
+													     when BC.VouchType like '020%' then '3' {#3-抵押}
+													end	as  GUARMODE ,{#担保方式}
+													'' as SECDEP ,{#保证金百分比:业务确认不报送} 
+													'0' as OTHREPYGUARWAY ,{#其他还款保证方式 :业务确认为0无} 
+													BD.CLASSIFYRESULT  as  FIVECATE ,{#五级分类} 
+													case when (BD.CLASSIFYDATE is null or BD.CLASSIFYDATE='') then replace(BD.PutOutDate,'/','-') else replace(BD.CLASSIFYDATE,'/','-') end as  FIVECATEADJDATE ,{#五级分类认定日期} 	    
+													case when BT.Attribute16='21'  then '' else  BC.Direction end as ACTINVEST ,{#贷款实际投向  ---代码映射未变成小写c1711}  
+													BC.OccurType as  LOAFRM ,{#贷款发放形式} 
+													case when bc.businesstype like '1035%' then '1' else '2' end  as  CYCFLAG ,{#循环标志  用业务品种判断}  
+													case when BD.BusinessType = '2060' then BC.BusinessSubType else '1' end as  FUNDSOU ,{#业务经营类型} 
+													'' as  APPLYBUSIDIST ,{#业务申请地行政区划代码 }
+													bc.manageorgid as MANAGERORGID ,{#管户机构编号} 
+													bc.manageuserid as MANAGERUSERID ,{#管户用户编号} 
+													replace(bc.updatedate,'/','-') as  UPDATEDATE ,{#更新日期} 
+													'{$ARE.bizDate}' as  OCCURDATE {#数据日期}  
+													from BUSINESS_CONTRACT_temp BC,ENT_INFO EI,BUSINESS_TYPE BT,business_duebill_temp bd
+													where bc.customerid = ei.customerid
+													and bc.serialno = bd.relativeserialno2
+													and bc.businesstype =bt.typeno 
+													and length(ei.loancardno) &gt;=16
+													and BT.Attribute16 in ('11','13','21','12') {#11贷款业务 13保理 21票据贴现 按照D2报送 12贸易融资  }
+													and bd.businesstype not in ('108090')
+													)
+												group by  BCTRCTCODE,CUSTOMERID,CONTRACTCODE,ACCTTYPE,FLAG,CY,NAME,IDNUM,IDTYPE,BUSILINES,BUSIDTLLINES,OPENDATE,DUEDATE,CTRCTAMT,CTRCTREMAMT, GUARMODE,SECDEP,OTHREPYGUARWAY ,ACTINVEST,LOAFRM, CYCFLAG,FUNDSOU ,MANAGERORGID,MANAGERUSERID, UPDATEDATE , OCCURDATE
+					"/>
+					<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" 
+						 value="{BUSILINES,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='EnAcctBusiLines'}{#借贷业务大类----未确认}  
+						 		{BUSIDTLLINES,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='EnAcctBusiDtlLines'}{#借贷业务种类细分-----未确认}   
+						 		{FIVECATE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='FiveCate'}{#五级分类--无问题}
+						 		{ACTINVEST,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='EcoIndusCate'}{#贷款实际投向--需业务确认} 
+						 		{LOAFRM,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='LoaFrm'}{#贷款发放形式} 
+						 		{FUNDSOU,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='FundSou'}{#业务经营类型} 
+						 		{CY,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName ='Currency'}{#币种} 
+						 		{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				 "/>
+					
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_ACCTCTRCT" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="BCTRCTCODE" />
+				<!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_ACCTCTRCT' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+		</executeUnit> 
+		
+		<executeUnit name="ImportECRPayPlan" describe="加载企业还款计划信息11:26:41-11:49:14-23分钟" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_PAYPLAN:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select trim(lf.acct) as ACCTCODE , {#账户标识码} 	
+											lt.bbedat as PAYDATE , {#结算日期 }		
+											lf.lextt as PERIODPAYDATE , {#宽限日期} 
+											lt.ncbb as PAYCORP , {#应还本金 }		
+											case when substr(lf.flag01,1,1) = '1' then lt.ncbi 
+											     when substr(lf.flag01,1,1)  &lt;&gt; '1' and lf.adsdat ='{$ARE.bizDate}' then (select sum(nvl(ld.bal,0)) from lnsfmlad_temp ld where ld.acct = lf.acct and ld.chat='11') 
+											     else 0 end as PAYINTE , {#应还利息 }		
+											(select sum(nvl(ld.bal,0)) from lnsfmlad_temp ld where ld.acct = lf.acct and ld.chat = '22' ) as PAYCORPFINE , {#应还本金罚息}
+											(select sum(nvl(ld.bal,0)) from lnsfmlad_temp ld where ld.acct = lf.acct and ld.chat = '21' ) as PAYINTEFINE , {#应还利息罚息}
+											lt.ncbdat as ACTUALPAYDATE , {#实还日期 }	 
+											nvl(lt.ncbb,0) - nvl(lt.abb,0)  as ACTUALCORP , {#实还本金} 		 
+											nvl(lt.ncbi,0) - nvl(lt.abi,0) as ACTUALINTE , {#实还利息}      
+											(select sum(nvl(lsf.amt,0)) from lnsfmlst_temp  lsf where lf.acct = lsf.acct and lsf.chat = '22')  as ACTUALCORPFINE , {#实还本金罚息}  
+											(select sum(nvl(lsf.amt,0)) from lnsfmlst_temp  lsf where lf.acct = lsf.acct and lsf.chat = '21') as ACTUALINTEFINE , {#实还利息罚息}  
+											case when substr(lt.NTSTA,4,1) = '0' then '0' else '1' end as PAYOFFSTATUS , {#还款标志}    
+											'' as MANAGERORGID , {#管户机构编号}
+											'' as MANAGERUSERID , {#管户用户编号}  
+											'{$ARE.bizDate}' as UPDATEDATE , {#更新日期} 		 
+											'{$ARE.bizDate}' as OCCURDATE  {#数据日期} 
+										 from Lnsfmlas_temp lf,Lnsfmamt_temp lt 
+									 where lt.NHBB = lf.CURTIM and lt.acct = lf.acct 
+									 and exists (select 1 from BUSINESS_DUEBILL_TEMP BD where BD.SERIALNO = lt.acct)
+					"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_PAYPLAN" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="ACCTCODE,PAYDATE" />
+			    <!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_PAYPLAN' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> --> 
+			</extendProperties>
+		</executeUnit> 
+		
+		<executeUnit name="ImportECRLcBackList" describe="加载企业还款流水信息17:34:31-17:50:41 16分" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_LCBACKLIST:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select distinct  trim(lst.ACCT) as ACCTCODE, {#账户标识码} 
+												 substr(trim(ACCT)|| trim(TXDT)||trim(PTXSQ)||trim(CTXSQ),1,40) as RPMTCODE, {#还款流水号}
+												 substr(char(lst.TXDT),1,4)||'-'||substr(char(lst.TXDT),5,2)||'-'||substr(char(lst.TXDT),7,2) as RPMTDATE, {#发生日期} 
+												 case when (lst.PTXCD = '994215' or lst.PTXCD = '994240' or lst.PTXCD = '420307' or lst.PTXCD = '420902' or        
+														   lst.PTXCD = '421705' or lst.PTXCD = '421200' or lst.PTXCD = '422307' or lst.PTXCD = 'S42130') AND lst.CRDRFG='C' and lst.chat in ('01','02','03','04') then lst.amt else 0 end  as RPMTCORP, {#还款本金} 
+												 case when (lst.PTXCD = '994215' or lst.PTXCD = '994240' or lst.PTXCD = '420307' or lst.PTXCD = '420902' or        
+														   lst.PTXCD = '421705' or lst.PTXCD = '421200' or lst.PTXCD = '422307' or lst.PTXCD = 'S42130') AND lst.CRDRFG='C' and lst.chat in ('11','21') then lst.AMT else 0 end  as RPMTINST, {#还款利息}
+												 case when (lst.PTXCD = '994215' or lst.PTXCD = '994240' or lst.PTXCD = '420307' or lst.PTXCD = '420902' or        
+															lst.PTXCD = '421705' or lst.PTXCD = '421200' or lst.PTXCD = '422307' or lst.PTXCD = 'S42130') AND lst.CRDRFG='C' and lst.chat ='22' then lst.AMT else 0 end  as RPMTCORPFINE, {#发生本金罚息} 
+												 case when (lst.PTXCD = '994215' or lst.PTXCD = '994240' or lst.PTXCD = '420307' or lst.PTXCD = '420902' or        
+															lst.PTXCD = '421705' or lst.PTXCD = '421200' or lst.PTXCD = '422307' or lst.PTXCD = 'S42130') AND lst.CRDRFG='C' and lst.chat ='41' then lst.AMT else 0 end as RPMTINSTFINE, {#发生利息罚息} 	 
+												 '10' as RPMTTYPE, {#还款形式================???}   
+												'{$ARE.bizDate}' as UPDATEDATE, {#更新日期}  	 
+												'{$ARE.bizDate}' as OCCURDATE {#数据日期} 
+												from lnsfmlst_temp lst
+					"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_LCBACKLIST" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="ACCTCODE,RPMTCODE,RPMTDATE" />
+			    <!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="1" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_LCBACKLIST' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+		</executeUnit> 
+		
+		<executeUnit name="ImportECRRltrepymtInfo" describe="加载企业相关还款责任人信息17:56:48-17:56:50" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_RLTREPYMTINFO:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select distinct BC.Serialno as BCTRCTCODE, {#账户标识码}   		          
+											case when length(getLoanCardNo(GC.GuarantorID)) &gt;='16'  then '1' else '2' end  as INFOIDTYPE, {#身份类别 2自然人}  			          
+											trim(GC.GuarantorName) as ARLPNAME, {#责任人名称}      
+											case when length(getLoanCardNo(GC.GuarantorID)) &gt;='16' then '10' else ci.CertType end  as ARLPCERTTYPE, {#责任人身份标识类型}
+											case when length(getLoanCardNo(GC.GuarantorID)) &gt;= '16' then getLoanCardNo(GC.GuarantorID) else ci.CertID end  as ARLPCERTNUM, {#责任人身份标识号码}
+											'2' as ARLPTYPE, {#还款责任人类型}
+											GC.GuarantyValue as ARLPAMT, {#还款责任金额}
+											case when gc.GuarantyType ='045' then '1' else '0' end  as WARTYSIGN, {#联保标志} 			            
+											GC.SerialNo as MAXGUARMCC, {#保证合同编号} 		          
+											case when (BC.FinishDate is null or BC.FinishDate = '') then (case when GC.ContractStatus = '030' then '2' else '1' end) else '2' end as EffStatus, {#有效标志} 	    	        
+											bc.manageorgid as MANAGERORGID, {#管户机构编号} 		      
+											bc.manageuserid as MANAGERUSERID, {#管户用户编号} 		    
+											replace(bc.updatedate,'/','-') as UPDATEDATE, {#更新日期}  	 
+											'{$ARE.bizDate}' as OCCURDATE {#数据日期}
+											from GUARANTY_CONTRACT_temp GC,CONTRACT_RELATIVE_temp CR,BUSINESS_CONTRACT_temp BC,ENT_INFO EI,BUSINESS_TYPE BT,CUSTOMER_INFO_temp CI
+											where  BC.SerialNo = CR.SerialNo
+											and CR.ObjectNo = GC.SerialNo
+											and BT.TypeNO = BC.BusinessType
+											and EI.CustomerID = BC.CustomerID
+											AND CI.CUSTOMERID=GC.GuarantorID
+											and CR.ObjectType = 'GUARANTY_CONTRACT'
+											and GC.GuarantyType in('010','020','030','040','045')  {#担保方式：010=保证}
+											and BT.Attribute16 in ('11','13','21','12') {#11贷款业务 13保理 21票据贴现 按照D2报送 12贸易融资  }
+											and GC.ContractStatus in ('020','030','040')
+											and (CI.CertType in ('0','1','2','3','4','5','6','7','8','9','X') or length(getLoanCardNo(GC.GuarantorID)) >=16)
+											
+					"/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" 
+						 value="{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				 "/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_RLTREPYMTINFO" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="BCTRCTCODE,MAXGUARMCC,ARLPCERTTYPE,ARLPCERTNUM,ARLPTYPE" />
+			    <!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_RLTREPYMTINFO' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="ImportICRSpeciBusiZQList" describe="加载企业特定交易信息_展期18:06:03-18:06:03" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_SPECIBUSINESS:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select BD.SerialNo as ACCTCODE, {#账户标识码}  		        
+															BE.SerialNo as CHANCODE, {#特殊交易标识码}  	        
+															'1'	as CHANTRANTYPE, {#交易类型}  			        
+															BE.OccurDate as TRANDATE, {#交易日期}  			          
+															BE.ExtensionSum  as TRANAMT, {#交易金额} 			            
+															'' as DUETRANMON{#到期日期变更月数--需重新取值},     
+															'' as DETINFO, {#交易明细信息 }     	      
+															BE.OccurDate  as UPDATEDATE, {#更新日期}  			        
+															'{$ARE.bizDate}' as OCCURDATE {#数据日期} 
+														from BUSINESS_EXTENSION BE,BUSINESS_DUEBILL_temp BD,ENT_INFO EI
+														where BE.RelativeSerialNo = BD.SerialNo
+														and BD.CustomerID = EI.CustomerID
+														and length(ei.loancardno) &gt;=16
+					"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_SPECIBUSINESS" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="ACCTCODE,CHANCODE" />
+			    <!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_SPECIBUSINESS' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+		</executeUnit> 
+			
+		<executeUnit name="ImportECRSpeciBusiness" describe="加载企业特定交易信息（未写---------------------）" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_SPECIBUSINESS:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:loan:select 
+																		as ACCTCODE, {#账户标识码}  		        
+																		as CHANCODE, {#特殊交易标识码}  	        
+																		as CHANTRANTYPE, {#交易类型}  			        
+																		as TRANDATE, {#交易日期}  			          
+																		as TRANAMT, {#交易金额} 			            
+																		as DUETRANMON, {#到期日期变更月数}  	      
+																		as DETINFO, {#交易明细信息 }     	      
+																		as MANAGERORGID, {#管户机构编号} 		        
+																		as MANAGERUSERID, {#管户用户编号} 		      
+																		as OPERORGID, {#操作机构编号}  		      
+																		as OPERUSERID, {#操作用户编号} 		        
+																		as UPDATEDATE, {#更新日期}  			        
+																		as OCCURDATE {#数据日期}  			   
+					"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_SPECIBUSINESS" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="ACCTCODE,CHANCODE" />
+			    <!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_SPECIBUSINESS' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+		</executeUnit> 
+		
+		<executeUnit name="ImportECRCreditInfo" describe="加载企业授信协议信息18:09:29-18:09:30" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_CREDITINFO:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select distinct BC.SerialNo as CONTRACTCODE, {#授信协议标识码} 		      
+													 EI.EnterpriseName as NAME, {#授信人名称} 		
+													 case when length(trim(EI.LoancardNo))=16 then EI.LoancardNo 
+													      when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then EI.Corpid
+													      when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then EI.Corpid end	as IDNUM  ,{#借款人身份标识号码}
+													 case when length(trim(EI.LoancardNo))=16 then '10' 
+													      when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then '20'
+													      when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then '30' end	as IDTYPE,  {#借款人身份标识类型}	            
+													 BT.Attribute16 as CREDITLIMTYPE, {#授信额度类型} 		        
+													 case  when bc.businesstype like '1035%' then '1' else '2' end  as LIMLOOPFLG, {#额度循环标志} 		          
+													 bc.BusinessSum as CREDITLIM, {#授信额度} 			            
+													 bc.BUSINESSCURRENCY as CY, {#币种}  			                  
+													 replace(BC.PutOutDate,'/','-') as CONEFFDATE, {#额度生效日期} 		          
+													 replace(BC.maturity,'/','-') as CONEXPDATE, {#额度到期日期} 		        
+													 case when (BC.FinishDate is not null and BC.FinishDate != '' and BC.FinishDate &lt; BC.Maturity) then '2' else '1' end  as CONSTATUS, {#额度状态}     	 	        
+													 BC.BusinessSum  as CREDITREST, {#授信限额}      		      
+													 BC.SerialNo as CREDITRESTCODE, {#授信限额编号}  		    
+													 bc.manageorgid as MANAGERORGID, {#管户机构编号} 		      
+													 bc.manageuserid as MANAGERUSERID, {#管户用户编号} 		    
+													 replace(bc.updatedate,'/','-') as UPDATEDATE, {#更新日期}  			        
+													 '{$ARE.bizDate}'	as OCCURDATE  {#数据日期}
+													 from BUSINESS_CONTRACT_temp BC,ENT_INFO EI,BUSINESS_TYPE BT,business_duebill_temp bd
+													where bc.customerid = ei.customerid
+													and bc.serialno = bd.relativeserialno2
+													and bc.businesstype =bt.typeno 
+													and length(ei.loancardno) &gt;=16
+													and BT.Attribute16 in ('11','13','21','12') {#11贷款业务 13保理 21票据贴现 按照D2报送 12贸易融资  }
+					"/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" 
+						 value="{CREDITLIMTYPE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='EnAcctBusiLines'}{#授信额度类型} 	
+						 	    {CY,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName ='Currency'}{#币种}  	
+						 	    {MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_CREDITINFO" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CONTRACTCODE,IDTYPE,IDNUM" />
+			    <!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_CREDITINFO' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> --> 
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="ImportECRGuarAcctInfo" describe="加载企业表外业务信息18:17:25-18:17:34" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_GUARACCTINFO:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select distinct 
+									case when BD.BUSINESSTYPE = '2012' then substr(BD.serialno,14,17) else BD.SerialNo end as BILLCODE, {#票据流水号}
+									bd.relativeserialno2 as BCTRCTCODE, {#合同号} 
+									bd.CustomerID as CUSTOMERID, {#客户号}
+									replace(bd.putoutdate,'/','-')		as OPENDATE, {#开户日期}          	  
+									replace(BD.ActualMaturity ,'/','-')	as DUEDATE, {#到期日期}          	  
+									BD.BusinessCurrency	as CY, {#币种}             	    
+									BD.BusinessSum as GUARAMT, {#担保金额}          	  
+									bd.Balance	as ACCTBAL, {#余额}             	    
+									'{$ARE.bizDate}' as BALCHGDAT, {#余额变化日期    ------核心取}
+									case when length(ltrim(rtrim(BD.ClassifyResult)))=0 then '9' else coalesce(BD.ClassifyResult,'9') end 	as FIVECATE, {#五级分类}          	
+									replace(BD.CLASSIFYDATE,'/','-') as FIVECATEADJDATE, {#五级分类认定日期}  	
+									case when BD.Finishdate is not null and BD.Finishdate &lt;&gt; '' then '3' 
+									when (coalesce(BD.OverDueBalance,0) + coalesce(BD.DullBalance,0) + coalesce(BD.BadBalance,0)+coalesce(BD.ReplaceOverdueBalance,0)+coalesce(BD.ReplaceDullBalance,0)+coalesce(BD.ReplaceBadBalance,0)+coalesce(CancelBalance,0)+coalesce(BD.Interestbalance1,0) + coalesce(BD.Interestbalance2,0)+coalesce(FineBalance1,0)+coalesce(FineBalance2,0)+coalesce(ReplaceInterestBalance,0)+coalesce(CancelInterest,0)) &gt; 0 then '2'
+									else '1' end as ACCTSTATUS, {#账户状态}          	
+									replace(BD.FinishDate,'/','-') as CLOSEDATE, {#账户关闭日期--------核心  借据 }     	
+									bd.CustomerName	as NAME, {#借款人名称}   
+									case when length(trim(EI.LoancardNo))=16 then EI.LoancardNo 
+									     when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then EI.Corpid
+									     when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then EI.Corpid end as IDNUM, {#借款人身份标识号码}    
+									case when length(trim(EI.LoancardNo))=16 then '10' 
+									     when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then '20'
+									     when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then '30' end	 as IDTYPE, {#借款人身份标识类型}
+									'0'	as COMPADVFLAG, {#代偿（垫款）标志      ------核心取 需要确认----}  	
+									bd.businesssum*(1-bc.BAILRATIO)	as RIEX, {#风险敞口        业务确认：按照保证金金额无法覆盖的本金额  ？？ 有无保证金}          	
+									bd.manageorgid	as MANAGERORGID, {#管户机构编号} 		      
+								   bd.manageuserid	as MANAGERUSERID, {#管户用户编号} 		    
+								   replace(bd.updatedate,'/','-') 	as UPDATEDATE, {#更新日期}  			        
+								   '{$ARE.bizDate}'	as OCCURDATE  {#数据日期}  	
+								from business_duebill_temp bd ,business_type bt ,ent_info ei ,business_contract_temp bc
+								where bt.typeno =bd.businesstype 
+								and bd.relativeserialno2=bc.serialno 
+								and ei.customerid = bd.customerid 
+								{#5信用证 6保函 7承兑汇票and substr(BT.Attribute15,1,1) in ('5','6','7')}
+								and (substr(bt.attribute15,1,1)='5'or bt.attribute16='7'or bt.attribute16='6') {#5信用证7保函 6承兑汇票}
+					"/>
+					<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" 
+						 value="{FIVECATE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='FiveCate'}{#五级分类}
+						 		{CY,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName ='Currency'}{#币种}  
+						 	    {MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				 "/>
+					
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!-- 下面的属性确定更新数据库的条件，含义如属性名字所表达的  --> 
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_GUARACCTINFO" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="BILLCODE" />
+			    <!-- commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!-- Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为* -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_GUARACCTINFO' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> --> 
+			</extendProperties>
+		</executeUnit> 
+		
+		<executeUnit name="ImportECRMotgaRlt" describe="加载企业抵质押关联关系信息18:20:08-18:20:34" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_MOTGARLT:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select distinct BC.Serialno as BCTRCTCODE, {#合同号}                  
+													GI.GuarantyID as CCC, {#抵（质）押合同标识码} 
+													'U' as RLTFLAG , 
+													BC.MANAGEORGID  as MANAGERORGID, {#管户机构编号}        	
+													bc.MANAGEUSERID as MANAGERUSERID, {#管户用户编号}        	
+													replace(GC.UpdateDate,'/','-')	as UPDATEDATE, {#更新日期}              
+													'{$ARE.bizDate}' as OCCURDATE {#数据日期}
+												   from  business_contract_temp bc , guaranty_contract_temp gc ,CONTRACT_RELATIVE_temp cr, business_type bt, ent_info ei , guaranty_info_temp gi 
+													where CR.SerialNo = BC.SerialNo
+													and gi.objectno=gc.SerialNo 
+													and CR.ObjectNo = GC.SerialNo
+													and bt.typeno =bc.businesstype
+													and bc.customerid = ei.customerid
+													and GC.GuarantyType in( '050','060') {#担保方式：050=抵押 060=质押}
+													and GC.ContractStatus in ('020','030','040')
+					"/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" 
+						 value="{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				 "/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!--下面的属性确定更新数据库的条件，含义如属性名字所表达的  -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_MOTGARLT" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="BCTRCTCODE,CCC" />
+				<!--commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!--Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为*-->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_MOTGARLT' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+		</executeUnit>                 
+		
+		<executeUnit name="ImportECRMotgCtrct" describe="加载抵质押物合同信息18:22:26-18:22:45" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_MOTGACTRCT:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select t.CCCODE, GUARTYPE, CCAMT,CY ,min(CCVALDATE),max(CCEXPDATE),CCSTATUS,min(CCSTATUS),MANAGERORGID,MANAGERUSERID, UPDATEDATE, OCCURDATE
+										from(select distinct GI.GuarantyID as CCCODE,{#抵（质）押合同标识码}
+											case when gc.GuarantyType ='050' then '1' when gc.GuarantyType ='060' then '2' end  as GUARTYPE,{#合同类型}              	        
+											GC.GuarantyValue as CCAMT,{#担保金额}                          
+											'CNY' as CY ,{#币种}                	              
+											replace(bc.putoutdate,'/','-') as CCVALDATE ,{#抵（质）押合同生效日期}		      
+											replace(bc.maturity,'/','-') as CCEXPDATE,{#抵（质）押合同到期日期}	        
+											case when gc.contracttype='020' then '1' else '0' end as MAXGUAR,{#最高额担保标志} 
+											case when GC.ContractStatus = '030' then '2' else '1' end  as CCSTATUS,{#抵（质）押合同状态} 
+											GC.InputOrgID as MANAGERORGID,{#管户机构编号}     
+											GC.InputUserID  as MANAGERUSERID,{#管户用户编号}     
+											replace(GC.updatedate,'/','-') as UPDATEDATE,{#更新日期}           
+											'{$ARE.bizDate}' as OCCURDATE{#数据日期}
+									from business_contract_temp bc,guaranty_contract_temp gc, contract_relative_temp cr, ent_info ei , guaranty_info_temp gi 
+									where bc.serialno=cr.serialno 
+									and bc.customerid=ei.customerid 
+									and cr.objectno=gc.serialno 
+									and gi.objectno=gc.SerialNo 
+									and cr.objecttype='GUARANTY_CONTRACT' 
+									and gc.GuarantyType in ('050','060') 
+									and GI.AboutSum2 > 0) t 
+									group by t.CCCODE, GUARTYPE, CCAMT,CY ,CCSTATUS,MANAGERORGID,MANAGERUSERID, UPDATEDATE, OCCURDATE
+					"/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" 
+						 value="{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				 "/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!--下面的属性确定更新数据库的条件，含义如属性名字所表达的  -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_MOTGACTRCT" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CCCODE" />
+				<!--commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!--Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为*-->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_MOTGACTRCT' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> --> 
+			</extendProperties>
+		</executeUnit> 
+
+		<executeUnit name="ImportECRProptInfo" describe="加载抵押物信息18:24:31-18:24:51" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_PROPTINFO:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select distinct gi.guarantyid	as CCCODE, {#抵（质）押合同标识码} 		
+											gi.guarantytype as PLETYPE, {#抵押物种类}           	
+											''	as MOTGAPROPTIDTYPE, {#抵押物识别号类型,需进一步确认}
+											gi.GuarantyId	as PLECERTID, {#抵押物唯一识别号,需进一步确认}     	
+											''	as PLEDISTR, {#抵押物位置在地行政区划}
+											gi.ConfirmValue	as PLEVALUE, {#抵押物评估价值}
+											'CNY' as PLECY, {#币种}
+											case when gi.evalmethod ='030' then '' else NVL(gi.evalmethod,'1') end 	as VALORGTYPE, {#评估机构类型EvaluateType}         	
+											replace(gi.EvalDate,'/','-')  as VALDATE, {#抵押物评估日期}       	
+											 case when length(getLoanCardNo(GC.GuarantorID)) &gt;=16 then '2' else '1' end PLEDGORTYPE, {#抵押人份类别 1自然人 2 是组织机构}      
+											CI.CustomerName as PLEDGORNAME, {#抵押人名称}
+											case when length(getLoanCardNo(GC.GuarantorID)) &gt;=16 then '10' else CI.certtype end as PLEORCERTTYPE, {#抵押人份标识类型}  
+											case when length(getLoanCardNo(GC.GuarantorID)) &gt;=16 then getLoanCardNo(GC.GuarantorID) else CI.certid end as PLEORCERTNUM, {#抵押人身份标识号码}
+											nvl(GI.GuarantyDescript,'足值')	as PLEDESC, {#抵押物说明}
+											case when bc.finishdate is not null then '0' else '1' end 	as EffStatus, {#有效标志}
+											gi.inputorgid	as MANAGERORGID, {#管户机构编号}
+											gi.inputuserid as MANAGERUSERID, {#管户用户编号}
+											 replace(gi.updatedate,'/','-')  as UPDATEDATE, {#更新日期}
+											'{$ARE.bizDate}' as OCCURDATE {#数据日期}
+									from  business_contract_temp bc, CONTRACT_RELATIVE_temp CR,Guaranty_contract_temp gc,guaranty_info_temp gi,CUSTOMER_INFO_temp CI
+										where CR.SerialNo=bc.SerialNo 
+										and CR.ObjectNo=gc.SerialNo 
+										and GC.SerialNO = GI.ObjectNo 
+										and CI.CUSTOMERID=GC.GuarantorID 
+										and CR.ObjectType = 'GUARANTY_CONTRACT'	
+										and GC.GuarantyType ='050'
+										and GC.ContractStatus in ('020','030','040') 
+										and GI.AboutSum2 &gt; 0 
+										and (CI.CertType in ('0','1','2','3','4','5','6','7','8','9','X') or length(getLoanCardNo(GC.GuarantorID)) &gt;=16)			
+					"/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+				 	{PLETYPE,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='PleType'}
+				 	{VALORGTYPE,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='ValOrgType'}
+				 	{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				"/>
+				
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!--下面的属性确定更新数据库的条件，含义如属性名字所表达的  -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_PROPTINFO" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CCCODE,PLECERTID" />
+				<!--commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!--Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为*-->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_PROPTINFO' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> --> 
+			</extendProperties>
+		</executeUnit>   
+		
+		<executeUnit name="ImportECRCltaInfo" describe="加载质物信息18:26:14-18:26:17" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_CLTALINFO:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select distinct gi.Guarantyid 	as CCCODE, {#抵（质）押合同标识码}		
+													case when GI.GuarantyType is null or GI.GuarantyType = '' then '90' else GI.GuarantyType end as IMPTYPE, {#质物种类}            	
+													GI.ConfirmValue	as IMPVAL, {#质物价值}            	  
+													'CNY' as IMPCY, {#币种}                	  
+					           					  	case when length(getLoanCardNo(GC.GuarantorID)) &gt;=16 then '2' else '1' end IPPC, {#抵押人份类别 1自然人 2 是组织机构}          		
+													CI.CustomerName as PAWNNAME, {#出质人名称}          	
+													case when length(getLoanCardNo(GC.GuarantorID)) &gt;=16 then '10' else CI.certtype end  as PAWNCERTTYPE, {#出质人身份标识类型}  
+													case when length(getLoanCardNo(GC.GuarantorID)) &gt;=16 then getLoanCardNo(GC.GuarantorID) else CI.certid end as PAWNCERTNUM, {#出质人身份标识号码}  
+													case when bc.finishdate is not null then '0' else '1' end as EffStatus, {#有效标志} 	    	  
+													gi.inputorgid  as MANAGERORGID, {#管户机构编号}      
+													gi.inputuserid as MANAGERUSERID, {#管户用户编号}        
+													 replace(gi.updatedate,'/','-') as UPDATEDATE{#更新日期},
+					        						'{$ARE.bizDate}' as OCCURDATE{#数据日期} 
+					        				from  business_contract_temp bc, CONTRACT_RELATIVE_temp CR, Guaranty_contract_temp gc, guaranty_info_temp GI, customer_info_temp CI
+												where CR.SerialNo=bc.SerialNo 
+												and CR.ObjectNo=gc.SerialNo 
+												and GC.SerialNO = GI.ObjectNo 
+												and CI.CUSTOMERID=GC.GuarantorID 
+												and CR.ObjectType = 'GUARANTY_CONTRACT'	
+												and GC.GuarantyType ='060' 
+												and GC.ContractStatus in ('020','030','040') 
+												and GI.AboutSum2 &gt; 0 
+												and GI.ConfirmValue &gt; 0 
+												and (CI.CertType in ('0','1','2','3','4','5','6','7','8','9','X') or length(getLoanCardNo(GC.GuarantorID)) &gt;=16) 
+					"/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+				 	{IMPTYPE,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='ImpType'}
+				 	{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!--下面的属性确定更新数据库的条件，含义如属性名字所表达的  -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_CLTALINFO" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CCCODE,IMPTYPE" />
+				<!--commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!--Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为*-->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_CLTALINFO' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> --> 
+			</extendProperties>
+		</executeUnit> 
+		
+		<executeUnit name="ImportECRFinanceBs" describe="加载企业财务报表基础段信息18:30:47-18:30:48" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_FINANCEBS:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource" 
+					value="datasource:db:ecr:select CUSTOMERID,SHEETYEAR,max(EXTEND1) as EXTEND1 ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+					                     from (   
+											select distinct CF.CustomerID as CUSTOMERID, {#客户号} 			              
+											substr(CF.ReportDate,1,4) as SHEETYEAR, {#报表年份}
+											CF.ReportDate as EXTEND1,		          
+											case when CF.ReportPeriod='040' then '10' when  CF.ReportPeriod='030'  and  substr(CF.ReportDate,6,2) in ('01','02','03','04','05','06') then '20' 
+												 when CF.ReportPeriod='030' and substr(CF.ReportDate,6,2) in ('07','08','09','10','11','12') then '30' 
+												 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('01','02','03') then '40' 
+												 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('04','05','06') then '50' 
+												 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('07','08','09') then '60' 
+												 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('10','11','12') then '70' 
+											 end as SHEETTYPE, {#报表类型}
+											case when cf.ReportScope='020' then '1' when cf.ReportScope ='010' then '2' end	 as SHEETTYPEDIVIDE, {#报表类型细分} 		      
+											CI.CustomerName	as ENTNAME, {#企业名称}                
+											case when length(trim(EI.LoancardNo))=16 then EI.LoancardNo 
+									             when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then EI.Corpid
+									             when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then EI.Corpid end as ENTCERTNUM, {#企业身份标识类型} 
+											case when length(trim(EI.LoancardNo))=16 then '10' 
+									    		 when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then '20'
+									     		 when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then '30' end as ENTCERTTYPE, {#企业身份标识号码}          
+											CF.AuditOffice as AUDITFIRMNAME, {#审计事务所名称}
+											'' as AUDITORNAME, {#审计人名称}			        
+											'' as AUDITTIME, {#审计时间}			        
+											EI.INPUTORGID as MANAGERORGID,{#管户机构编号}
+											EI.INPUTUSERID as MANAGERUSERID,{#管户用户编号}
+											cf.OrgID as OPERORGID,{#操作机构编号}
+											cf.UserID as OPERUSERID,{#操作用户编号}
+											replace(cf.UpdateDate,'/','-') as UPDATEDATE,{#更新日期}   
+										    replace(cf.InputDate,'/','-') as OCCURDATE,{#数据日期}
+										   'U' as INFRECTYPE
+										 from Customer_FSRecord cf , Customer_info_temp ci ,ent_info ei
+										 where cf.customerid =ci.customerid 
+										 and ei.customerid =ci.customerid 
+										 and ei.FinanceBelong in ('001' ,'007','002')
+										 and length(EI.LoanCardNo) >= 16
+										 and cf.ReportScope in ('020','010')
+										 and cf.ReportPeriod in ('020','030','040')
+									)
+								group by CUSTOMERID,SHEETYEAR ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+					"/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+				 				{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!--下面的属性确定更新数据库的条件，含义如属性名字所表达的  -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_FINANCEBS" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CUSTOMERID,SHEETYEAR,SHEETTYPE,SHEETTYPEDIVIDE,INFRECTYPE" />
+				<!--commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!--Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为*-->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_FINANCEBS' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+		</executeUnit> 
+
+		<executeUnit name="ImportECRFinanceBs02" describe="加载企业2002版资产负债表信息14:02:37-14:15:54" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_FINANCEBS02:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.app.als.credit.FinanceBs02ReportProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.app.als.credit.FinanceBs02ReportProvider.dataSource" 
+					value="datasource:db:ecr:select CUSTOMERID,SHEETYEAR,max(EXTEND1) as EXTEND1 ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+					                     from ( 
+												select distinct CF.CustomerID	as CUSTOMERID, {#客户号} 			              
+												substr(CF.ReportDate,1,4) as SHEETYEAR, {#报表年份}
+												CF.ReportDate as EXTEND1 ,{#信贷报表年月}
+												case when CF.ReportPeriod='040' then '10' when  CF.ReportPeriod='030'  and  substr(CF.ReportDate,6,2) in ('01','02','03','04','05','06') then '20' 
+													 when CF.ReportPeriod='030' and substr(CF.ReportDate,6,2) in ('07','08','09','10','11','12') then '30' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('01','02','03') then '40' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('04','05','06') then '50' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('07','08','09') then '60' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('10','11','12') then '70' 
+												 end as SHEETTYPE, {#报表类型 }
+												 case when cf.ReportScope='020' then '1' when cf.ReportScope ='010' then '2' end	 as SHEETTYPEDIVIDE, {#报表类型细分} 		      
+												 CI.CustomerName	as ENTNAME, {#企业名称}                
+												 case when length(trim(EI.LoancardNo))=16 then EI.LoancardNo 
+											         when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then EI.Corpid
+											         when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then EI.Corpid end as ENTCERTNUM, {#企业身份标识类型} 
+												 case when length(trim(EI.LoancardNo))=16 then '10' 
+										    		 when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then '20'
+										     		 when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then '30' end	 as ENTCERTTYPE, {#企业身份标识号码}          
+												 CF.AuditOffice	as AUDITFIRMNAME, {#审计事务所名称}		      
+												 '' as AUDITORNAME, {#审计人名称}			        
+												 '' as AUDITTIME, {#审计时间}			        
+												 EI.INPUTORGID as MANAGERORGID,{#管户机构编号}
+												 EI.INPUTUSERID as MANAGERUSERID,{#管户用户编号}
+												 replace(cf.UpdateDate,'/','-') as UPDATEDATE,{#更新日期}   
+												 '{$ARE.bizDate}' as OCCURDATE,{#数据日期}
+												 'U' as INFRECTYPE
+											 from Customer_FSRecord cf , CUSTOMER_INFO_TEMP ci ,ent_info ei
+											 where cf.customerid =ci.customerid 
+											 and ei.customerid =ci.customerid 
+											 and ei.FinanceBelong='001'{#通用财务报表}
+											 and length(EI.LoanCardNo) >= 16
+											 and cf.ReportScope in ('020','010')
+											 and cf.ReportPeriod in ('020','030','040') {#020季报030半年报040年报 }
+											)
+								group by CUSTOMERID,SHEETYEAR ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+					"/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" 
+						 value="{SHEETTYPEDIVIDE,datasource:db:ecr:select CBCODE,PBCODE from ECR_CODE_LIBRARY where ColName='SheetTypeDivide'}{#报表类型细分}
+								{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				 "/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!--下面的属性确定更新数据库的条件，含义如属性名字所表达的  -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_FINANCEBS02" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CUSTOMERID,SHEETYEAR,SHEETTYPE,SHEETTYPEDIVIDE" />
+				<!--commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!--Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为*-->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_FINANCEBS02' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+		</executeUnit> 
+
+		<executeUnit name="ImportECRFinancePs02" describe="加载企业2002版利润及利润分配信息14:32:46-14:41:53" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_FINANCEPS02:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.app.als.credit.FinancePs02ReportProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.app.als.credit.FinancePs02ReportProvider.dataSource" 
+					value="datasource:db:ecr:select CUSTOMERID,SHEETYEAR,max(EXTEND1) as EXTEND1 ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+					                     from ( 
+												select distinct CF.CustomerID	as CUSTOMERID, {#客户号} 			              
+												substr(CF.ReportDate,1,4) as SHEETYEAR, {#报表年份}
+												CF.ReportDate as EXTEND1 ,{#信贷报表年月}
+												case when CF.ReportPeriod='040' then '10' when  CF.ReportPeriod='030'  and  substr(CF.ReportDate,6,2) in ('01','02','03','04','05','06') then '20' 
+													 when CF.ReportPeriod='030' and substr(CF.ReportDate,6,2) in ('07','08','09','10','11','12') then '30' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('01','02','03') then '40' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('04','05','06') then '50' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('07','08','09') then '60' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('10','11','12') then '70' 
+												 end  as SHEETTYPE, {#报表类型 }
+												case when cf.ReportScope='020' then '1' when cf.ReportScope ='010' then '2' end		as SHEETTYPEDIVIDE, {#报表类型细分} 		      
+												CI.CustomerName	as ENTNAME, {#企业名称}                
+												case when length(trim(EI.LoancardNo))=16 then EI.LoancardNo 
+										          when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then EI.Corpid
+										          when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then EI.Corpid end	as ENTCERTNUM, {#企业身份标识类型} 
+												case when length(trim(EI.LoancardNo))=16 then '10' 
+										    		 when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then '20'
+										     		 when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then '30' end	 as ENTCERTTYPE, {#企业身份标识号码}          
+												CF.AuditOffice	as AUDITFIRMNAME, {#审计事务所名称}		      
+												'' as AUDITORNAME, {#审计人名称}			        
+												'' as AUDITTIME, {#审计时间}
+												EI.INPUTORGID as MANAGERORGID,{#管户机构编号}
+												EI.INPUTUSERID as MANAGERUSERID,{#管户用户编号}
+												cf.OrgID as OPERORGID,{#操作机构编号}
+												cf.UserID as OPERUSERID,{#操作用户编号}
+												replace(cf.UpdateDate,'/','-') as UPDATEDATE,{#更新日期}   
+												replace(cf.InputDate,'/','-') as OCCURDATE,{#数据日期}
+												'U' as INFRECTYPE
+											 from Customer_FSRecord cf , CUSTOMER_INFO_TEMP ci ,ent_info ei
+											 where cf.customerid =ci.customerid 
+											 and ei.customerid =ci.customerid 
+											 and ei.FinanceBelong='001'{#通用财务报表}
+											 and length(EI.LoanCardNo) >= 16
+											 and cf.ReportScope in ('020','010')
+											 and cf.ReportPeriod in ('020','030','040') {#020季报030半年报040年报}
+										)
+								group by CUSTOMERID,SHEETYEAR ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+					"/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+				 		{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!--下面的属性确定更新数据库的条件，含义如属性名字所表达的  -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_FINANCEPS02" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CUSTOMERID,SHEETYEAR,SHEETTYPE,SHEETTYPEDIVIDE" />
+				<!--commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!--Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为*-->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_FINANCEPS02' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+		</executeUnit>
+
+		<executeUnit name="ImportECRFinanceCf02" describe="加载企业2002版现金流量信息11:14:53-11:17:50" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_FINANCECF02:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.app.als.credit.FinanceCf02ReportProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.app.als.credit.FinanceCf02ReportProvider.dataSource" 
+					value="datasource:db:ecr:select CUSTOMERID,SHEETYEAR,max(EXTEND1) as EXTEND1 ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+					                     from ( 
+												select distinct CF.CustomerID	as CUSTOMERID, {#客户号} 			              
+												substr(CF.ReportDate,1,4) as SHEETYEAR, {#报表年份}
+												CF.ReportDate as EXTEND1 ,{#信贷报表年月}		          
+												case when CF.ReportPeriod='040' then '10' when  CF.ReportPeriod='030'  and  substr(CF.ReportDate,6,2) in ('01','02','03','04','05','06') then '20' 
+													 when CF.ReportPeriod='030' and substr(CF.ReportDate,6,2) in ('07','08','09','10','11','12') then '30' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('01','02','03') then '40' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('04','05','06') then '50' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('07','08','09') then '60' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('10','11','12') then '70' 
+												 end as SHEETTYPE, {#报表类型   }
+												case when cf.ReportScope='020' then '1' when cf.ReportScope ='010' then '2' end		as SHEETTYPEDIVIDE, {#报表类型细分} 		      
+												CI.CustomerName	as ENTNAME, {#企业名称}                
+												case when length(trim(EI.LoancardNo))=16 then EI.LoancardNo 
+										          when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then EI.Corpid
+										          when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then EI.Corpid end	as ENTCERTNUM, {#企业身份标识类型} 
+												case when length(trim(EI.LoancardNo))=16 then '10' 
+										    		 when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then '20'
+										     		 when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then '30' end	 as ENTCERTTYPE, {#企业身份标识号码}          
+												CF.AuditOffice	as AUDITFIRMNAME, {#审计事务所名称}		      
+												'' as AUDITORNAME, {#审计人名称}			        
+												'' as AUDITTIME, {#审计时间}
+												EI.INPUTORGID as MANAGERORGID,{#管户机构编号}
+												EI.INPUTUSERID as MANAGERUSERID,{#管户用户编号}
+												cf.OrgID	as OPERORGID,{#操作机构编号}
+												cf.UserID	as OPERUSERID,{#操作用户编号}
+												replace(cf.UpdateDate,'/','-') as UPDATEDATE,{#更新日期}   
+												replace(cf.InputDate,'/','-') as OCCURDATE,{#数据日期}
+												'U' as INFRECTYPE
+											 from Customer_FSRecord cf , Customer_info ci ,ent_info ei
+											 where cf.customerid =ci.customerid 
+											 and ei.customerid =ci.customerid 
+											 and ei.FinanceBelong='001'{#通用财务报表}
+											 and length(EI.LoanCardNo) >= 16
+											 and cf.ReportScope in ('020','010')
+											 and cf.ReportPeriod in ('020','030','040')
+										)
+								group by CUSTOMERID,SHEETYEAR ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+					
+					"/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+				 		{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!--下面的属性确定更新数据库的条件，含义如属性名字所表达的  -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_FINANCECF02" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CUSTOMERID,SHEETYEAR,SHEETTYPE,SHEETTYPEDIVIDE" />
+				<!--commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!--Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为*-->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_FINANCECF02' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+		</executeUnit>
+
+		<executeUnit name="ImportECRFinanceBs07" describe="加载企业2007版资产负债信息15:06:14-15:06:23" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_FINANCEBS07:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.app.als.credit.FinanceBs07ReportProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.app.als.credit.FinanceBs07ReportProvider.dataSource" 
+					value="datasource:db:ecr:select CUSTOMERID,SHEETYEAR,max(EXTEND1) as EXTEND1 ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+					                     from ( 
+												select distinct CF.CustomerID	as CUSTOMERID, {#客户号} 			              
+												substr(CF.ReportDate,1,4) as SHEETYEAR, {#报表年份}
+												CF.ReportDate as EXTEND1 ,{#信贷报表年月}		          
+												case when CF.ReportPeriod='040' then '10' when  CF.ReportPeriod='030'  and  substr(CF.ReportDate,6,2) in ('01','02','03','04','05','06') then '20' 
+													 when CF.ReportPeriod='030' and substr(CF.ReportDate,6,2) in ('07','08','09','10','11','12') then '30' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('01','02','03') then '40' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('04','05','06') then '50' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('07','08','09') then '60' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('10','11','12') then '70' 
+												 end as SHEETTYPE, {#报表类型 CF.ReportPeriod  }
+												case when cf.ReportScope='020' then '1' when cf.ReportScope ='010' then '2' end		as SHEETTYPEDIVIDE, {#报表类型细分} 		      
+												CI.CustomerName	as ENTNAME, {#企业名称}                
+												case when length(trim(EI.LoancardNo))=16 then EI.LoancardNo 
+										          when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then EI.Corpid
+										          when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then EI.Corpid end	as ENTCERTNUM, {#企业身份标识类型} 
+												case when length(trim(EI.LoancardNo))=16 then '10' 
+										    		 when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then '20'
+										     		 when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then '30' end	 as ENTCERTTYPE, {#企业身份标识号码}          
+												CF.AuditOffice	as AUDITFIRMNAME, {#审计事务所名称}		      
+												'' as AUDITORNAME, {#审计人名称}			        
+												'' as AUDITTIME, {#审计时间}
+												EI.INPUTORGID as MANAGERORGID,{#管户机构编号}
+												EI.INPUTUSERID as MANAGERUSERID,{#管户用户编号}
+												cf.OrgID	as OPERORGID,{#操作机构编号}
+												cf.UserID	as OPERUSERID,{#操作用户编号}
+												replace(cf.UpdateDate,'/','-') as UPDATEDATE,{#更新日期}
+												replace(cf.InputDate,'/','-') as OCCURDATE,{#数据日期}
+												'U' as INFRECTYPE
+											 from Customer_FSRecord cf , Customer_info ci ,ent_info ei
+											 where cf.customerid =ci.customerid 
+											 and ei.customerid =ci.customerid 
+											 and ei.FinanceBelong='007'
+											 and length(EI.LoanCardNo) >= 16
+											 and cf.ReportScope in ('020','010')
+											 and cf.ReportPeriod in ('020','030','040')
+										 )
+								group by CUSTOMERID,SHEETYEAR ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+					
+					"/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+				 		{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!--下面的属性确定更新数据库的条件，含义如属性名字所表达的  -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_FINANCEBS07" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CUSTOMERID,SHEETYEAR,SHEETTYPE,SHEETTYPEDIVIDE" />
+				<!--commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!--Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为*-->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_FINANCEBS07' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+		</executeUnit>
+
+		<executeUnit name="ImportECRFinancePs07" describe="加载企业2007版利润及利润信息14:29:23-14:29:26" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_FINANCEPS07:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.app.als.credit.FinancePs07ReportProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.app.als.credit.FinancePs07ReportProvider.dataSource" 
+					value="datasource:db:ecr:select CUSTOMERID,SHEETYEAR,max(EXTEND1) as EXTEND1 ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+					                     from ( 
+												select distinct CF.CustomerID	as CUSTOMERID, {#客户号} 			              
+												substr(CF.ReportDate,1,4) as SHEETYEAR, {#报表年份}
+												CF.ReportDate as EXTEND1 ,{#信贷报表年月}	          
+												case when CF.ReportPeriod='040' then '10' when  CF.ReportPeriod='030'  and  substr(CF.ReportDate,6,2) in ('01','02','03','04','05','06') then '20' 
+													 when CF.ReportPeriod='030' and substr(CF.ReportDate,6,2) in ('07','08','09','10','11','12') then '30' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('01','02','03') then '40' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('04','05','06') then '50' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('07','08','09') then '60' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('10','11','12') then '70' 
+												 end as SHEETTYPE, {#报表类型}
+												case when cf.ReportScope='020' then '1' when cf.ReportScope ='010' then '2' end		as SHEETTYPEDIVIDE, {#报表类型细分} 		      
+												CI.CustomerName	as ENTNAME, {#企业名称}                
+												case when length(trim(EI.LoancardNo))=16 then EI.LoancardNo 
+										          when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then EI.Corpid
+										          when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then EI.Corpid end	as ENTCERTNUM, {#企业身份标识类型} 
+												case when length(trim(EI.LoancardNo))=16 then '10' 
+										    		 when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then '20'
+										     		 when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then '30' end	 as ENTCERTTYPE, {#企业身份标识号码}          
+												CF.AuditOffice	as AUDITFIRMNAME, {#审计事务所名称}		      
+												'' as AUDITORNAME, {#审计人名称}			        
+												'' as AUDITTIME, {#审计时间}
+												EI.INPUTORGID as MANAGERORGID,{#管户机构编号}
+												EI.INPUTUSERID as MANAGERUSERID,{#管户用户编号}
+												cf.OrgID	as OPERORGID,{#操作机构编号}
+												cf.UserID	as OPERUSERID,{#操作用户编号}
+												replace(cf.UpdateDate,'/','-') as UPDATEDATE,{#更新日期}   
+												replace(cf.InputDate,'/','-') as OCCURDATE,{#数据日期}
+												'U' as INFRECTYPE
+											 from Customer_FSRecord cf , Customer_info ci ,ent_info ei
+											 where cf.customerid =ci.customerid 
+											 and ei.customerid =ci.customerid 
+											 and ei.FinanceBelong='007'
+											 and length(EI.LoanCardNo) >= 16
+											 and cf.ReportScope in ('020','010')
+											 and cf.ReportPeriod in ('020','030','040')
+										 )
+								group by CUSTOMERID,SHEETYEAR ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+										 
+										 "/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+				 		{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!--下面的属性确定更新数据库的条件，含义如属性名字所表达的  -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_FINANCEPS07" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CUSTOMERID,SHEETYEAR,SHEETTYPE,SHEETTYPEDIVIDE" />
+				<!--commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!--Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为*-->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_FINANCEPS07' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+		</executeUnit>
+
+		<executeUnit name="ImportECRFinanceCf07" describe="加载企业2007版现金流量信息15:57:37-15:57:49" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_FINANCECF07:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.app.als.credit.FinanceCf07ReportProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.app.als.credit.FinanceCf07ReportProvider.dataSource" 
+					value="datasource:db:ecr:select CUSTOMERID,SHEETYEAR,max(EXTEND1) as EXTEND1 ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+					                     from ( 
+												select distinct CF.CustomerID	as CUSTOMERID, {#客户号} 			              
+												substr(CF.ReportDate,1,4) as SHEETYEAR, {#报表年份}
+												CF.ReportDate as EXTEND1 ,{#信贷报表年月}		          
+												case when CF.ReportPeriod='040' then '10' when  CF.ReportPeriod='030'  and  substr(CF.ReportDate,6,2) in ('01','02','03','04','05','06') then '20' 
+													 when CF.ReportPeriod='030' and substr(CF.ReportDate,6,2) in ('07','08','09','10','11','12') then '30' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('01','02','03') then '40' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('04','05','06') then '50' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('07','08','09') then '60' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('10','11','12') then '70' 
+												 end as SHEETTYPE, {#报表类型  }
+												case when cf.ReportScope='020' then '1' when cf.ReportScope ='010' then '2' end		as SHEETTYPEDIVIDE, {#报表类型细分} 		      
+												CI.CustomerName	as ENTNAME, {#企业名称}                
+												case when length(trim(EI.LoancardNo))=16 then EI.LoancardNo 
+										          when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then EI.Corpid
+										          when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then EI.Corpid end	as ENTCERTNUM, {#企业身份标识类型} 
+												case when length(trim(EI.LoancardNo))=16 then '10' 
+										    		 when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then '20'
+										     		 when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then '30' end	 as ENTCERTTYPE, {#企业身份标识号码}          
+												CF.AuditOffice	as AUDITFIRMNAME, {#审计事务所名称}		      
+												'' as AUDITORNAME, {#审计人名称}			        
+												'' as AUDITTIME, {#审计时间}
+												EI.INPUTORGID as MANAGERORGID,{#管户机构编号}
+												EI.INPUTUSERID as MANAGERUSERID,{#管户用户编号}
+												cf.OrgID	as OPERORGID,{#操作机构编号}
+												cf.UserID	as OPERUSERID,{#操作用户编号}
+												replace(cf.UpdateDate,'/','-') as UPDATEDATE,{#更新日期}   
+												replace(cf.InputDate,'/','-') as OCCURDATE,{#数据日期}
+												'U' as INFRECTYPE
+											 from Customer_FSRecord cf , Customer_info ci ,ent_info ei
+											 where cf.customerid =ci.customerid 
+											 and ei.customerid =ci.customerid 
+											 and ei.FinanceBelong='007'
+											 and length(EI.LoanCardNo) >= 16
+											 and cf.ReportScope in ('020','010')
+											 and cf.ReportPeriod in ('020','030','040')
+										)
+								group by CUSTOMERID,SHEETYEAR ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+										 "/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+				 		{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!--下面的属性确定更新数据库的条件，含义如属性名字所表达的  -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_FINANCECF07" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CUSTOMERID,SHEETYEAR,SHEETTYPE,SHEETTYPEDIVIDE" />
+				<!--commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!--Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为*-->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" /> 
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_FINANCECF07' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> -->
+			</extendProperties>
+		</executeUnit>
+
+		<executeUnit name="ImportECRFinanceBsIn" describe="加载事业单位资产负债信息14:31:18-14:31:25" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_FINANCEBSIN:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.app.als.credit.FinanceBsInReportProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.app.als.credit.FinanceBsInReportProvider.dataSource" 
+					value="datasource:db:ecr:select CUSTOMERID,SHEETYEAR,max(EXTEND1) as EXTEND1 ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+					                     from ( 
+												select distinct CF.CustomerID	as CUSTOMERID, {#客户号} 			              
+												substr(CF.ReportDate,1,4) as SHEETYEAR, {#报表年份}
+												CF.ReportDate as EXTEND1 ,{#信贷报表年月}		          
+												case when CF.ReportPeriod='040' then '10' when  CF.ReportPeriod='030'  and  substr(CF.ReportDate,6,2) in ('01','02','03','04','05','06') then '20' 
+													 when CF.ReportPeriod='030' and substr(CF.ReportDate,6,2) in ('07','08','09','10','11','12') then '30' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('01','02','03') then '40' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('04','05','06') then '50' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('07','08','09') then '60' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('10','11','12') then '70' 
+												 end as SHEETTYPE, {#报表类型   }
+												case when cf.ReportScope='020' then '1' when cf.ReportScope ='010' then '2' end		as SHEETTYPEDIVIDE, {#报表类型细分} 		      
+												CI.CustomerName	as ENTNAME, {#企业名称}                
+												case when length(trim(EI.LoancardNo))=16 then EI.LoancardNo 
+										          when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then EI.Corpid
+										          when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then EI.Corpid end	as ENTCERTNUM, {#企业身份标识类型} 
+												case when length(trim(EI.LoancardNo))=16 then '10' 
+										    		 when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then '20'
+										     		 when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then '30' end	 as ENTCERTTYPE, {#企业身份标识号码}          
+												CF.AuditOffice	as AUDITFIRMNAME, {#审计事务所名称}		      
+												'' as AUDITORNAME, {#审计人名称}			        
+												'' as AUDITTIME, {#审计时间}
+												EI.INPUTORGID as MANAGERORGID,{#管户机构编号}
+												EI.INPUTUSERID as MANAGERUSERID,{#管户用户编号}
+												cf.OrgID	as OPERORGID,{#操作机构编号}
+												cf.UserID	as OPERUSERID,{#操作用户编号}
+												replace(cf.UpdateDate,'/','-') as UPDATEDATE,{#更新日期}   
+												replace(cf.InputDate,'/','-') as OCCURDATE,{#数据日期}
+												'U' as INFRECTYPE
+											 from Customer_FSRecord cf , Customer_info ci ,ent_info ei
+											 where cf.customerid =ci.customerid 
+											 and ei.customerid =ci.customerid 
+											 and ei.FinanceBelong='002'
+											 and length(EI.LoanCardNo) >= 16
+											 and cf.ReportScope in ('020','010')
+											  and cf.ReportPeriod in ('020','030','040')
+										)
+								group by CUSTOMERID,SHEETYEAR ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+					"/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+				 		{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!--下面的属性确定更新数据库的条件，含义如属性名字所表达的  -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_FINANCEBSIN" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CUSTOMERID,SHEETYEAR,SHEETTYPE,SHEETTYPEDIVIDE" />
+				<!--commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!--Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为*-->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_FINANCEBSIN' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> --> 
+			</extendProperties>
+		</executeUnit>
+
+		<executeUnit name="ImportECRFinanceCfIn" describe="加载事业单位收入支出信息14:32:11-14:32:11" executeClass="com.amarsoft.task.units.dpx.PRHUnit" >
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_INT_FINANCECFIN:etc/ecr_are.xml:"/>
+				<property name="unit.provider" value="com.amarsoft.app.als.credit.FinanceCfInReportProvider" />
+				<property name="unit.handlers" value="com.amarsoft.are.dpx.recordset.UpdateDBHandler"/>
+				<!-- 构成处理过程的数据源 -->
+				<property name="com.amarsoft.app.als.credit.FinanceCfInReportProvider.dataSource" 
+					value="datasource:db:ecr:select CUSTOMERID,SHEETYEAR,max(EXTEND1) as EXTEND1 ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+					                     from ( 
+												select distinct CF.CustomerID	as CUSTOMERID, {#客户号} 			              
+												substr(CF.ReportDate,1,4) as SHEETYEAR, {#报表年份}
+												CF.ReportDate as EXTEND1 ,{#信贷报表年月}		          
+												case when CF.ReportPeriod='040' then '10' when  CF.ReportPeriod='030'  and  substr(CF.ReportDate,6,2) in ('01','02','03','04','05','06') then '20' 
+													 when CF.ReportPeriod='030' and substr(CF.ReportDate,6,2) in ('07','08','09','10','11','12') then '30' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('01','02','03') then '40' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('04','05','06') then '50' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('07','08','09') then '60' 
+													 when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('10','11','12') then '70' 
+												 end  as SHEETTYPE, {#报表类型}
+												case when cf.ReportScope='020' then '1' when cf.ReportScope ='010' then '2' end	as SHEETTYPEDIVIDE, {#报表类型细分} 		      
+												CI.CustomerName	as ENTNAME, {#企业名称}                
+												case when length(trim(EI.LoancardNo))=16 then EI.LoancardNo 
+										          when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then EI.Corpid
+										          when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then EI.Corpid end as ENTCERTNUM, {#企业身份标识类型} 
+												case when length(trim(EI.LoancardNo))=16 then '10' 
+										    		 when length(trim(EI.Corpid))=18 and EI.Corpid not like '%-%' then '20'
+										     		 when length(trim(EI.Corpid))=10 and EI.Corpid like '%-%' then '30' end	 as ENTCERTTYPE, {#企业身份标识号码}          
+												CF.AuditOffice	as AUDITFIRMNAME, {#审计事务所名称}		      
+												'' as AUDITORNAME, {#审计人名称}			        
+												'' as AUDITTIME, {#审计时间}
+												EI.INPUTORGID as MANAGERORGID,{#管户机构编号}
+												EI.INPUTUSERID as MANAGERUSERID,{#管户用户编号}
+												cf.OrgID	as OPERORGID,{#操作机构编号}
+												cf.UserID	as OPERUSERID,{#操作用户编号}
+												replace(cf.UpdateDate,'/','-') as UPDATEDATE,{#更新日期}   
+												replace(cf.InputDate,'/','-') as OCCURDATE,{#数据日期}
+												'U' as INFRECTYPE
+											 from Customer_FSRecord cf , Customer_info ci ,ent_info ei
+											 where cf.customerid =ci.customerid 
+											 and ei.customerid =ci.customerid 
+											 and ei.FinanceBelong='002'
+											 and length(EI.LoanCardNo) >= 16
+											 and cf.ReportScope in ('020','010')
+											 and cf.ReportPeriod in ('020','030','040')
+										 )
+								group by CUSTOMERID,SHEETYEAR ,SHEETTYPE, SHEETTYPEDIVIDE ,ENTNAME,ENTCERTNUM,ENTCERTTYPE,AUDITFIRMNAME,MANAGERORGID,MANAGERUSERID,UPDATEDATE,OCCURDATE,INFRECTYPE
+										 "/>
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+				 		{MANAGERORGID,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}	
+				"/>
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<!--下面的属性确定更新数据库的条件，含义如属性名字所表达的  -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.database" value="ecr" /> 				
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.table" value="ECR_INT_FINANCECFIN" />
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.keyColumns" value="CUSTOMERID,SHEETYEAR,SHEETTYPE,SHEETTYPEDIVIDE" />
+				<!--commitNumber是指批量处理数据的时候多少条记录做一次batchUpdate。此值和事务无关，只是影响性能，缺省2000 -->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.commitNumber" value="2000" />
+				<!--Insert和update字段可以用*表示全部，或者逐个写出。如果没有设置，默认为*-->
+				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.insertColumns" value="*" />
+ 				<property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.updateColumns" value="*" />
+ 				<!-- <property name="com.amarsoft.are.dpx.recordset.UpdateDBHandler.endSql" value="update ECR_EXTERN_LIST set STATUS ='3' where FONTABLENAME = 'ECR_INT_FINANCECFIN' and STATUS ='2' and ISINUSE='1' and ETLDATE='{$ARE.bizDate}'"/> --> 
+			</extendProperties>
+		</executeUnit>  
+	</executeUnits>
+    <!-- 路由
+    	ImportBusinessDuebill  ImportBusinessContract   ImportContractRelative  ImportCustomerInfo  ImportGuarantyContract  ImportGuarantyInfo  
+		ImportLnsfmlas  ImportLnsfmamt  Importlnsfmlst  Importlnsfmlad   ImportCustomerRelative  ImportCisfmscbi  ImportCIFM51    ImportECREntInfo  ImportECREntInfoHX
+		ImportECRAcctInfo   ImportECRAcctCtrct  ImportECRPayPlan  ImportECRLcBackList   ImportECRRltrepymtInfo  ImportICRSpeciBusiZQList  ImportECRCreditInfo  ImportECRMotgaRlt
+		ImportECRMotgCtrct   ImportECRProptInfo   ImportECRCltaInfo  ImportECRFinanceBs
+		 -->
+		
+    <routeMap  start="ImportBusinessDuebill">
+    <!--   -->
+         <route unit="ImportBusinessDuebill"    successful="ImportBusinessContract"/>
+         <route unit="ImportBusinessContract"   successful="ImportContractRelative"/>
+         <route unit="ImportContractRelative"   successful="ImportCustomerInfo"/>
+         <route unit="ImportCustomerInfo"       successful="ImportGuarantyContract"/>            
+         <route unit="ImportGuarantyContract"   successful="ImportGuarantyInfo"/>
+         <route unit="ImportGuarantyInfo"       successful="ImportLnsfmlas"/>
+         <route unit="ImportLnsfmlas"           successful="ImportLnsfmamt"/>
+         <route unit="ImportLnsfmamt"           successful="Importlnsfmlst"/>   
+         <route unit="Importlnsfmlst"           successful="Importlnsfmlad"/>
+         <route unit="Importlnsfmlad"           successful="ImportCustomerRelative"/>
+         <route unit="ImportCustomerRelative"   successful="ImportCisfmscbi"/>
+         <route unit="ImportCisfmscbi"          successful="ImportCIFM51"/>            
+         <route unit="ImportCIFM51"          successful="ImportECREntInfo"/>
+         <route unit="ImportECREntInfo"         successful="ImportECREntInfoHX"/>   
+         <route unit="ImportECREntInfoHX"       successful="ImportECRAcctInfo"/>
+         <route unit="ImportECRAcctInfo"        successful="ImportECRAcctCtrct"/>
+         <route unit="ImportECRAcctCtrct"       successful="ImportECRPayPlan"/>
+         <route unit="ImportECRPayPlan"         successful="ImportECRLcBackList"/>            
+         <route unit="ImportECRLcBackList"      successful="ImportECRRltrepymtInfo"/>
+         <route unit="ImportECRRltrepymtInfo"   successful="ImportICRSpeciBusiZQList"/>
+         <route unit="ImportICRSpeciBusiZQList" successful="ImportECRCreditInfo"/>
+         <route unit="ImportECRCreditInfo"      successful="ImportECRMotgaRlt"/>   
+         <route unit="ImportECRMotgaRlt"        successful="ImportECRMotgCtrct"/>
+         <route unit="ImportECRMotgCtrct"       successful="ImportECRProptInfo"/>
+         <route unit="ImportECRProptInfo"       successful="ImportECRCltaInfo"/>
+         <route unit="ImportECRCltaInfo"        successful="ImportECRFinanceBs"/>            
+		 <route unit="ImportECRFinanceBs"       successful="ImportECRFinanceBs02"/>
+		 <route unit="ImportECRFinanceBs02"     successful="ImportECRFinancePs02"/>
+		 <route unit="ImportECRFinancePs02"     successful="ImportECRFinanceCf02"/>
+		 <route unit="ImportECRFinanceCf02"     successful="ImportECRFinanceBs07"/>
+		 <route unit="ImportECRFinanceBs07"     successful="ImportECRFinancePs07"/>  
+		 <route unit="ImportECRFinancePs07"     successful="ImportECRFinanceCf07"/> 
+		 <route unit="ImportECRFinanceCf07"     successful="ImportECRFinanceBsIn"/>
+		 <route unit="ImportECRFinanceBsIn"     successful="ImportECRFinanceCfIn"/> 
+		
+    </routeMap>	
+</task>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="GBK" ?>
+<inf>
+	<sgmt name="BsSgmt" describe="基础段" type="B" ctable="ECR_Cust_Bs" htable="HECR_Cust_Bs" key="CustomerID" >
+		<field name="InfRecType" describe="信息记录类型" type="text" source="fix" value="310" />
+		<field name="EntName" describe="企业名称" type="text" source="db" dbname="EntName" isKey="true" />
+		<field name="EntCertType" describe="企业身份标识类型" type="text" source="db" dbname="EntCertType" isKey="true" />
+		<field name="EntCertNum" describe="企业身份标识号码" type="text" source="db" dbname="EntCertNum" isKey="true" />
+		<field name="InfSurcCode" describe="信息来源编码" type="text" source="db" dbname="InfSurcCode" isKey="true" />
+		<field name="RptDate" describe="信息报告日期" type="text" source="db" dbname="RptDate" />
+		<field name="RptDateCode" describe="报告时点说明代码" type="text" source="db" dbname="RptDateCode" />
+		<field name="Cimoc" describe="客户资料维护机构代码" type="text" source="db" dbname="Cimoc" />
+		<field name="CustomerType" describe="客户资料类型" type="text" source="db" dbname="CustomerType" />
+		<field name="EtpSts" describe="存续状态" type="text" source="db" dbname="EtpSts" />
+		<field name="OrgType" describe="组织机构类型" type="text" source="db" dbname="OrgType" />
+	</sgmt>
+	<sgmt name="IDSgmt" describe="其他标识段" type="N" ctable="ECR_Cust_IDINF" htable="HECR_Cust_IDINF" key="CustomerID,OtherIDSerialNo" >
+		<field name="IDNm" describe="其他标识个数" type="num" source="count" />
+		<field name="IDRec" describe="其他标识信息" type="node" source="table" >
+			<field name="OthEntCertType" describe="企业身份标识类型" type="text" source="db" dbname="OthEntCertType" />
+			<field name="OthEntCertNum" describe="企业身份标识号码" type="text" source="db" dbname="OthEntCertNum" />
+		</field>
+		<field name="IDInfoUpDate" describe="信息更新日期" type="text" source="db" dbname="IDInfoUpDate" />
+	</sgmt>
+	<sgmt name="FcsInfSgmt" describe="基本概况段" type="S" ctable="ECR_Cust_FcsInf" htable="HECR_Cust_FcsInf" key="CustomerID">
+		<field name="Nationality" describe="国别代码" type="text" source="db" dbname="Nationality" />
+		<field name="RegAdd" describe="登记地址" type="text" source="db" dbname="RegAdd" />
+		<field name="AdmDivOfReg" describe="登记地行政区划代码" type="text" source="db" dbname="AdmDivOfReg" />
+		<field name="EstablishDate" describe="成立日期" type="text" source="db" dbname="EstablishDate" />
+		<field name="BizEndDate" describe="营业许可证到期日" type="text" source="db" dbname="BizEndDate" />
+		<field name="BizRange" describe="业务范围" type="text" source="db" dbname="BizRange" />
+		<field name="EcoIndusCate" describe="行业分类代码" type="text" source="db" dbname="EcoIndusCate" />
+		<field name="EcoType" describe="经济类型代码" type="text" source="db" dbname="EcoType" />
+		<field name="EntScale" describe="规模" type="text" source="db" dbname="EntScale" />
+		<field name="FcsInfoUpDate" describe="信息更新日期" type="text" source="db" dbname="FcsInfoUpDate" />
+	</sgmt>
+	<sgmt name="MnMmbInfSgmt" describe="主要组成人员段" type="N" ctable="ECR_Cust_MnMmbInf" htable="HECR_Cust_MnMmbInf" key="CustomerID,MmbSerialNo">
+		<field name="MmbNm" describe="组成人员个数" type="num" source="count" />
+		<field name="MmbInf" describe="组成人员信息" type="node" source="table" >
+			<field name="MmbAlias" describe="组成人员姓名" type="text" source="db" dbname="MmbAlias" />
+			<field name="MmbIDType" describe="组成人员证件类型" type="text" source="db" dbname="MmbIDType" />
+			<field name="MmbIDNum" describe="组成人员证件号码" type="text" source="db" dbname="MmbIDNum" />
+			<field name="MmbPstn" describe="组成人员职位" type="text" source="db" dbname="MmbPstn" />
+		</field>
+		<field name="MnMmbInfoUpDate" describe="信息更新日期" type="text" source="db" dbname="MnMmbInfoUpDate" />
+	</sgmt>
+	<sgmt name="MnShaHodInfSgmt_S" describe="注册资本及主要出资人段（注册资本部分）" type="S" ctable="ECR_Cust_MnShaInf" htable="HECR_Cust_MnShaInf" key="CustomerID">
+		<field name="RegCapCurrency" describe="注册资本币种" type="text" source="db" dbname="RegCapCurrency"  />
+		<field name="RegCap" describe="注册资本" type="numeric" source="db" dbname="RegCap"  />
+	</sgmt>
+	<sgmt name="MnShaHodInfSgmt_M" describe="注册资本及主要出资人段（主要出资人部分）" type="N" ctable="ECR_Cust_MnHodInf" htable="HECR_Cust_MnHodInf" key="CustomerID,MnSharHodSerialNo">
+		<field name="MnSharHodNm" describe="主要出资人个数" type="num" source="count" />
+		<field name="SharHodInf" describe="出资人信息" type="node" source="table" >
+			<field name="SharHodType" describe="出资人类型" type="text" source="db" dbname="SharHodType"  />
+			<field name="SharHodCertType" describe="出资人身份类别" type="text" source="db" dbname="SharHodCertType"  />
+			<field name="SharHodName" describe="出资人名称" type="text" source="db" dbname="SharHodName"  />
+			<field name="SharHodIDType" describe="出资人身份标识类型" type="text" source="db" dbname="SharHodIDType"/>
+			<field name="SharHodIDNum" describe="出资人身份标识号码" type="text" source="db" dbname="SharHodIDNum" />
+			<field name="InvRatio" describe="出资比例" type="isodouble" source="db" dbname="InvRatio"/>
+		</field>
+	</sgmt>
+	<sgmt name="MnShaHodInfSgmt_E" describe="注册资本及主要出资人段（注册资本部分）" type="S" ctable="ECR_Cust_MnShaInf" htable="HECR_Cust_MnShaInf" key="CustomerID">
+		<field name="MnShaHodInfoUpDate" describe="信息更新日期" type="isodate" source="db" dbname="MnShaHodInfoUpDate" />
+	</sgmt>
+	<sgmt name="ActuCotrlInfSgmt" describe="实际控制人段" type="N" ctable="ECR_Cust_ActuCotrlInf" htable="HECR_Cust_ActuCotrlInf" key="CustomerID,ActuCotrlSerialNo">
+		<field name="ActuCotrlNm" describe="实际控制人个数" type="num" source="count" />
+		<field name="ActuCotrlInf" describe="实际控制人信息" type="node" source="table" >
+			<field name="ActuCotrlCertType" describe="实际控制人身份类别" type="text" source="db" dbname="ActuCotrlCertType" />
+			<field name="ActuCotrlName" describe="实际控制人名称" type="text" source="db" dbname="ActuCotrlName" />
+			<field name="ActuCotrlIDType" describe="实际控制人身份标识类型" type="text" source="db" dbname="ActuCotrlIDType" />
+			<field name="ActuCotrlIDNum" describe="实际控制人身份标识号码" type="text" source="db" dbname="ActuCotrlIDNum" />
+		</field>
+		<field name="ActuCotrlInfoUpDate" describe="信息更新日期" type="text" source="db" dbname="ActuCotrlInfoUpDate" />
+	</sgmt>
+	<sgmt name="SpvsgAthrtyInfSgmt" describe="上级机构段" type="S" ctable="ECR_Cust_SpvsgAthrtyInf" htable="HECR_Cust_SpvsgAthrtyInf" key="CUSTOMERID,SUPORGTYPE">
+		<field name="SupOrgType" describe="上级机构类型" type="text" source="db" dbname="SupOrgType" />
+		<field name="SupOrgName" describe="上级机构名称" type="text" source="db" dbname="SupOrgName" />
+		<field name="SupOrgCertType" describe="上级机构身份标识类型" type="text" source="db" dbname="SupOrgCertType" />
+		<field name="SupOrgCertNum" describe="上级机构身份标识码" type="text" source="db" dbname="SupOrgCertNum" />
+		<field name="SupOrgInfoUpDate" describe="信息更新日期" type="text" source="db" dbname="SupOrgInfoUpDate" />
+	</sgmt>
+	<sgmt name="CotaInfSgmt" describe="联系方式段" type="S" ctable="ECR_Cust_CotaInf" htable="HECR_Cust_CotaInf" key="CustomerID">
+		<field name="ConAddDistrictCode" describe="联系地址行政区划代码" type="text" source="db" dbname="ConAddDistrictCode" />
+		<field name="ConAdd" describe="联系地址" type="text" source="db" dbname="ConAdd" constraint="P" />
+		<field name="ConPhone" describe="联系电话" type="text" source="db" dbname="ConPhone" constraint="P" />
+		<field name="FinConPhone" describe="财务部门联系电话" type="text" source="db" dbname="FinConPhone" constraint="P" />
+		<field name="CotaInfoUpDate" describe="信息更新日期" type="text" source="db" dbname="CotaInfoUpDate" />
+	</sgmt>
+</inf>

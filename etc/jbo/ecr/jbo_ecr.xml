@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jbo>
+  <package name="jbo.ecr" label="icr配置">
+		<class name="ECR_VALIDATE_LIBRARY" label="校验规则配置表" keyAttributes="INFRECTYPE,RULENO">
+			<attributes>
+				<attribute name="RULENO" label="规则编号" type="STRING" length="20"/>
+				<attribute name="INFRECTYPE" label="信息记录类型/报文类型" type="STRING" length="3"/>
+				<attribute name="RULESQL" label="规则语句" type="STRING" length="2000"/>
+				<attribute name="APPLICATIONCODE" label="应用类别" type="STRING" length="2"/>
+				<attribute name="STATUS" label="状态" type="STRING" length="2"/>
+				<attribute name="INPUTDATE" label="登记日期" type="STRING" length="10"/>
+				<attribute name="UPDATEDATE" label="更新日期" type="STRING" length="10"/>
+				<attribute name="EXTEND1" label="扩展字段1" type="STRING" length="30"/>
+				<attribute name="EXTEND2" label="扩展字段2" type="STRING" length="30"/>
+				<attribute name="EXTEND3" label="扩展字段3" type="STRING" length="30"/>
+			</attributes>
+			<manager>
+				<managerProperties>
+					<property name="table" value="ECR_VALIDATE_LIBRARY" />
+					<property name="createKey" value="true" />
+				</managerProperties>
+			</manager>
+		</class>
+		
+		<class name="ECR_VALIDATEERRORS" label="校验错误表" keyAttributes="ERRNO">
+			<attributes>
+				<attribute name="ERRNO" label="错误编号" type="STRING" length="128"/>
+				<attribute name="BUSIIDSERIALNO" label="业务标识号" type="STRING" length="200"/>
+				<attribute name="BSBUSIIDSERIALNO" label="基础段业务标识号" type="STRING" length="200"/>
+				<attribute name="SERIALNO" label="内部流水号" type="STRING" length="40"/>
+				<attribute name="INFRECTYPE" label="信息记录类型/报文类型" type="STRING" length="3"/>
+				<attribute name="VALIDATELEVEL" label="校验级别" type="STRING" length="1"/>
+				<attribute name="APPLICATIONCODE" label="应用类型" type="STRING" length="2"/>
+				<attribute name="ERRCODE" label="错误代码" type="STRING" length="40"/>
+				<attribute name="ERRMSG" label="错误信息" type="STRING" length="800"/>
+				<attribute name="ERRTABLE" label="错误表名" type="STRING" length="120"/>
+				<attribute name="ERRTABLENAME" label="错误表中文名" type="STRING" length="120"/>
+				<attribute name="ERRFIELD" label="错误字段" type="STRING" length="40"/>
+				<attribute name="ERRFIELDNAME" label="错误字段中文名" type="STRING" length="40"/>
+				<attribute name="ERRFIELDVALUE" label="错误字段值" type="STRING" length="100"/>
+				<attribute name="RULENO" label="规则编号" type="STRING" length="20"/>
+				<attribute name="OPERATOR" label="操作用户" type="STRING" length="20"/>
+				<attribute name="OPERORGID" label="操作机构" type="STRING" length="20"/>
+				<attribute name="OCCURDATE" label="数据日期" type="STRING" length="20"/>
+			</attributes>
+			<manager>
+				<managerProperties>
+					<property name="table" value="ECR_VALIDATEERRORS" />
+					<property name="createKey" value="true" />
+				</managerProperties>
+			</manager>
+		</class>
+	</package>
+</jbo>  

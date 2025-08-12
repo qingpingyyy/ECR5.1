@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="GBK" ?>
+<inf><!-- 新版规范中无该段节点 -->
+	<sgmt name="BsSgmt" describe="抵（质）押合同标识变更请求记录" type="B" table="HECR_IdCagsInfo" key="SessionID,InfRecType,OdBnesCode,NwBnesCode" >
+		<field name="InfRecType" describe="标识变更类型" type="text" source="fix" value="511" />
+		<field name="OdBnesCode" describe="原业务标识号" type="text" source="db" dbname="OdBnesCode" />
+		<field name="NwBnesCode" describe="新业务标识号" type="text" source="db" dbname="NwBnesCode" />
+	</sgmt>
+</inf>

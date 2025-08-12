@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="GBK" ?>
+<inf>
+	<sgmt name="EnCtrctInfEntDel" describe="企业授信协议整笔删除请求信息段" type="B" table="HECR_Busi_AllDel" key="InfRecType,DelRecCode,SessionID">
+		<field name="InfRecType" describe="信息记录类型" 	type="text" source="fix" value="424" />
+		<field name="DelRecCode" describe="待删除业务标识" 	type="text" source="db" dbname="DelRecCode" bsdbname="ContractCode" />
+	</sgmt>
+</inf>

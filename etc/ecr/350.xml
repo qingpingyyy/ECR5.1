@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="GBK" ?>
+<inf>
+	<sgmt name="IcdnRltpInfSgmt" describe="企业关联关系信息段" type="B" ctable="ECR_Cust_IcdnRltpInf" htable="HECR_Cust_IcdnRltpInf" key="CustomerID,AssoEntSerialNo,InfSurcCode" >
+		<field name="InfRecType" describe="信息记录类型" type="text" source="fix" value="350" />
+		<field name="EntName" describe="A企业名称" type="text" source="db" dbname="EntName" isKey="true" />
+		<field name="EntCertType" describe="A企业身份标识类型" type="text" source="db" dbname="EntCertType" isKey="true" />
+		<field name="EntCertNum" describe="A企业身份标识号码" type="text" source="db" dbname="EntCertNum" isKey="true" />
+		<field name="AssoEntName" describe="B企业名称" type="text" source="db" dbname="AssoEntName" isKey="true" />
+		<field name="AssoEntCertType" describe="B企业身份标识类型" type="text" source="db" dbname="AssoEntCertType" isKey="true" />
+		<field name="AssoEntCertNum" describe="B企业身份标识号码" type="text" source="db" dbname="AssoEntCertNum" isKey="true" />
+		<field name="AssoType" describe="关联关系类型" type="text" source="db" dbname="AssoType" />
+		<field name="AssoSign" describe="关联标志" type="text" source="db" dbname="AssoSign" />
+		<field name="RptDate" describe="信息报告日期" type="text" source="db" dbname="RptDate" />
+	</sgmt>
+</inf>

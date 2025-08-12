@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="GBK" ?>
+<validator>
+	<code>
+		<rule name="I0000201-1" sgmtName="CashFlowsBsSgmt" fieldName="EntCertType" level="3" type="DL"
+			  dataList="10;20;30;" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“企业身份标识类型”取值需要在代码表中。"/>
+		<rule name="I0000201-2" sgmtName="CashFlowsBsSgmt" fieldName="SheetType" level="3" type="DIC"
+			  dataList="SheetType" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报表类型”取值需要在代码表中。"/>
+		<rule name="I0000201-3" sgmtName="CashFlowsBsSgmt" fieldName="SheetTypeDivide" level="3" type="DIC"
+			  dataList="SheetTypeDivide" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报表类型细分”取值需要在代码表中。"/>
+		<rule name="I0000201-4" sgmtName="CashFlowsBsSgmt" fieldName="RptDateCode" level="3" type="DIC"
+			  dataList="RptDateCode610" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报告时点说明代码”取值需要在代码表中。"/>
+
+		<rule name="I6300C01" sgmtName="CashFlows2002Sgmt" fieldName="NetCashFlowsFromOperatingActivities" level="3"
+			  type="DE" compareWay="number"
+			  dataList="{$CashFlows2002Sgmt.TotalCashInflowsFromOperatingActivities}-{$CashFlows2002Sgmt.TotalCashOutflowsFromOperatingActivities}"
+			  errorCode="CRE100"
+			  errorMsg="在借款人2002版现金流量表信息中数据项“经营活动产生的现金流量净额＝经营活动现金流入小计－经营活动现金流出小计”。">
+		</rule>
+		<rule name="I6300C02" sgmtName="CashFlows2002Sgmt" fieldName="NetCashFlowsFromInvestingActivities" level="3"
+			  type="DE" compareWay="number"
+			  dataList="{$CashFlows2002Sgmt.TotalCashInflowsFromInvestingActivities}-{$CashFlows2002Sgmt.TotalCashOutflowsFromInvestingActivities}"
+			  errorCode="CRE101"
+			  errorMsg="在借款人2002版现金流量表信息中数据项“投资活动产生的现金流量净额＝投资活动现金流入小计－投资活动现金流出小计”。">
+		</rule>
+		<rule name="I6300C03" sgmtName="CashFlows2002Sgmt" fieldName="NetCashFlowsFromFinancingActivities" level="3"
+			  type="DE" compareWay="number"
+			  dataList="{$CashFlows2002Sgmt.TotalCashInflowsFromFinancingActivities}-{$CashFlows2002Sgmt.TotalCashOutflowsFromFinancingActivities}"
+			  errorCode="CRE102"
+			  errorMsg="在借款人2002版现金流量表信息中数据项“筹集活动产生的现金流量净额＝筹资活动现金流入小计－筹资活动现金流出小计”。">
+		</rule>
+		<rule name="I6300C04" sgmtName="CashFlows2002Sgmt" fieldName="NetIncreaseInCashAndCashEquivalents" level="3"
+			  type="DE" compareWay="number"
+			  dataList="{$CashFlows2002Sgmt.NetCashFlowsFromFinancingActivities}+{$CashFlows2002Sgmt.NetCashFlowsFromOperatingActivities}+{$CashFlows2002Sgmt.NetCashFlowsFromInvestingActivities}+{$CashFlows2002Sgmt.EffectOfExchangRateChangesOnCash}"
+			  errorCode="CRE103"
+			  errorMsg="在借款人2002版现金流量表信息中数据项“现金及现金等价物净增加额＝筹集活动产生的现金流量净额＋汇率变动对现金的影响＋经营活动产生的现金流量净额＋投资活动产生的现金流量净额”。">
+		</rule>
+		<rule name="I6300D01" sgmtName="CashFlows2007Sgmt" fieldName="NetCashFlowsFromOperatingActivities" level="3"
+			  type="DE" compareWay="number"
+			  dataList="{$CashFlows2007Sgmt.TotalCashInflowsFromOperatingActivities}-{$CashFlows2007Sgmt.TotalCashOutflowsFromOperatingActivities}"
+			  errorCode="CRE104"
+			  errorMsg="在2007版现金流量表信息中数据项“经营活动产生的现金流量净额=经营活动现金流入小计－经营活动现金流出小计”。">
+		</rule>
+		<rule name="I6300D02" sgmtName="CashFlows2007Sgmt" fieldName="NetCashFlowsFromInvestingActivities" level="3"
+			  type="DE" compareWay="number"
+			  dataList="{$CashFlows2007Sgmt.TotalCashInflowsFromInvestingActivities}-{$CashFlows2007Sgmt.SubTotalOfCashOutflows}"
+			  errorCode="CRE105"
+			  errorMsg="在2007版现金流量表信息中数据项“投资活动产生的现金流量净额＝投资活动现金流入小计－投资活动现金流出小计”。">
+		</rule>
+		<rule name="I6300D03" sgmtName="CashFlows2007Sgmt" fieldName="NetCashFlowsFromFinancingActivities" level="3"
+			  type="DE" compareWay="number"
+			  dataList="{$CashFlows2007Sgmt.TotalCashInflowsFromFinancingActivities}-{$CashFlows2007Sgmt.TotalCashOutflowsFromFinancingActivities}"
+			  errorCode="CRE106"
+			  errorMsg="在2007版现金流量表信息中数据项“筹资活动产生的现金流量净额＝筹资活动现金流入小计－筹资活动现金流出小计”。">
+		</rule>
+		<rule name="I6300D04" sgmtName="CashFlows2007Sgmt" fieldName="NetIncreaseInCashAndCashEquivalents" level="3"
+			  type="DE" compareWay="number"
+			  dataList="{$CashFlows2007Sgmt.NetCashFlowsFromOperatingActivities}+{$CashFlows2007Sgmt.NetCashFlowsFromInvestingActivities}+{$CashFlows2007Sgmt.NetCashFlowsFromFinancingActivities}+{$CashFlows2007Sgmt.EffectOfExchangRateChangesOnCash}"
+			  errorCode="CRE107"
+			  errorMsg="在2007版现金流量表信息中数据项“现金及现金等价物净增加额=经营活动产生的现金流量净额+投资活动产生的现金流量净额+筹资活动产生的现金流量净额+汇率变动对现金及现金等价物的影响”。">
+		</rule>
+		<rule name="I6300D05" sgmtName="CashFlows2007Sgmt" fieldName="TheFinalCashAndCashEquivalentsBalance" level="3"
+			  type="DE" compareWay="number"
+			  dataList="{$CashFlows2007Sgmt.NetIncreaseInCashAndCashEquivalents}+{$CashFlows2007Sgmt.InitialCashAndCashEquivalentsBalance}"
+			  errorCode="CRE108"
+			  errorMsg="在2007版现金流量表信息中数据项“期末现金及现金等价物余额=现金及现金等价物净增加额+期初现金及现金等价物余额”。">
+		</rule>
+	</code>
+</validator>

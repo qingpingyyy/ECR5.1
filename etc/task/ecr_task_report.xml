@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task name="ECRReportTask" describe="企业待上报数据报文生成" recovery="false"  saveHistory="false"  historyFolder="./his">
+	<executeUnits>
+		<taskContainer name="report" describe="生成报文" taskRef="pool"/>
+	
+		<executeUnit name ="FileToZip" describe ="压缩上报报文" executeClass = "com.amarsoft.app.pbc.ecr.report.FileToZip" allowManualExecute="true">  
+			<extendProperties>
+				<property name="unit.sourceFilePath" value="{$ARE.ECR_HOME}/export/{$ARE.fileDate}"/>
+				<property name="unit.zipFilePath" value="{$ARE.ECR_HOME}/export/reportzip"/>
+				<property name="unit.fileName" value="{$ARE.fileDate}"/>
+			</extendProperties>
+		</executeUnit>	
+	</executeUnits>
+	<routeMap start="report">
+		<!-- <route unit="report"  successful="FileToZip"/> -->
+	</routeMap>
+	<subTasks>
+		<subTask name="pool">
+			<listeners>
+				<listener listenerClass="com.amarsoft.app.pbc.ecr.report.PoolListener" enabled="true"/>
+			</listeners>
+			<pool taskThreadNumber="10" queueSize="20" startArgName="record">
+       			<producer className="com.amarsoft.app.pbc.ecr.report.ReportProducer">
+		           <extendProperties>
+		           		<!--是否多法人标志，1：否。2：是。默认单法人机构1。多法人时，Org_info.OrgClass = '020'请注意配置。-->
+						<property name="isFlag" value="1" />
+		           		<property name="fetchSize" type="INT" value="0" />
+		           		<property name="maxRows" type="INT" value="0" />
+		           </extendProperties>
+      			</producer>
+		    </pool>
+			<executeUnits>
+				<executeUnit name="ReportHandler" describe="待上报数据报文生成" executeClass="com.amarsoft.app.pbc.ecr.report.ReportProcessUnit">
+				</executeUnit>
+			</executeUnits>
+			<routeMap start="ReportHandler"/>
+		</subTask>
+	</subTasks>   
+</task>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="GB2312"?>
+
+<task name="ECRFeedbackEncTask" describe="企业反馈报文预处理"  recovery="false"  saveHistory="false"  historyFolder="./his">
+			<executeUnits>	
+				<executeUnit name ="feedbackencdoaction" describe ="反馈报文预处理" executeClass = "com.amarsoft.app.pbc.ecr.report.feedback.FeedbackEncTask" allowManualExecute="true">  
+					<extendProperties>
+						<property name="unit.osClass" value="Windows"/>
+					</extendProperties>
+				</executeUnit>	
+			</executeUnits>
+			<!-- 路由 -->
+			<routeMap start="feedbackencdoaction"  >  
+			</routeMap>
+</task>
+			
+			

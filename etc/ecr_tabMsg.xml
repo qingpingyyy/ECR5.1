@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="GBK" ?>
+<doc>
+ <ecr>
+  <tabs>
+   <tab tabname="ECR_Cust_Bs" bstabname="ECR_Cust_Bs" key="CustomerID" describe="企业基本信息-基础段信息表"></tab>
+   <tab tabname="ECR_Cust_FcsInf" bstabname="ECR_Cust_Bs" key="CustomerID" describe="企业基本信息-基本概况段信息表"></tab>
+   <tab tabname="ECR_Cust_IDInf" bstabname="ECR_Cust_Bs" key="CustomerID,OtherIDSerialNo" describe="企业基本信息-其他标识段信息表"></tab>
+   <tab tabname="ECR_Cust_MnMmbInf" bstabname="ECR_Cust_Bs" key="CustomerID,MmbSerialNo" describe="企业基本信息-主要组成人员段信息表"></tab>
+   <tab tabname="ECR_Cust_MnShaInf" bstabname="ECR_Cust_Bs" key="CustomerID" describe="企业基本信息-注册资本信息"></tab>
+   <tab tabname="ECR_Cust_MnHodInf" bstabname="ECR_Cust_Bs" key="CustomerID,MnSharHodSerialNo" describe="企业基本信息-主要出资人信息"></tab>
+   <tab tabname="ECR_Cust_ActuCotrlInf" bstabname="ECR_Cust_Bs" key="CustomerID,ActuCotrlSerialNo" describe="企业基本信息-实际控制人段信息表"></tab>
+   <tab tabname="ECR_Cust_SpvsgAthrtyInf" bstabname="ECR_Cust_Bs" key="CustomerID,SupOrgType" describe="企业基本信息-上级机构段信息表"></tab>
+   <tab tabname="ECR_Cust_CotaInf" bstabname="ECR_Cust_Bs" key="CustomerID" describe="企业基本信息-联系方式段信息表"></tab>
+   <tab tabname="ECR_Cust_IcdnRltpInf" bstabname="ECR_Cust_IcdnRltpInf" key="CustomerID,AssoEntSerialNo" describe="企业基本信息-企业关联关系信息表"></tab>
+   <tab tabname="ECR_Cust_CtfItgInf" bstabname="ECR_Cust_CtfItgInf" key="OthOrgSerialNo,CustomerID" describe="企业基本信息-证件整合信息表"></tab>
+   
+   <tab tabname="ECR_Acct_Bs" bstabname="ECR_Acct_Bs" key="AcctCode" describe="借贷交易信息-基础段信息表"></tab>
+   <tab tabname="ECR_Acct_BsInf" bstabname="ECR_Acct_Bs" key="AcctCode" describe="借贷交易信息-基本信息段信息表"></tab>
+   <tab tabname="ECR_Acct_RltRepymt" bstabname="ECR_Acct_Bs" key="AcctCode,RltRepymtSerialNo" describe="借贷交易信息-相关还款责任人段信息表"></tab>
+   <tab tabname="ECR_Acct_MotgaCtrct" bstabname="ECR_Acct_Bs" key="AcctCode" describe="借贷交易信息-抵质押品信息段信息表"></tab>
+   <tab tabname="ECR_Acct_Cred" bstabname="ECR_Acct_Bs" key="AcctCode" describe="借贷交易信息-授信额度信息段信息表"></tab>
+   <tab tabname="ECR_Acct_OrigCreditor" bstabname="ECR_Acct_Bs" key="AcctCode" describe="借贷交易信息-初始债权说明段信息表"></tab>
+   <tab tabname="ECR_Acct_ActLblty" bstabname="ECR_Acct_Bs" key="AcctCode" describe="借贷交易信息-还款表现信息段信息表"></tab>
+   <tab tabname="ECR_Acct_SpecTrstDspn" bstabname="ECR_Acct_Bs" key="AcctCode" describe="借贷交易信息-特殊交易说明段信息表"></tab>
+   <tab tabname="ECR_Credit_Bs" bstabname="ECR_Credit_Bs" key="ContractCode" describe="企业授信协议-基础段信息表"></tab>
+   <tab tabname="ECR_Credit_Lim" bstabname="ECR_Credit_Bs" key="ContractCode" describe="企业授信协议-额度信息段信息表"></tab>
+   <tab tabname="ECR_Credit_CertRel" bstabname="ECR_Credit_Bs" key="BrerSerialNo,ContractCode" describe="企业授信协议-共同受信人信息段信息表"></tab>
+   
+   <tab tabname="ECR_Guar_Bs" bstabname="ECR_Guar_Bs" key="AcctCode" describe="企业担保-基础段"></tab>
+   <tab tabname="ECR_Guar_BsInf" bstabname="ECR_Guar_Bs" key="AcctCode" describe="企业担保-账户基本信息段"></tab>
+   <tab tabname="ECR_Guar_RltRepymtInf" bstabname="ECR_Guar_Bs" key="AcctCode" describe="企业担保-在保责任信息段"></tab>
+   <tab tabname="ECR_Guar_RltRepymt" bstabname="ECR_Guar_Bs" key="AcctCode,RltRepymtSerialNo" describe="企业担保-相关还款责任人信息段"></tab>
+   <tab tabname="ECR_Guar_MotgaCtrct" bstabname="ECR_Guar_Bs" key="AcctCode,Ccc" describe="企业担保-抵质押品信息段"></tab>
+   <tab tabname="ECR_Guar_Cred" bstabname="ECR_Guar_Bs" key="AcctCode" describe="企业担保-授信额度信息段"></tab>
+   
+   <tab tabname="ECR_Motga_Bs" bstabname="ECR_Motga_Bs" key="CcCode" describe="抵质押物-基础段信息表"></tab>
+   <tab tabname="ECR_Motga_BsInf" bstabname="ECR_Motga_Bs" key="CcCode" describe="抵质押物-合同基本信息段信息表"></tab>
+   <tab tabname="ECR_Motga_ComRecInf" bstabname="ECR_Motga_Bs" key="CcCode,GrtdSerialNo" describe="抵质押物-共同债务人信息段信息表"></tab>
+   <tab tabname="ECR_Motga_ProptInf" bstabname="ECR_Motga_Bs" key="CcCode,PleCertId" describe="抵质押物-抵押物信息段信息表"></tab>
+   <tab tabname="ECR_Motga_CltalInf" bstabname="ECR_Motga_Bs" key="CcCode,ImpType" describe="抵质押物-质物信息段信息表"></tab> 
+   
+   <tab tabname="ECR_FINANCE_REPORT_Bs" bstabname="ECR_FINANCE_REPORT_Bs" key="CustomerID,SheetYear,SheetType,SheetTypeDivide,InfRecType" describe="财务报表基础段"></tab>
+   <tab tabname="ECR_FINANCEBS_2002" bstabname="ECR_FINANCE_REPORT_Bs" key="CustomerID,SheetYear,SheetType,SheetTypeDivide,InfRecType" describe="02资产负债表"></tab>
+   <tab tabname="ECR_FINANCEPS_2002" bstabname="ECR_FINANCE_REPORT_Bs" key="CustomerID,SheetYear,SheetType,SheetTypeDivide,InfRecType" describe="02利润及利润分配表"></tab>
+   <tab tabname="ECR_FINANCECF_2002" bstabname="ECR_FINANCE_REPORT_Bs" key="CustomerID,SheetYear,SheetType,SheetTypeDivide,InfRecType" describe="02现金流量表"></tab>
+   <tab tabname="ECR_FINANCEBS_2007" bstabname="ECR_FINANCE_REPORT_Bs" key="CustomerID,SheetYear,SheetType,SheetTypeDivide,InfRecType" describe="07资产负债表"></tab>
+   <tab tabname="ECR_FINANCEPS_2007" bstabname="ECR_FINANCE_REPORT_Bs" key="CustomerID,SheetYear,SheetType,SheetTypeDivide,InfRecType" describe="07利润及利润分配表"></tab>
+   <tab tabname="ECR_FINANCECF_2007" bstabname="ECR_FINANCE_REPORT_Bs" key="CustomerID,SheetYear,SheetType,SheetTypeDivide,InfRecType" describe="07现金流量表"></tab>
+   <tab tabname="ECR_FINANCEBS_IN" bstabname="ECR_FINANCE_REPORT_Bs" key="CustomerID,SheetYear,SheetType,SheetTypeDivide,InfRecType" describe="事业单位资产负债表"></tab>
+   <tab tabname="ECR_FINANCECF_IN" bstabname="ECR_FINANCE_REPORT_Bs" key="CustomerID,SheetYear,SheetType,SheetTypeDivide,InfRecType" describe="事业单位收入支出表"></tab>
+  </tabs>
+ </ecr>
+</doc>

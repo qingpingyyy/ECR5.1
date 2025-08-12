@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!-- 事业单位收入支出表信息记录 -->
+<inf>
+	<sgmt name="IncomeAndExpenseStatementBsSgmt" describe="基础段" type="B" ctable="ECR_FINANCE_REPORT_Bs" htable="HECR_FINANCE_REPORT_Bs" key="CUSTOMERID,SheetYear,SheetType,SheetTypeDivide,InfRecType">
+		<field name="InfRecType" describe="信息记录类型" type="text" source="db" dbname="InfRecType" />
+		<field name="EntName" describe="企业名称 " type="text" source="db" dbname="EntName" isKey="true" />
+		<field name="EntCertType" describe="企业身份标识类型 " type="text" source="db" dbname="EntCertType" isKey="true" />
+		<field name="EntCertNum" describe="企业身份标识号码 " type="text" source="db" dbname="EntCertNum" isKey="true" />
+		<field name="RptDate" describe="信息报告日期 " type="text" source="db" dbname="RptDate" isKey="true" />
+		<field name="SheetYear" describe="报表年份 " type="text" source="db" dbname="SheetYear" isKey="true" />
+		<field name="SheetType" describe="报表类型 " type="text" source="db" dbname="SheetType" isKey="true" />
+		<field name="SheetTypeDivide" describe="报表类型细分 " type="text" source="db" dbname="SheetTypeDivide" isKey="true" />
+		<field name="AuditFirmName" describe="审计事务所名称 " type="text" source="db" dbname="AuditFirmName" />
+		<field name="AuditorName" describe="审计人员名称 " type="text" source="db" dbname="AuditorName" />
+		<field name="AuditTime" describe="审计时间 " type="text" source="db" dbname="AuditTime" />
+		<field name="Cimoc" describe="客户资料维护机构代码 " type="text" source="db" dbname="Cimoc" />
+		<field name="RptDateCode" describe="报告时点说明代码 " type="text" source="db" dbname="RptDateCode" />
+	</sgmt>
+	<sgmt name="IncomeAndExpenseStatementSgmt" describe="事业单位收入支出表段" type="S" ctable="ECR_FINANCECF_IN" htable="HECR_FINANCECF_IN" key="CUSTOMERID,SheetYear,SheetType,SheetTypeDivide">
+		<field name="CurrentFinancialSubsidyCarriedOverBalance" describe="本期财政补助结转结余" type="isodouble" source="db" dbname="m9501" />
+		<field name="FinancialSubsidyRevenue" describe="财政补助收入 " type="isodouble" source="db" dbname="FinancialSubsidyRevenue" />
+		<field name="UndertakingsExpenditureFinancialSubsidyExpenditure" describe="事业支出（财政补助支出） " type="isodouble" source="db" dbname="m9345" />
+		<field name="CurrentUndertakingsCarriedOverBalance" describe="本期事业结转结余" type="isodouble" source="db" dbname="m9502" />
+		<field name="UndertakingsClassRevenue" describe="事业类收入 " type="isodouble" source="db" dbname="UndertakingsClassRevenue" />
+		<field name="UndertakingsRevenue" describe="事业收入 " type="isodouble" source="db" dbname="UndertakingsRevenue" />
+		<field name="SuperiorSubsidyRevenue" describe="上级补助收入 " type="isodouble" source="db" dbname="SuperiorSubsidyRevenue" />
+		<field name="RevenueTurnedOverBySubsidiaryUnit" describe="附属单位上缴收入 " type="isodouble" source="db" dbname="m9503" />
+		<field name="OtherRevenue" describe="其他收入 " type="isodouble" source="db" dbname="OtherRevenue" />
+		<field name="DonationIncome" describe="（其他收入科目下）捐赠收入" type="isodouble" source="db" dbname="DonationIncome" />
+		<field name="UndertakingsClassExpenditure" describe="事业类支出 " type="isodouble" source="db" dbname="UndertakingsClassExpenditure" />
+		<field name="UndertakingsExpenditureNonFinancialSubsidyExpenditure" describe="事业支出（非财政补助支出） " type="isodouble" source="db" dbname="m9505" />
+		<field name="PaymentToTheHigherAuthority" describe="上缴上级支出 " type="isodouble" source="db" dbname="PaymentToTheHigherAuthority" />
+		<field name="GrantToTheAuxiliaryOrganization" describe="对附属单位补助支出 " type="isodouble" source="db" dbname="m9508" />
+		<field name="OtherExpenditure" describe="其他支出 " type="isodouble" source="db" dbname="OtherExpenditure" />
+		<field name="CurrentOperatingBalance" describe="本期经营结余" type="isodouble" source="db" dbname="CurrentOperatingBalance" />
+		<field name="OperatingRevenue" describe="经营收入 " type="isodouble" source="db" dbname="OperatingRevenue" />
+		<field name="OperatingExpenditure" describe="经营支出 " type="isodouble" source="db" dbname="OperatingExpenditure" />
+		<field name="OperatingBalanceMadeUpForOfThePreviousYearsOperatingLoss" describe="弥补以前年度亏损后的经营结余" type="isodouble" source="db" dbname="m9506" />
+		<field name="NonFinancialSubsidyCarriedOverBalanceThisYear" describe="本年非财政补助结转结余" type="isodouble" source="db" dbname="m9507" />
+		<field name="NonFinancialAidCarriedOver" describe="非财政补助结转 " type="isodouble" source="db" dbname="NonFinancialAidCarriedOver" />
+		<field name="NonFinancialAidBalanceThisYear" describe="本年非财政补助结余" type="isodouble" source="db" dbname="NonFinancialAidBalanceThisYear" />
+		<field name="EnterpriseIncomeTaxPayable" describe="应缴企业所得税 " type="isodouble" source="db" dbname="EnterpriseIncomeTaxPayable" />
+		<field name="SpecialFundsToExtract" describe="提取专用基金" type="isodouble" source="db" dbname="SpecialFundsToExtract" />
+		<field name="PublicFundTurnedInto" describe="转入事业基金" type="isodouble" source="db" dbname="PublicFundTurnedInto" />
+	</sgmt>
+</inf>

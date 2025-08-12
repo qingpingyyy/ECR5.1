@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="GB2312"?>
+
+<task name="ECRExportEncTask" describe="企业报文预处理"  recovery="false"  saveHistory="false"  historyFolder="./his">
+			<executeUnits>	
+				<executeUnit name ="exportencdoaction" describe ="报文预处理" executeClass = "com.amarsoft.app.pbc.ecr.report.ExportEncTask" allowManualExecute="true">  
+					<extendProperties>
+						<property name="unit.osClass" value="Windows"/>
+					</extendProperties>
+				</executeUnit>	
+			</executeUnits>
+			<!-- 路由 -->
+			<routeMap start="exportencdoaction"  >  
+			</routeMap>
+</task>
+			
+			

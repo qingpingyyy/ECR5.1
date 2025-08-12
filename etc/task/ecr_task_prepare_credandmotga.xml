@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="GB2312"?>
+<task name="ECRPrepareCredAndMotgaTask" describe="导入企业授信协议和抵质押信息" recovery="false"  saveHistory="true"  historyFolder="./his" >
+	<extendProperties>
+			<!-- 授信协议抽取条件:授信协议信息未失效 -->
+			<property name="CredCondition" value=" exists(select 1 from ECR_CREDIT_BS BS where EAC.BCtrctCode = BS.ContractCode
+														and (BS.RptDateCode &lt;&gt; '20' or (BS.RptDateCode = '20' and BS.RecordFlag &lt;&gt; 'X')){#授信未报送失效})" />
+			<!-- 抵质押抽取条件：抵质押信息未失效 -->
+			<property name="MotgaCondition" value="exists(select 1 from ECR_MOTGA_BS BS where EM.CcCode=BS.CcCode{#记录表和抵质押基础表通过抵质押合同号关联}
+														and (BS.RptDateCode &lt;&gt; '20' or (BS.RptDateCode = '20' and BS.RecordFlag &lt;&gt; 'X')){#抵质押未报送失效})" />		
+	</extendProperties>
+	<executeUnits>
+	    <!-- 以下为授信协议信息 -->
+	    <!-- 授信协议基础段信息独立报送，不依赖业务账户报送，新增时若授信协议已结清或者失效，做不上报处理 -->
+		<executeUnit name="InsertEcrCreditBs" describe="导入企业授信协议基础段信息" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_CREDIT_BS:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+						'420' as InfRecType{#信息记录类型},
+						EAC.BCtrctCode as ContractCode{#授信协议标识码},
+						'{$ARE.bizDate}' as RptDate{#信息报告日期 },
+						EAC.Name as Name{#受信人名称},
+						EAC.IDType as IDType{#受信人身份标识类型},
+						EAC.IDNum as IDNum{#受信人身份标识号码},
+						EAC.ManagerOrgID as MngmtOrgCode{#业务管理机构代码},
+						EAC.DueDate as ConExpDate{#额度到期日期},
+						EAC.ConStatus as ConStatus{#额度状态},
+						EAC.CustomerID as CustomerID{#受信人客户编号},
+						EAC.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						EAC.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_INT_ACCTCTRCT EAC {#EAC=合同表}
+					where EAC.AcctType in('R1','R4')
+						or (EAC.AcctType = 'D1' and EAC.Flag &lt;&gt; '0')
+						or (EAC.AcctType = 'G3' and EAC.CycFlag = '1' ){#R1/R4/D1分次放款账户/G3额度可循环账户}
+					"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+					{MngmtOrgCode,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='ManageOrgID_ECR'}" 
+				/>
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.table" value="ECR_CREDIT_BS" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.keyColumns" value="ContractCode" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.checkDBRecord" value="true" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.insertColumns" 
+						  value="SessionID,CustomerID,INfrecType,ContractCode,RptDate,RptDateCode,Name,IDType,IDNum,MngmtOrgCode,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.updateColumns" 
+						  value="RptDate,RptDateCode,Name,IDType,IDNum,MngmtOrgCode,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.compareColumns" 
+						  value="Name,IDType,IDNum,MngmtOrgCode" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrCreditLim" describe="导入企业授信协议额度信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_CREDIT_LIM:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+						EAC.CustomerID as CustomerID{#客户编号},
+						EAC.BCtrctCode as ContractCode{#授信协议标识码},
+						case when EAC.BusiLines in ('11','12','13','15','16','31') then EAC.BusiLines 
+							 when EAC.BusiLines ='5' then '41' 
+							 when EAC.BusiLines ='6' then '51' 
+							 else '' end as CreditLimType{#授信额度类型},
+						case when EAC.AcctType in ('R1','R4','G3') then '1' else '0' end as LimLoopFlg{#额度循环标志},
+						EAC.CtrCtamt as CreditLim{#授信额度},
+						EAC.Cy as Cy{#币种},
+						EAC.OpenDate as ConEffDate{#额度生效日期},
+						EAC.DueDate as ConExpDate{#额度到期日期},
+						case when (EAC.ConStatus ='2' or EAC.DueDate &lt;= '{$ARE.bizDate}') then '2' else '1' end as ConStatus{#额度状态},
+						null as CreditRest{#授信限额},
+						null as CreditRestCode{#授信限额编号},
+						EAC.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						EAC.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_INT_ACCTCTRCT EAC{#EAC=合同表,EA=账户信息表}
+					where {$TASK.CredCondition}
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.table" value="ECR_CREDIT_LIM" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.keyColumns" value="ContractCode" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.updateColumns" 
+						  value="CreditLimType,LimLoopFlg,CreditLim,Cy,ConEffDate,ConExpDate,ConStatus,CreditRest,CreditRestCode,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.compareColumns" 
+						  value="CreditLimType,LimLoopFlg,CreditLim,Cy,ConEffDate,ConExpDate,ConStatus,CreditRest,CreditRestCode" />
+			</extendProperties>
+		</executeUnit>
+		
+		<!-- 以下为抵质押信息 -->
+		<!-- 抵质押合同基础段信息独立报送，不依赖业务账户报送，新增时若抵质押合同已结清或者失效，做不上报处理 -->
+		<executeUnit name="InsertEcrMotgaBs" describe="导入企业抵质押合同信息基础段信息" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_MOTGA_BS:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+						'510' as InfRecType{#信息记录类型},
+						A.Ccc as CcCode{#抵（质）押合同标识码},
+						'{$ARE.bizDate}' as RptDate{#信息报告日期 },
+						'2' as InfoIDType{#债务人身份类别},
+						EA.Name as Name{#债务人名称},
+						EA.IDType as CertType{#债务人身份标识类型},
+						EA.IDNum as CertNum{#债务人身份标识代码},
+						EMC.CcStatus as CcStatus{#抵（质）押合同状态 },
+						EMC.CcExpDate as CcExpDate{#抵（质）押合同到期日期},
+						EMC.ManagerOrgID as MngmtOrgCode{#业务管理机构代码},
+						EMC.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						EMC.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_INT_ACCTCTRCT EA, ECR_INT_MOTGACTRCT EMC,{#EA=合同表,EMC=抵质押合同表}
+						(select min(EM.BCtrctCode) as BCtrctCode, 
+							EM.Ccc as Ccc{#抵（质）押合同标识码}
+						from ECR_INT_MOTGARLT EM, ECR_INT_ACCTCTRCT EA1{#EA1=合同表,EM=抵质押关联表}
+						where EA1.BCtrctCode = EM.BCtrctCode
+							and EM.RltFlag = '1'{#关联标志有效}
+                        group by EM.Ccc) A
+					where EA.BCtrctCode = A.BCtrctCode and EMC.CcCode = A.Ccc
+					"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+					{MngmtOrgCode,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='ManageOrgID_ECR'}" 
+				/>
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.table" value="ECR_MOTGA_BS" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.keyColumns" value="CcCode" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.checkDBRecord" value="true" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.insertColumns" 
+						  value="SessionID,CcCode,InfRecType,RptDate,RptDateCode,InfoIDType,Name,CertType,CertNum,MngmtOrgCode,RecordFlag,OccurDate,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.updateColumns" 
+						  value="RptDate,RptDateCode,InfoIDType,Name,CertType,CertNum,MngmtOrgCode,RecordFlag,OccurDate,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.compareColumns" 
+						  value="InfoIDType,Name,CertType,CertNum,MngmtOrgCode" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrMotgaBsInf" describe="导入企业抵质押合同信息合同基本信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_MOTGA_BSINF:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+						EM.CcCode as CcCode{#抵（质）押合同标识码},
+						EM.GuarType as GuarType{#合同类型 },
+						EM.CcValDate as CcValDate{#抵（质）押合同生效日期},
+						EM.CcExpDate as CcExpDate{#抵（质）押合同到期日期},
+						EM.MaxGuar as MaxGuar{#最高额担保标志},
+						case when (EM.CcStatus ='2' or EM.CcExpDate &lt;= '{$ARE.bizDate}') then '2' else '1' end as CcStatus{#抵（质）押合同状态 },
+						EM.CcAmt as CcAmt{#担保金额 },
+						EM.Cy as Cy{#币种 },
+						EM.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						EM.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_INT_MOTGACTRCT EM{#EM=抵质押合同表}
+					where {$TASK.MotgaCondition}
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.table" value="ECR_MOTGA_BSINF" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.keyColumns" value="CcCode" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.updateColumns" 
+						  value="GuarType,CcValDate,CcExpDate,MaxGuar,CcStatus,CcAmt,Cy,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.compareColumns" 
+						  value="GuarType,CcValDate,CcExpDate,MaxGuar,CcStatus,CcAmt,Cy" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrMotgaProptInf" describe="导入企业抵质押合同信息抵押物信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_MOTGA_PROPTINF:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+						EM.CcCode as CcCode{#抵（质）押合同标识码},
+						EM.PleType as PleType{#抵押物种类},
+						EM.MotgaProptIDType as MotgaProptIdType{#抵押物识别号类型},
+						EM.PleCertID as PleCertId{#抵押物唯一识别号},
+						EM.PleDistr as PleDistr{#抵押物位置所在地行政区划 },
+						EM.PleValue as PleValue{#抵押物评估价值  },
+						EM.PleCy as PleCy{#币种},
+						EM.ValOrgType as ValOrgType{#评估机构类型 },
+						EM.ValDate as ValDate {#抵押物评估日期 },
+						EM.PledgorType as PledgorType{#抵押人身份类别},
+						EM.PledgorName as PledgorName{#抵押人名称  },
+						EM.PleorCertType as PleorCertType{#抵押人身份标识类型  },
+						EM.PleorCertNum as PleorCertNum{#抵押人身份标识号码  },
+						EMC.CcStatus as CcStatus{#抵（质）押合同状态 },
+						EMC.CcExpDate as CcExpDate{#抵（质）押合同到期日期},
+						EM.PleDesc as PleDesc{#抵押物说明 },
+						EM.EffStatus as EffStatus{#有效标志},
+						EMC.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						EMC.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_INT_PROPTINFO EM, ECR_INT_MOTGACTRCT EMC{#EM=抵押物信息表,EMC=抵质押合同表}
+					where EM.CcCode = EMC.CcCode
+						and EMC.GuarType = '1'{#类型1=抵押合同}
+						and {$TASK.MotgaCondition}
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.table" value="ECR_MOTGA_PROPTINF" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.keyColumns" value="PleCertId,CcCode" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.insertColumns" 
+						  value="SessionID,CcCode,PleType,PleCertId,MotgaProptIdType,PleDistr,PleValue,PleCy,ValOrgType,ValDate,PledgorType,PledgorName,PleorCertType,PleorCertNum,PleDesc,EffStatus,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.updateColumns" 
+						  value="PleType,MotgaProptIdType,PleDistr,PleValue,PleCy,ValOrgType,ValDate,PledgorType,PledgorName,PleorCertType,PleorCertNum,PleDesc,EffStatus,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.compareColumns" 
+						  value="PleType,MotgaProptIdType,PleDistr,PleValue,PleCy,ValOrgType,ValDate,PledgorType,PledgorName,PleorCertType,PleorCertNum,PleDesc,EffStatus" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrMotgaCltalInf" describe="导入企业抵质押合同信息质物信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_MOTGA_CLTALINF:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+						EM.CcCode as CcCode{#抵（质）押合同标识码},
+						EM.ImpType as ImpType{#质物种类},
+						EM.ImpVal as ImpVal{#质物价值},
+						EM.ImpCy as ImpCy{#币种},
+						EM.Ippc as Ippc{#出质人身份类别},
+						EM.PawnName as PawnName{#出质人名称 },
+						EM.PawnCertType as PawnCertType{#出质人身份标识类型 },
+						EM.PawnCertNum as PawnCertNum{#出质人身份标识号码},
+						EMC.CcStatus as CcStatus{#抵（质）押合同状态 },
+						EMC.CcExpDate as CcExpDate{#抵（质）押合同到期日期},
+						EM.EffStatus as EffStatus{#有效标志},
+						EMC.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						EMC.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_INT_CLTALINFO EM, ECR_INT_MOTGACTRCT EMC{#EM=质物信息表,EMC=抵质押合同表}
+					where EM.CcCode = EMC.CcCode
+						and EMC.GuarType = '2'{#类型2=质押合同}
+						and {$TASK.MotgaCondition}
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.table" value="ECR_MOTGA_CLTALINF" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.keyColumns" value="ImpType,CcCode" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.insertColumns" 
+						  value="SessionID,CcCode,ImpType,ImpVal,ImpCy,Ippc,PawnName,PawnCertType,PawnCertNum,EffStatus,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.updateColumns" 
+						  value="ImpVal,ImpCy,Ippc,PawnName,PawnCertType,PawnCertNum,EffStatus,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.compareColumns" 
+						  value="ImpVal,ImpCy,Ippc,PawnName,PawnCertType,PawnCertNum,EffStatus" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="DeleteEcrMotgaComRecInf" describe="导入前清空基础段有更新的其他债务人信息段" allowManualExecute="true" executeClass="com.amarsoft.task.units.dpx.SQLProcess">
+					<extendProperties>
+						<property name="unit.onErrorAction" value="break"/>
+						<property name="unit.logLevel" value="debug"/>
+						<property name="unit.script" value="
+							connect to {$ARE.ecr_dataSource};&#xA;
+							set autocommit false;&#xA;
+							delete from ECR_MOTGA_COMRECINF where CcCode in(SELECT CcCode FROM ECR_MOTGA_BS where RecordFlag = 'U');&#xA;
+							commit;&#xA;
+							disconnect;"
+						/>
+					</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrMotgaComRecInf" describe="导入企业抵质押合同信息其他债务人信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_MOTGA_COMRECINF:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select distinct
+						EM.Ccc as CcCode{#抵（质）押合同标识码},
+						EA.CustomerID as GrtdSerialNo{#其他债务人编号},
+						'2' as InfoIDType{#身份类别},
+						EA.Name as GuarName{#其他债务人名称},
+						EA.IDType as GuarCertType{#其他债务人身份标识类型},
+						EA.IDNum as GuarCertNum{#其他债务人身份标识号码},
+						EMC.CcStatus as CcStatus{#抵（质）押合同状态 },
+						EMC.CcExpDate as CcExpDate{#抵（质）押合同到期日期},
+						EMC.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						EMC.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_INT_ACCTCTRCT EA, ECR_INT_MOTGARLT EM, ECR_INT_MOTGACTRCT EMC{#EA=账户信息表,EM=抵质押关联表,EMC=抵质押合同表}
+					where EA.BCtrctCode = EM.BCtrctCode{#合同表和抵质押关联表通过合同号关联}
+						and EM.Ccc = EMC.CcCode{#抵质押关联表和抵质押合同通过抵质押标识号关联}
+						and EM.RltFlag = '1'{#关联标志有效}
+						and not exists(select 1 from ECR_MOTGA_BS where EM.Ccc=CcCode and EA.IDType = CertType and EA.IDNum = CertNum){#不存在于基础段信息表}
+						and exists(select 1 from ECR_MOTGA_BS BS where EM.Ccc=BS.CcCode{#记录表和抵质押基础表通过抵质押合同号关联}
+								and (BS.RptDateCode &lt;&gt; '20' or (BS.RptDateCode = '20' and BS.RecordFlag &lt;&gt; 'X')){#抵质押未报送失效})
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.table" value="ECR_MOTGA_COMRECINF" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.keyColumns" value="CcCode,GrtdSerialNo" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.insertColumns" 
+						  value="SessionID,CcCode,GrtdSerialNo,InfoIDType,GuarName,GuarCertType,GuarCertNum,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.updateColumns" 
+						  value="InfoIDType,GuarName,GuarCertType,GuarCertNum,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRMotgaUpdateHandler.compareColumns" 
+				          value="InfoIDType,GuarName,GuarCertType,GuarCertNum" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrCreditCertRel" describe="导入企业授信协议共同受信人信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_CREDIT_CERTREL:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+					 BCtrctCode as ContractCode{#授信协议标识码},
+					 CustomerID as BrerSerialNo{#共同受信人编号},
+					 '2' as BrerType{#共同受信人身份类别},
+					 Name as CertRelName{#共同受信人名称},
+					 IDType as CertRelIDType{#共同受信人身份标识类型},
+					 IDNum as CertRelIDNum{#共同受信人身份标识号码},
+					 DueDate as ConExpDate{#额度到期日期},
+					 ConStatus as ConStatus{#额度状态},
+					 ManagerOrgID as ManagerOrgID{#管户机构编号},
+					 ManagerUserID as ManagerUserID{#管户用户编号}
+					 from ECR_INT_ACCTCTRCT EAC
+					 where {$TASK.CredCondition}
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.table" value="ECR_CREDIT_CERTREL" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.keyColumns" value="ContractCode,BrerSerialNo" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.insertColumns" 
+				          value="SessionID,CustomerID,ContractCode,BrerSerialNo,BrerType,CertRelName,CertRelIDType,CertRelIDNum,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.updateColumns" 
+				          value="BrerType,CertRelName,CertRelIDType,CertRelIDNum,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCredUpdateHandler.compareColumns" 
+				          value="BrerType,CertRelName,CertRelIDType,CertRelIDNum" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="SyncOrgCredRecordflag" describe="更新企业授信协议基础段" executeClass="com.amarsoft.app.pbc.ecr.dataimport.SyncOrgCredRecordflag" allowManualExecute="true"/>
+		
+		<executeUnit name="SyncOrgMotgaRecordflag" describe="更新企业抵质押合同信息基础段" executeClass="com.amarsoft.app.pbc.ecr.dataimport.SyncOrgMotgaRecordflag" allowManualExecute="true"/>
+	</executeUnits>
+
+	<routeMap start="InsertEcrCreditBs" >
+		<route unit="InsertEcrCreditBs" successful="InsertEcrCreditLim" />
+		<!-- <route unit="InsertEcrCreditLim" successful="InsertEcrCreditCertRel" /> -->
+		<route unit="InsertEcrCreditLim" successful="SyncOrgCredRecordflag" />
+		<route unit="SyncOrgCredRecordflag" successful="InsertEcrMotgaBs" />
+		<route unit="InsertEcrMotgaBs" successful="InsertEcrMotgaBsInf" />
+		<route unit="InsertEcrMotgaBsInf" successful="DeleteEcrMotgaComRecInf" />
+		<route unit="DeleteEcrMotgaComRecInf" successful="InsertEcrMotgaComRecInf" />
+		<route unit="InsertEcrMotgaComRecInf" successful="InsertEcrMotgaProptInf" />
+		<route unit="InsertEcrMotgaProptInf" successful="InsertEcrMotgaCltalInf" />
+		<route unit="InsertEcrMotgaCltalInf" successful="SyncOrgMotgaRecordflag" />
+    </routeMap>	
+    
+</task>

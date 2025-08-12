@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="GBK" ?>
+<inf>
+	<sgmt name="EnAcctInfDel" describe="企业借贷账户按段删除请求信息段" type="B" table="HECR_Busi_SegmentDel" key="InfRecType,DelRecCode,DelSgmtCode,SessionID">
+		<field name="InfRecType" 	describe="信息记录类型" 		type="text" source="fix" value="413" />
+		<field name="DelRecCode" 	describe="待删除业务标识" 	type="text" source="db" dbname="DelRecCode" 	bsdbname="AcctCode" />
+		<field name="DelSgmtCode" 	describe="待删除段段标" 		type="text" source="db" dbname="DelSgmtCode" />
+		<field name="DelStartDate" 	describe="待删除起始日期" 	type="text" source="db" dbname="DelStartDate" />
+		<field name="DelEndDate" 	describe="待删除结束日期" 	type="text" source="db" dbname="DelEndDate" />
+	</sgmt>
+</inf>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!-- 企业授信协议信息记录 -->
+<inf>
+	<sgmt name="CtrctBsSgmt" describe="基础段" type="B" ctable="ECR_Credit_Bs" htable="HECR_Credit_Bs" key="ContractCode" flag="B">
+		<field name="InfRecType"   describe="信息记录类型"    type="text" source="fix" value="420" />
+		<field name="ContractCode" describe="授信协议标识码"   type="text" source="db" dbname="ContractCode" isKey="true" />
+		<field name="RptDate"      describe="信息报告日期"    type="text" source="db" dbname="RptDate" />
+		<field name="RptDateCode"  describe="报告时点说明代码"  type="text" source="db" dbname="RptDateCode" />
+		<field name="Name"         describe="受信人名称" type="text" source="db" dbname="Name" />
+		<field name="IDType"       describe="受信人身份标识类型" type="text" source="db" dbname="IDType" />
+		<field name="IDNum"        describe="受信人身份标识证件号码" type="text" source="db" dbname="IDNum" />
+		<field name="MngmtOrgCode" describe="业务管理机构代码" type="text" source="db" dbname="MngmtOrgCode" />
+	</sgmt>
+	<sgmt name="CtrctCertRelSgmt" describe="共同受信人信息段" type="N" ctable="ECR_Credit_CertRel" htable="HECR_Credit_CertRel" key="BrerSerialNo,ContractCode" flag="C">
+		<field name="BrerNm" describe="共同受信人个数" type="num" source="count" />
+		<field name="CtrctCertRel" describe="受信人信息" type="node" source="table" >
+			<field name="BrerType" describe="共同受信人身份类别" type="text" source="db" dbname="BrerType" />
+			<field name="CertRelName" describe="共同受信人姓名" type="text" source="db" dbname="CertRelName"/>
+			<field name="CertRelIDType" describe="共同受信人身份标识类型" type="text" source="db" dbname="CertRelIDType"/>
+			<field name="CertRelIDNum" describe="共同受信人身份标识号码" type="text" source="db" dbname="CertRelIDNum"/>
+		</field>
+	</sgmt>
+	<sgmt name="CreditLimSgmt" describe="额度信息段" type="S" ctable="ECR_Credit_Lim" htable="HECR_Credit_Lim" key="ContractCode" flag="D">
+		<field name="CreditLimType" describe="授信额度类型" type="text" source="db" dbname="CreditLimType" />
+		<field name="LimLoopFlg" describe="额度循环标志" type="text" source="db" dbname="LimLoopFlg" />
+		<field name="CreditLim" describe="授信额度" type="numeric" source="db" dbname="CreditLim"  />
+		<field name="Cy" describe="币种" type="text" source="db" dbname="Cy" />
+		<field name="ConEffDate" describe="额度生效日期" type="text" source="db" dbname="ConEffDate" />
+		<field name="ConExpDate" describe="额度到期日期" type="text" source="db" dbname="ConExpDate" />
+		<field name="ConStatus" describe="额度状态" type="text" source="db" dbname="ConStatus" />
+		<field name="CreditRest" describe="授信限额" type="numeric" source="db" dbname="CreditRestCode" constraint="S" />
+		<field name="CreditRestCode" describe="授信限额编号" type="text" source="db" dbname="CreditRest" constraint="S" />
+	</sgmt>
+</inf>

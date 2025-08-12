@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="GBK" ?>
+<validator>
+	<code>
+		<!--段校验-->
+		<rule name="R4200101-1" sgmtName="CtrctBsSgmt" fieldName="N/A" level="2" type="SE" errorCode="CCR000"
+			  errorMsg="企业授信协议记录报送时，基础段和额度信息段必须出现。@基础段必须出现。"/>
+		<rule name="R4200101-2" sgmtName="CreditLimSgmt" fieldName="N/A" level="2" type="SE" errorCode="CCR000"
+			  errorMsg="企业授信协议记录报送时，基础段和额度信息段必须出现。@额度信息段必须出现。"/>
+		<!--数据项校验-->
+		<rule name="I0000201-1" sgmtName="CtrctBsSgmt" fieldName="RptDateCode" level="3" type="DIC"
+			  dataList="RptDateCode420" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“报告时点说明代码”取值需要在代码表中。"/>
+		<rule name="I0000201-2" sgmtName="CtrctBsSgmt" fieldName="IDType" level="3" type="DIC"
+			  dataList="ECertType" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“受信人身份标识类型”取值需要在代码表中。"/>
+
+		<rule name="I0000201-3" sgmtName="CtrctCertRelSgmt" fieldName="CtrctCertRel:BrerType" level="3" type="DIC"
+			  dataList="IDCategory" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“共同受信人身份类别”取值需要在代码表中。"/>
+
+		<rule name="I0000201-4" sgmtName="CreditLimSgmt" fieldName="CreditLimType" level="3" type="DIC"
+			  dataList="CreditLimType" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“授信额度类型”取值需要在代码表中。"/>
+		<rule name="I0000201-5" sgmtName="CreditLimSgmt" fieldName="LimLoopFlg" level="3" type="DIC"
+			  dataList="LimLoopFlg" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“额度循环标志”取值需要在代码表中。"/>
+		<rule name="I0000201-6" sgmtName="CreditLimSgmt" fieldName="Cy" level="3" type="DIC"
+			  dataList="Currency" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“币种”取值需要在代码表中。"/>
+		<rule name="I0000201-7" sgmtName="CreditLimSgmt" fieldName="ConStatus" level="3" type="DIC"
+			  dataList="ConStatus" errorCode="ABE001" errorMsg="对于枚举型数据项，取值需要在代码表中。@“额度状态”取值需要在代码表中。"/>
+
+		<rule name="I4200C01-2" sgmtName="CtrctCertRelSgmt" fieldName="N/A" level="2" type="TM"
+			  groupList="CtrctCertRelSgmt.CtrctCertRel:BrerType;CertRelIDType"
+			  dataList="1[1|2|5|6|8|9|A|B|C|X|10|20];2[10|20|30]" errorCode="CCE000"
+			  errorMsg="“共同受信人信息段”中的“共同受信人身份类别”和“共同受信人身份标识类型”的代码必须匹配。">
+		</rule>
+		<rule name="I4200D01-1" sgmtName="CreditLimSgmt" fieldName="ConEffDate" level="3" type="DTR"
+			  dataEndValue="{$CreditLimSgmt.ConExpDate}" errorCode="CCE002" errorMsg="“额度生效日期”必须不晚于“额度到期日期”。"/>
+		<rule name="I4200A01-1" sgmtName="CtrctCertRelSgmt" fieldName="N/A" level="2" type="GE"
+			  groupList="CtrctCertRelSgmt.CtrctCertRel:CertRelIDType+CertRelIDNum=CtrctBsSgmt.IDType+IDNum"
+			  errorCode="CCE003" errorMsg="受信人两标（“身份标识类型”、“身份标识号码”）与共同受信人两标不能相同。"/>
+			  
+		<rule name="I4200D02-1" sgmtName="CreditLimSgmt" fieldName="CreditRest" level="3" type="NA" errorCode="BBE002"
+			  errorMsg="“授信限额编号”、“授信限额”其中之一不为空时，另一个应不为空。">
+			<precondition>
+				<rule name="I4200D02-1-P1" sgmtName="CreditLimSgmt" fieldName="CreditRestCode" level="3" type="NA"/>
+			</precondition>
+		</rule>
+		<rule name="I4200D02-2" sgmtName="CreditLimSgmt" fieldName="CreditRestCode" level="3" type="NA" errorCode="BBE002"
+			  errorMsg="“授信限额编号”、“授信限额”其中之一不为空时，另一个应不为空。">
+			<precondition>
+				<rule name="I4200D02-2-P1" sgmtName="CreditLimSgmt" fieldName="CreditRest" level="3" type="NA"/>
+			</precondition>
+		</rule>		  
+	</code>
+</validator>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="GBK" ?>
+<doc>
+	<ecr_type>ECR</ecr_type>
+	<head>
+		<field name="HeadFlag" describe="文件头起始标识" startPosition="0" endPosition="0" value="A"/>
+		<field name="HeadLength" describe="文件头长度" startPosition="1" endPosition="3" value="050"/>
+		<field name="InfType" describe="所含记录类型" startPosition="4" endPosition="6"/>
+		<field name="Version" describe="接口规范版本号" startPosition="7" endPosition="11" value="2.0.0"/>
+		<field name="FormType" describe="记录模板类型" startPosition="12" endPosition="13"/>
+		<field name="FinanceCode" describe="数据提供机构区段码" startPosition="14" endPosition="27"/>
+		<field name="CreatedTime" describe="文件生成时间" startPosition="28" endPosition="41"/>
+		<field name="ReserveField" describe="预留字段" startPosition="42" endPosition="42" value="0"/>
+		<field name="InfCount" describe="信息记录数" startPosition="43" endPosition="49"/>
+	</head>
+	<infs>
+		<inf code="310" name="EnBasInf" 			describe="企业基本信息记录" 				type="0" config="{$ARE.ECR_HOME}/etc/ecr/310.xml" validator="{$ARE.ECR_HOME}/etc/ecr/310_rule.xml"/>
+		<inf code="314" name="EnBsInfDlt" 			describe="企业基本信息删除请求记录" 		type="4" config="{$ARE.ECR_HOME}/etc/ecr/314.xml"/>
+		<inf code="340" name="EnCtfItgInf" 			describe="企业身份标识整合信息记录" 		type="0" config="{$ARE.ECR_HOME}/etc/ecr/340.xml" validator="{$ARE.ECR_HOME}/etc/ecr/340_rule.xml"/>
+		<inf code="350" name="EnIcdnRltpInf" 		describe="企业关联关系信息记录" 			type="0" config="{$ARE.ECR_HOME}/etc/ecr/350.xml" validator="{$ARE.ECR_HOME}/etc/ecr/350_rule.xml"/>
+		<inf code="410" name="EnAcctInf" 			describe="企业借贷账户信息记录" 			type="0" config="{$ARE.ECR_HOME}/etc/ecr/410.xml" validator="{$ARE.ECR_HOME}/etc/ecr/410_rule.xml"/>
+		<inf code="411" name="EnAcctInfIDCagsInf" 	describe="企业借贷账户标识变更请求记录" 	type="1" config="{$ARE.ECR_HOME}/etc/ecr/411.xml"/>
+		<inf code="412" name="EnAcctInfMdfc" 		describe="企业借贷账户更正请求记录" 		type="2" config="{$ARE.ECR_HOME}/etc/ecr/412.xml"/>
+		<inf code="413" name="EnAcctInfDel" 		describe="企业借贷账户按段删除请求记录" 	type="3" config="{$ARE.ECR_HOME}/etc/ecr/413.xml"/>
+		<inf code="414" name="EnAcctInfEntDel" 		describe="企业借贷账户整笔删除请求记录" 	type="4" config="{$ARE.ECR_HOME}/etc/ecr/414.xml"/>
+		<inf code="420" name="EnCtrctInf" 			describe="企业授信协议信息记录" 			type="0" config="{$ARE.ECR_HOME}/etc/ecr/420.xml" validator="{$ARE.ECR_HOME}/etc/ecr/420_rule.xml"/>
+		<inf code="421" name="EnCtrctInfIDCagsInf" 	describe="企业授信协议标识变更请求记录" 	type="1" config="{$ARE.ECR_HOME}/etc/ecr/421.xml"/>
+		<inf code="422" name="EnCtrctInfMdfc" 		describe="企业授信协议更正请求记录" 		type="2" config="{$ARE.ECR_HOME}/etc/ecr/422.xml"/>
+		<inf code="423" name="EnCtrctInfDel" 		describe="企业授信协议按段删除请求记录" 	type="3" config="{$ARE.ECR_HOME}/etc/ecr/423.xml"/>
+		<inf code="424" name="EnCtrctInfEntDel" 	describe="企业授信协议整笔删除请求记录" 	type="4" config="{$ARE.ECR_HOME}/etc/ecr/424.xml"/>
+		<inf code="430" name="EnMaxGuarCtrctInf" 	describe="企业最高额保证合同信息记录" 	type="0" config="{$ARE.ECR_HOME}/etc/ecr/430.xml" validator="{$ARE.ECR_HOME}/etc/ecr/430_rule.xml"/>
+		<inf code="431" name="EnMaxGuarCtrctInfIDCagsInf" 	describe="企业最高额保证合同标识变更请求记录" 	type="1" config="{$ARE.ECR_HOME}/etc/ecr/431.xml"/>
+		<inf code="432" name="EnMaxGuarCtrctInfMdfc" 		describe="企业最高额保证合同更正请求记录" 	type="2" config="{$ARE.ECR_HOME}/etc/ecr/432.xml"/>
+		<inf code="433" name="EnMaxGuarCtrctInfDel" describe="企业最高额保证合同按段删除请求记录" 			type="3" config="{$ARE.ECR_HOME}/etc/ecr/433.xml"/>
+		<inf code="434" name="EnSecAcctEntDel" 		describe="企业最高额保证合同整笔删除请求记录" 			type="4" config="{$ARE.ECR_HOME}/etc/ecr/434.xml"/>
+		<inf code="440" name="EnSecAcctInf" 		describe="企业担保账户信息记录" 			type="0" config="{$ARE.ECR_HOME}/etc/ecr/440.xml" validator="{$ARE.ECR_HOME}/etc/ecr/440_rule.xml"/>
+		<inf code="441" name="EnSecAcctIDCagsInf " 	describe="企业担保账户标识变更请求记录" 	type="1" config="{$ARE.ECR_HOME}/etc/ecr/441.xml"/>
+		<inf code="442" name="EnSecAcctMdfc" 		describe="企业担保账户更正请求记录" 		type="2" config="{$ARE.ECR_HOME}/etc/ecr/442.xml"/>
+		<inf code="443" name="EnSecAcctDel" 		describe="企业担保账户按段删除请求记录" 	type="3" config="{$ARE.ECR_HOME}/etc/ecr/443.xml"/>
+		<inf code="444" name="EnSecAcctEntDel"		describe="企业担保账户整笔删除请求记录" 	type="4" config="{$ARE.ECR_HOME}/etc/ecr/444.xml"/>
+		<inf code="510" name="MotgaCltalCtrctInf" 	describe="抵质押合同信息记录" 			type="0" config="{$ARE.ECR_HOME}/etc/ecr/510.xml" validator="{$ARE.ECR_HOME}/etc/ecr/510_rule.xml"/>
+		<inf code="511" name="MoCIdCagsInf" 		describe="抵质押合同变更请求记录" 		type="1" config="{$ARE.ECR_HOME}/etc/ecr/511.xml"/>
+		<inf code="514" name="MoCEntDel" 			describe="抵质押合同整笔删除请求记录" 	type="4" config="{$ARE.ECR_HOME}/etc/ecr/514.xml"/>
+		<inf code="520" name="RateInf" 				describe="利率信息记录" 					type="0" config="{$ARE.ECR_HOME}/etc/ecr/520.xml" validator="{$ARE.ECR_HOME}/etc/ecr/520_rule.xml"/>
+		<inf code="522" name="RateInfMdfc" 			describe="利率信息更正请求记录" 			type="2" config="{$ARE.ECR_HOME}/etc/ecr/522.xml"/>
+		<inf code="523" name="RateInfDel" 			describe="利率信息按段删除请求记录" 		type="3" config="{$ARE.ECR_HOME}/etc/ecr/523.xml"/>
+		<inf code="524" name="RateInfEntDel" 		describe="利率信息整笔删除请求记录" 		type="4" config="{$ARE.ECR_HOME}/etc/ecr/524.xml"/>
+		<inf code="610" name="BalanceSheet" 		describe="企业资产负债表信息记录" 		type="0" config="{$ARE.ECR_HOME}/etc/ecr/610.xml" validator="{$ARE.ECR_HOME}/etc/ecr/610_rule.xml"/>
+		<inf code="614" name="BalanceSheetDlt" 		describe="企业资产负债表整笔删除请求记录" type="4" config="{$ARE.ECR_HOME}/etc/ecr/614.xml"/>
+		<inf code="620" name="IncomeStatementProfitAppropriation" 		describe="企业利润及利润分配表信息记录" 			type="0" config="{$ARE.ECR_HOME}/etc/ecr/620.xml" validator="{$ARE.ECR_HOME}/etc/ecr/620_rule.xml"/>
+		<inf code="624" name="IncomeStatementProfitAppropriationDlt" 	describe="企业利润及利润分配表整笔删除请求记录" 	type="4" config="{$ARE.ECR_HOME}/etc/ecr/624.xml"/>
+		<inf code="630" name="CashFlows" 			describe="企业现金流量表信息记录" 			type="0" config="{$ARE.ECR_HOME}/etc/ecr/630.xml" validator="{$ARE.ECR_HOME}/etc/ecr/630_rule.xml"/>
+		<inf code="634" name="CashFlowsDlt" 		describe="企业现金流量表整笔删除请求记录" 	type="4" config="{$ARE.ECR_HOME}/etc/ecr/634.xml"/>
+		<inf code="640" name="InstitutionBalanceSheet" 		describe="事业单位资产负债表信息记录" 			type="0" config="{$ARE.ECR_HOME}/etc/ecr/640.xml" validator="{$ARE.ECR_HOME}/etc/ecr/640_rule.xml"/>
+		<inf code="644" name="InstitutionBalanceSheetDlt" 	describe="事业单位资产负债表整笔删除请求记录" 		type="4" config="{$ARE.ECR_HOME}/etc/ecr/644.xml"/>
+		<inf code="650" name="IncomeAndExpenseStatement" 	describe="事业单位收入支出表信息记录" 			type="0" config="{$ARE.ECR_HOME}/etc/ecr/650.xml" validator="{$ARE.ECR_HOME}/etc/ecr/650_rule.xml"/>
+		<inf code="654" name="IncomeAndExpenseStatementDlt" describe="事业单位收入支出表整笔删除请求记录" 		type="4" config="{$ARE.ECR_HOME}/etc/ecr/654.xml"/>
+	</infs>
+</doc>

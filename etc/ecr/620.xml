@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!-- 企业利润及利润分配表信息记录 -->
+<inf>
+	<sgmt name="IncomeStatementProfitAppropriationBsSgmt" describe="基础段" type="B" ctable="ECR_FINANCE_REPORT_Bs" htable="HECR_FINANCE_REPORT_Bs" key="CUSTOMERID,SheetYear,SheetType,SheetTypeDivide,InfRecType">
+		<field name="InfRecType" describe="信息记录类型" type="text" source="db" dbname="InfRecType" />
+		<field name="EntName" describe="企业名称 " type="text" source="db" dbname="EntName" isKey="true" />
+		<field name="EntCertType" describe="企业身份标识类型 " type="text" source="db" dbname="EntCertType" isKey="true" />
+		<field name="EntCertNum" describe="企业身份标识号码 " type="text" source="db" dbname="EntCertNum" isKey="true" />
+		<field name="RptDate" describe="信息报告日期 " type="text" source="db" dbname="RptDate" isKey="true" />
+		<field name="SheetYear" describe="报表年份 " type="text" source="db" dbname="SheetYear" isKey="true" />
+		<field name="SheetType" describe="报表类型 " type="text" source="db" dbname="SheetType" isKey="true" />
+		<field name="SheetTypeDivide" describe="报表类型细分 " type="text" source="db" dbname="SheetTypeDivide" isKey="true" />
+		<field name="AuditFirmName" describe="审计事务所名称 " type="text" source="db" dbname="AuditFirmName" />
+		<field name="AuditorName" describe="审计人员名称 " type="text" source="db" dbname="AuditorName" />
+		<field name="AuditTime" describe="审计时间 " type="text" source="db" dbname="AuditTime" />
+		<field name="Cimoc" describe="客户资料维护机构代码 " type="text" source="db" dbname="Cimoc" />
+		<field name="RptDateCode" describe="报告时点说明代码 " type="text" source="db" dbname="RptDateCode" />
+	</sgmt>
+	<sgmt name="IncomeStatementProfitAppropriation2002Sgmt" describe="2002版利润及利润分配表段" type="S" ctable="ECR_FINANCEPS_2002" htable="HECR_FINANCEPS_2002" key="CUSTOMERID,SheetYear,SheetType,SheetTypeDivide">
+		<field name="MainRevenuefRevenue" describe="主营业务收入 " type="isodouble" source="db" dbname="MainRevenuefRevenue" />
+		<field name="SalesIncomeOfExportGoodsProducts" describe="（主营业务收入科目下）出口产品销售收入" type="isodouble" source="db" dbname="m9677" />
+		<field name="SalesIncomeOfImportGoodsProducts" describe="（主营业务收入科目下）进口产品销售收入" type="isodouble" source="db" dbname="m9679" />
+		<field name="DiscountAndAllowance" describe="销售折扣与折让 " type="isodouble" source="db" dbname="DiscountAndAllowance" />
+		<field name="NetAmountOfIncomeFromMainBusiness" describe="主营业务收入净额 " type="isodouble" source="db" dbname="m9683" />
+		<field name="MainOperatingCost" describe="主营业务成本 " type="isodouble" source="db" dbname="MainOperatingCost" />
+		<field name="SalesIncomeOfExportProducts" describe="（主营业务成本科目下）出口产品销售成本" type="isodouble" source="db" dbname="SalesIncomeOfExportProducts" />
+		<field name="PrincipleBusinessTaxAndExtraCharge" describe="主营业务税金及附加 " type="isodouble" source="db" dbname="m9689" />
+		<field name="OperationExpense" describe="经营费用 " type="isodouble" source="db" dbname="OperationExpense" />
+		<field name="OthersOperatingCost" describe="其他（业务成本） " type="isodouble" source="db" dbname="OthersOperatingCost" />
+		<field name="DeferredIncome" describe="递延收益 " type="isodouble" source="db" dbname="DeferredIncome" />
+		<field name="IncomeFromSalesAgency" describe="代购代销收入 " type="isodouble" source="db" dbname="IncomeFromSalesAgency" />
+		<field name="OtherOperatingIncome" describe="其他（收入） " type="isodouble" source="db" dbname="OtherOperatingIncome" />
+		<field name="PrincipleBusinessProfit" describe="主营业务利润 " type="isodouble" source="db" dbname="PrincipleBusinessProfit" />
+		<field name="OtherBusinessProfit" describe="其他业务利润 " type="isodouble" source="db" dbname="OtherBusinessProfit" />
+		<field name="SellingExpenses" describe="营业费用 " type="isodouble" source="db" dbname="SellingExpenses" />
+		<field name="GeneralAndAdministrativeExpenses" describe="管理费用 " type="isodouble" source="db" dbname="m9707" />
+		<field name="FinancialExpenses" describe="财务费用 " type="isodouble" source="db" dbname="FinancialExpenses" />
+		<field name="OthersExpenses" describe="其他（费用） " type="isodouble" source="db" dbname="OthersExpenses" />
+		<field name="OperatingProfits" describe="营业利润 " type="isodouble" source="db" dbname="OperatingProfits" />
+		<field name="InvestmentIncome" describe="投资收益 " type="isodouble" source="db" dbname="InvestmentIncome" />
+		<field name="FuturesIncome" describe="期货收益 " type="isodouble" source="db" dbname="FuturesIncome" />
+		<field name="AllowanceIncome" describe="补贴收入 " type="isodouble" source="db" dbname="AllowanceIncome" />
+		<field name="AllowanceIncomeBeforeAllowance" describe="（补贴收入科目下）补贴前亏损的企业补贴收入" type="isodouble" source="db" dbname="m9719" />
+		<field name="NonOperatingIncome" describe="营业外收入 " type="isodouble" source="db" dbname="NonOperatingIncome" />
+		<field name="NetGainOnDisposalOfFixedAssets" describe="（营业外收入科目下）处置固定资产净收益" type="isodouble" source="db" dbname="m9723" />
+		<field name="IncomeFromNonCurrencyTrade" describe="（营业外收入科目下）非货币性交易收益" type="isodouble" source="db" dbname="IncomeFromNonCurrencyTrade" />
+		<field name="IncomeFromSalesOfIntangibleAssets" describe="（营业外收入科目下）出售无形资产收益" type="isodouble" source="db" dbname="m9727" />
+		<field name="IncomeFromPenalty" describe="（营业外收入科目下）罚款净收入" type="isodouble" source="db" dbname="IncomeFromPenalty" />
+		<field name="OthersIncome" describe="其他（利润） " type="isodouble" source="db" dbname="OthersIncome" />
+		<field name="CalculatingFromTheContentSalaryBefore" describe="（其他科目下）用以前年度含量工资节余弥补利润" type="isodouble" source="db" dbname="m9731" />
+		<field name="NonOperatingExpenses" describe="营业外支出 " type="isodouble" source="db" dbname="NonOperatingExpenses" />
+		<field name="LossFromDisposalOfFixedAssets" describe="（营业外支出科目下）处置固定资产净损失" type="isodouble" source="db" dbname="m9735" />
+		<field name="ExchangeOfNonMonetaryAssetsLoss" describe="（营业外支出科目下）债务重组损失" type="isodouble" source="db" dbname="m9737" />
+		<field name="LossOfLawsuits" describe="（营业外支出科目下）罚款支出" type="isodouble" source="db" dbname="LossOfLawsuits" />
+		<field name="PaymentForDonation" describe="（营业外支出科目下）捐赠支出" type="isodouble" source="db" dbname="PaymentForDonation" />
+		<field name="OtherPayments" describe="其他支出 " type="isodouble" source="db" dbname="OtherPayments" />
+		<field name="BalanceOfContentSalary" describe="（其他支出）结转的含量工资包干节余" type="isodouble" source="db" dbname="BalanceOfContentSalary" />
+		<field name="TotalProfit" describe="利润总额 " type="isodouble" source="db" dbname="TotalProfit" />
+		<field name="Incometax" describe="所得税 " type="isodouble" source="db" dbname="Incometax" />
+		<field name="ImparimentLoss" describe="少数股东损益 " type="isodouble" source="db" dbname="ImparimentLoss" />
+		<field name="UnrealizedInvestmentLosses" describe="未确认的投资损失 " type="isodouble" source="db" dbname="UnrealizedInvestmentLosses" />
+		<field name="NetProfit" describe="净利润 " type="isodouble" source="db" dbname="NetProfit" />
+		<field name="ProfitDistributionAtBeginningOfPeriod" describe="年初未分配利润 " type="isodouble" source="db" dbname="m9757" />
+		<field name="CompensationOfSurplusReserve" describe="盈余公积补亏 " type="isodouble" source="db" dbname="CompensationOfSurplusReserve" />
+		<field name="OtherAdjustmentFactors" describe="其他调整因素 " type="isodouble" source="db" dbname="OtherAdjustmentFactors" />
+		<field name="ProfitAvailableForDistribution" describe="可供分配的利润 " type="isodouble" source="db" dbname="ProfitAvailableForDistribution" />
+		<field name="ProfitReservedForASingleItem" describe="单项留用的利润 " type="isodouble" source="db" dbname="ProfitReservedForASingleItem" />
+		<field name="SupplementaryCurrentCapital" describe="补充流动资本 " type="isodouble" source="db" dbname="SupplementaryCurrentCapital" />
+		<field name="AppropriationOfStatutorySurplusReserves" describe="提取法定盈余公积 " type="isodouble" source="db" dbname="m9769" />
+		<field name="AppropriationOfStatutoryWelfareFund" describe="提取法定公益金 " type="isodouble" source="db" dbname="m9771" />
+		<field name="AppropriationOfStaffIncentiveAndWelfareFund" describe="提取职工奖励及福利基金 " type="isodouble" source="db" dbname="m9773" />
+		<field name="AppropriationOfReserveFund" describe="提取储备基金 " type="isodouble" source="db" dbname="AppropriationOfReserveFund" />
+		<field name="AppropriationOfEnterpriseExpansionFund" describe="提取企业发展基金 " type="isodouble" source="db" dbname="m9777" />
+		<field name="ProfitsCapitalizadOnReturnOfInvestment" describe="利润归还投资" type="isodouble" source="db" dbname="m9779" />
+		<field name="Others" describe="（可供分配的利润科目下）其他" type="isodouble" source="db" dbname="Others4" />
+		<field name="ProfitAvailableForOwnersDistribution" describe="可供投资者分配的利润 " type="isodouble" source="db" dbname="m9781" />
+		<field name="PreferredStockDividendsPayable" describe="应付优先股股利 " type="isodouble" source="db" dbname="PreferredStockDividendsPayable" />
+		<field name="WithdrawalOtherCommonAccumulationFund" describe="提取任意盈余公积 " type="isodouble" source="db" dbname="m9785" />
+		<field name="PayableDividendsOfCommonStock" describe="应付普通股股利 " type="isodouble" source="db" dbname="PayableDividendsOfCommonStock" />
+		<field name="TransferFromOrdinarySharesDividendToPaidInCapitalOrStock" describe="转作资本的普通股股利 " type="isodouble" source="db" dbname="m9789" />
+		<field name="OthersForOwners" describe="（可供投资者分配的利润科目下）其他" type="isodouble" source="db" dbname="Others5" />
+		<field name="UnappropriatedProfit" describe="未分配利润 " type="isodouble" source="db" dbname="UnappropriatedProfit" />
+		<field name="LossCompensatedBeforeTheTax" describe="（未分配利润科目下）应由以后年度税前利润弥补的亏损" type="isodouble" source="db" dbname="LossCompensatedBeforeTheTax" />
+	</sgmt>
+	<sgmt name="IncomeStatementProfitAppropriation2007Sgmt" describe="2007版利润及利润分配表段" type="S" ctable="ECR_FINANCEPS_2007" htable="HECR_FINANCEPS_2007" key="CUSTOMERID,SheetYear,SheetType,SheetTypeDivide">
+		<field name="RevenueOfSales" describe="营业收入 " type="isodouble" source="db" dbname="RevenueOfSales" />
+		<field name="CostOfSales" describe="营业成本 " type="isodouble" source="db" dbname="CostOfSales" />
+		<field name="BusinessAndOtherTaxes" describe="营业税金及附加 " type="isodouble" source="db" dbname="BusinessAndOtherTaxes" />
+		<field name="SellingExpenses" describe="销售费用 " type="isodouble" source="db" dbname="SellingExpenses" />
+		<field name="GeneralAndAdministrativeExpenses" describe="管理费用 " type="isodouble" source="db" dbname="m9174" />
+		<field name="FinancialExpense" describe="财务费用 " type="isodouble" source="db" dbname="FinancialExpense" />
+		<field name="ImpairmentLossOfAssets" describe="资产减值损失 " type="isodouble" source="db" dbname="ImpairmentLossOfAssets" />
+		<field name="ProfitOrLossArisingFromChangesInFairValue" describe="公允价值变动净收益 " type="isodouble" source="db" dbname="m9177" />
+		<field name="InvestmentIncome" describe="投资净收益 " type="isodouble" source="db" dbname="InvestmentIncome" />
+		<field name="InvestmentIncomeFromAffiliatedBusinessAndCooperativeEnterprise" describe="对联营企业和合营企业的投资收益" type="isodouble" source="db" dbname="m9179" />
+		<field name="OperatingProfits" describe="营业利润 " type="isodouble" source="db" dbname="OperatingProfits" />
+		<field name="NonOperatingIncome" describe="营业外收入 " type="isodouble" source="db" dbname="NonOperatingIncome" />
+		<field name="NonOperatingExpenses" describe="营业外支出 " type="isodouble" source="db" dbname="NonOperatingExpenses" />
+		<field name="NonCurrentAssets" describe="非流动资产损失（其中：非流动资产处置损失） " type="isodouble" source="db" dbname="NonCurrentAssets" />
+		<field name="ProfitBeforeTax" describe="利润总额 " type="isodouble" source="db" dbname="ProfitBeforeTax" />
+		<field name="IncomeTaxExpense" describe="所得税费用 " type="isodouble" source="db" dbname="IncomeTaxExpense" />
+		<field name="NetProfit" describe="净利润 " type="isodouble" source="db" dbname="NetProfit" />
+		<field name="BasicEarningsPerShare" describe="基本每股收益 " type="isodouble" source="db" dbname="BasicEarningsPerShare" />
+		<field name="DilutedEarningsPerShare" describe="稀释每股收益 " type="isodouble" source="db" dbname="DilutedEarningsPerShare" />
+	</sgmt>
+</inf>

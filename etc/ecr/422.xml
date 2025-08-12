@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!-- 企业授信协议更正请求记录 -->
+<inf>
+	<sgmt name="BsSgmt" describe="企业授信协议更正请求信息段" type="B" table="HECR_MdfcInfo" key="InfRecType,ModRecCode,SessionID,MdfcSgmtCode">
+		<field name="InfRecType" 	describe="信息记录类型" 		type="text" source="fix" value="422" />
+		<field name="ModRecCode" 	describe="待更正业务标识" 	type="text" source="db" dbname="ModRecCode" bsdbname="ContractCode" />
+		<field name="RptDate" 		describe="信息报告日期" 		type="text" source="db" dbname="RptDate" />
+		<field name="MdfcSgmtCode" 	describe="待更正段段标" 		type="text" source="db" dbname="MdfcSgmtCode" />
+	</sgmt>
+</inf>

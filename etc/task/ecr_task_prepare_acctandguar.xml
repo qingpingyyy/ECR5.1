@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="GB2312"?>
+<task name="ECRPrepareAcctAndGuarTask" describe="导入企业借贷账户和担保账户信息" recovery="fasle"  saveHistory="true"  historyFolder="./his" >
+	<extendProperties>
+			<!-- 借贷账户基础段、基本概况段、还款表现信息段共用条件 -->
+			<property name="AcctBsCondition" value=" EA.RecordFlag in('A','U') {#符合记录标志的数据}					
+													 and EA.AcctType in('D1','D2','R1','R4','C1') {#借贷账户记录}" />
+			<!-- 借贷账户授信额度信息段、特定交易段共用条件 -->
+			<property name="AcctCredCondition" value=" EA.RecordFlag in('A','U') {#符合记录标志的数据}" />
+			<!-- 借贷账户符合记录标志的数据,新增或更新或月底未上报的 -->
+			<property name="AcctMotgaAndRltCondition" value=" (EA.RecordFlag in('A','U') or (EA.RecordFlag = 'R' and '{$ARE.endDate}' = '{$ARE.bizDate}')){#符合记录标志的数据,新增或更新或月底未上报的}" />
+			<!-- 担保账户 A/U账户-->
+			<property name="AcctguarAUCondition" value=" EA.RecordFlag in('A','U') {#符合记录标志的数据}
+														 and EA.AcctType in('G1','G2','G3') {#担保账户记录}" />
+			<!-- 担保账户A/U/R状态  -->
+			<property name="AcctguarAURCondition" value=" EA.RecordFlag in('A','U','R') {#符合记录标志的数据}
+															  and EA.AcctType in('G1','G2','G3') {#担保账户记录}	" />
+	</extendProperties>
+	<executeUnits>
+		<!-- 以下为借贷账户信息 -->
+		<executeUnit name="InsertEcrAcctBs" describe="导入企业借贷交易信息基础段信息-------------跑这个" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_ACCT_BS:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+										EA.CustomerID as CustomerID{#客户编号},
+										'410' as InfRecType{#信息记录类型},
+										EA.AcctType as AcctType{#账户类型 },
+										EA.AcctCode as AcctCode{#账户标识码 },
+										'{$ARE.bizDate}' as RptDate{#信息报告日期 },
+										EA.RptDateCode as RptDateCode{#报告时点说明代码},
+										EA.Name as Name{#借款人名称},
+										EA.IDType as IDType{#借款人身份标识类型},
+										EA.IDNum as IDNum{#借款人身份标识号码},
+										EA.ManagerOrgID as MngmtOrgCode{#业务管理机构代码},
+										EA.ManagerOrgID as ManagerOrgID{#管户机构编号},
+										EA.ManagerUserID as ManagerUserID{#管户用户编号}
+								from ECR_ACCOUNTINFO EA
+								where {$TASK.AcctBsCondition}
+					"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+					{MngmtOrgCode,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='ManageOrgID_ECR'}" 
+				/>
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.table" value="ECR_ACCT_BS" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.keyColumns" value="AcctCode" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateColumns" 
+						  value="RptDate,RptDateCode,Name,IDType,IDNum,MngmtOrgCode,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.compareColumns" 
+						  value="RptDateCode,Name,IDType,IDNum,MngmtOrgCode" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrAcctBsInf" describe="导入企业借贷借贷交易信息基本概况段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_ACCT_BSINF:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+										EA.CustomerID as CustomerID{#客户编号},
+										EA.AcctCode as AcctCode{#账户标识码 },
+										EA.BusiLines as BusiLines{#借贷业务大类 },
+										EA.BusiDtlLines as BusiDtlLines{#借贷业务种类细分},
+										EA.OpenDate as OpenDate{#开户日期},
+										EA.Cy as Cy{#币种},
+										case when EA.AcctType ='R1' then EA.AcctCredLine else null end as AcctCredLine{#信用额度},
+										case when EA.AcctType &lt;&gt; 'R1' then EA.LoanAmt else null end as LoanAmt{#借款金额},
+										case when EA.AcctType ='D1' then EA.Flag else null end as Flag{#分次放款标志},
+										case when EA.AcctType &lt;&gt; 'C1' then EA.DueDate else null end as DueDate{#到期日期},
+										case when EA.AcctType in ('D1','R1','R4') then EA.RepayMode else null end as RepayMode{#还款方式 },
+										case when EA.AcctType in ('D1','R1','R4') then EA.RepayFreqcy else null end as RepayFreqcy{#还款频率 },
+										case when EA.AcctType &lt;&gt; 'C1' then EA.ApplyBusiDist else null end as ApplyBusiDist{#业务申请地行政区划代码  },
+										case when EA.AcctType &lt;&gt; 'C1' then EA.GuarMode else null end as GuarMode{#担保方式  },
+										case when EA.AcctType &lt;&gt; 'C1' then EA.OthRepyGuarWay else null end as OthRepyGuarWay{#其他还款保证方式  },
+										case when EA.AcctType in ('D1','R4') then EA.LoanTimeLimCat else null end as LoanTimeLimCat{#借款期限分类 },
+										case when EA.AcctType &lt;&gt; 'C1' then EA.LoaFrm else null end as LoaFrm{#借款发放形式},
+										case when EA.AcctType in ('D1','R1','R4') then EA.ActInvest else null end as ActInvest{#借款实际投向},
+										case when EA.AcctType &lt;&gt; 'C1' then EA.FundSou else null end as FundSou{#业务经营类型},
+										case when EA.AcctType in ('D1','R1','R4') then EA.AssetTrandFlag else null end as AssetTrandFlag{#资产转让标志},
+										EA.ManagerOrgID as ManagerOrgID{#管户机构编号},
+										EA.ManagerUserID as ManagerUserID{#管户用户编号}
+								from ECR_ACCOUNTINFO EA
+								where {$TASK.AcctBsCondition}
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.table" value="ECR_ACCT_BSINF" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.keyColumns" value="AcctCode" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateColumns" 
+						  value="BusiLines,BusiDtlLines,OpenDate,Cy,AcctCredLine,LoanAmt,Flag,DueDate,RepayMode,RepayFreqcy,ApplyBusiDist,GuarMode,OthRepyGuarWay,LoanTimeLimCat,LoaFrm,ActInvest,FundSou,AssetTrandFlag,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.compareColumns" 
+						  value="BusiLines,BusiDtlLines,OpenDate,Cy,AcctCredLine,LoanAmt,Flag,DueDate,RepayMode,RepayFreqcy,ApplyBusiDist,GuarMode,OthRepyGuarWay,LoanTimeLimCat,LoaFrm,ActInvest,FundSou,AssetTrandFlag" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrAcctCred" describe="导入企业借贷交易信息授信额度信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_ACCT_CRED:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+						EA.CustomerID as CustomerID{#客户编号},
+						EA.AcctCode as AcctCode{#账户标识码 },
+						EA.BCtrctCode as Mcc{#授信协议标识码 },
+						EA.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						EA.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_ACCOUNTINFO EA
+					where {$TASK.AcctCredCondition} 
+						and (EA.AcctType in('R1','R4') or (EA.AcctType = 'D1' and (EA.Flag in('1','2')))){#R1/R4/D1分次放款账户}
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.table" value="ECR_ACCT_CRED" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.keyColumns" value="AcctCode,Mcc" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateDifferent" value="false" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateColumns" 
+						  value="OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrAcctMotgaCtrct" describe="导入企业借贷交易信息抵质押信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_ACCT_MOTGACTRCT:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+							EA.CustomerID as CustomerID{#客户编号},
+							EA.AcctCode as AcctCode{#账户标识码 },
+							EM.Ccc as Ccc{#抵(质)押合同标识码},
+							EM.RltFlag as EffStatus{#有效标志},
+							EA.ManagerOrgID as ManagerOrgID{#管户机构编号},
+							EA.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_ACCOUNTINFO EA,ECR_INT_MOTGARLT EM
+					where EM.BCtrctCode = EA.BCtrctCode
+							and {$TASK.AcctMotgaAndRltCondition}
+							and EA.AcctType in('D1','R1','R4') {#借贷账户记录}				
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.table" value="ECR_ACCT_MOTGACTRCT" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.keyColumns" value="AcctCode,Ccc" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.commitNumber" value="500" />
+				<!-- <property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateDifferent" value="false" /> -->
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.compareColumns" 
+					      value="EffStatus" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateColumns" 
+					      value="EffStatus,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrAcctActlblty" describe="导入企业借贷交易信息还款表现信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_ACCT_ACTLBLTY:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctActlbltyUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+							EA.CustomerID as CustomerID{#客户编号},
+							EA.AcctCode as AcctCode{#账户标识码 },
+							case when EA.AcctStatus in('1','2') then '10' else EA.AcctStatus end as AcctStatus{#账户状态 },
+							EA.AcctBal as AcctBal{#余额 },
+							EA.BalChgDat as BalChgDate{#余额变化日期},
+							EA.FiveCate as FiveCate{#五级分类},
+							EA.FiveCateAdjDate as FiveCateAdjDate{#五级分类认定日期},
+							case when EA.AcctType ='R1' then EA.PymtPrd else null end as PymtPrd{#剩余还款期数},
+							case when EA.AcctType &lt;&gt; 'C1' then EA.OverdBal+EA.Interest else null end as TotOverd{#当前逾期总额},
+							case when EA.AcctType &lt;&gt; 'C1' then EA.OverdBal else null end as OverdPrinc{#当前逾期本金},
+							case when EA.AcctType &lt;&gt; 'C1' then EA.OverdDy else null end as OverdDy{#当前逾期天数},
+							case when EA.AcctType = 'C1' then null when EA.AcctType &lt;&gt; 'C1' and EA.NxtAgrrRpyDate is not null then EA.NxtAgrrRpyDate else 'N/A' end as NxtAgrrRpyDate{#下一次约定还款日期},
+							EA.CloseDate as CloseDate{#账户关闭日期},
+							EA.ManagerOrgID as ManagerOrgID{#管户机构编号},
+							EA.ManagerUserID as ManagerUserID{#管户用户编号},
+							EA.OpenDate as OpenDate{#开户日期}
+					from ECR_ACCOUNTINFO EA
+					where {$TASK.AcctBsCondition}
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctActlbltyUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctActlbltyUpdateHandler.table" value="ECR_ACCT_ACTLBLTY" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctActlbltyUpdateHandler.keyColumns" value="AcctCode" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.EECRAcctActlbltyUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctActlbltyUpdateHandler.insertColumns" 
+						  value="SessionID,CustomerID,AcctCode,AcctStatus,AcctBal,BalChgDate,FiveCate,FiveCateAdjDate,PymtPrd,TotOverd,OverdPrinc,OverdDy,LatRpyDate,LatRpyAmt,LatRpyPrinc,LatAgrrRpyDate,LatAgrrRpyAmt,NxtAgrrRpyDate,RpmtType,CloseDate,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID,OperOrgID,OperUserID,OperTime" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctActlbltyUpdateHandler.updateColumns" 
+						  value="AcctStatus,AcctBal,BalChgDate,FiveCate,FiveCateAdjDate,PymtPrd,TotOverd,OverdPrinc,OverdDy,LatRpyDate,LatRpyAmt,LatRpyPrinc,LatAgrrRpyDate,LatAgrrRpyAmt,NxtAgrrRpyDate,RpmtType,CloseDate,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctActlbltyUpdateHandler.compareColumns" 
+						  value="AcctStatus,AcctBal,BalChgDate,FiveCate,FiveCateAdjDate,PymtPrd,TotOverd,OverdPrinc,OverdDy,LatRpyDate,LatRpyAmt,LatRpyPrinc,LatAgrrRpyDate,LatAgrrRpyAmt,NxtAgrrRpyDate,RpmtType,CloseDate" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrAcctRltRepymt" describe="导入企业借贷交易信息相关还款责任人段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_ACCT_RLTREPYMT:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+							EA.CustomerID as CustomerID{#客户编号},
+							EA.AcctCode as AcctCode{#账户标识码 },
+							concat(concat(ERI.ArlpCertNum,'*'),ERI.ArlpType) as RltRepymtSerialNo{#责任人编号 },
+							ERI.InfoIDType as ArlpIDType{#身份类别 },
+							ERI.ArlpName as ArlpName{#责任人名称},
+							ERI.ArlpCertType as ArlpCertType{#责任人身份标识类型},
+							ERI.ArlpCertNum as ArlpCertNum{#责任人身份标识号码},
+							ERI.ArlpType as ArlpType{#还款责任类型},
+							ERI.ArlpAmt as ArlpAmt{#还款责任金额},
+							ERI.WartySign as WartySign{#联保标志},
+							ERI.MaxGuarMcc as MaxGuarMcc{#保证合同编号},
+							ERI.EffStatus as EffStatus{#有效标志},
+							EA.ManagerOrgID as ManagerOrgID{#管户机构编号},
+							EA.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_ACCOUNTINFO EA,ECR_INT_RLTREPYMTINFO ERI
+					where ERI.BCtrctCode = EA.BCtrctCode
+							and {$TASK.AcctMotgaAndRltCondition}
+							and (EA.AcctType in('D1','D2','R1','R4'){#借贷账户记录}
+							    or (EA.AcctType='C1' and EA.RptDateCode='10'){#催收账户新开立时}) 
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.table" value="ECR_ACCT_RLTREPYMT" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.keyColumns" value="AcctCode,RltRepymtSerialNo" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.compareColumns" 
+						  value="ArlpIDType,ArlpName,ArlpCertType,ArlpCertNum,ArlpType,ArlpAmt,WartySign,MaxGuarMcc,EffStatus" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateColumns" 
+						  value="ArlpIDType,ArlpName,ArlpCertType,ArlpCertNum,ArlpType,ArlpAmt,WartySign,MaxGuarMcc,EffStatus,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrAcctSpecTrstDspn" describe="导入企业借贷交易信息特定交易段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_ACCT_SPECTRSTDSPN:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+							EA.CustomerID as CustomerID{#客户编号},
+							EA.AcctCode as AcctCode{#账户标识码 },
+							ESB.ChanCode as CagOfTrdSerialNo{#交易编号 },
+							ESB.ChanTranType as ChanTranType{#交易类型 },
+							ESB.TranDate as TranDate{#交易日期},
+							ESB.TranAmt as TranAmt{#交易金额},
+							ESB.DueTranMon as DueTranMon{#到期日期变更月数},
+							ESB.DetInfo as DetInfo{#交易明细信息},
+							EA.ManagerOrgID as ManagerOrgID{#管户机构编号},
+							EA.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_ACCOUNTINFO EA,ECR_INT_SPECIBUSINESS ESB
+					where ESB.AcctCode = EA.AcctCode
+							and {$TASK.AcctCredCondition}  
+							and (EA.AcctType in('R4','C1') or (EA.AcctType ='D1' and (EA.Flag in('0','1')))){#借贷账户记录}
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.table" value="ECR_ACCT_SPECTRSTDSPN" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.keyColumns" value="AcctCode,CagOfTrdSerialNo" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateColumns" 
+					      value="ChanTranType,TranDate,TranAmt,DueTranMon,DetInfo,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.compareColumns" 
+					      value="ChanTranType,TranDate,TranAmt,DueTranMon,DetInfo" />
+			</extendProperties>
+		</executeUnit>
+		
+		<!-- 以下为担保账户信息 -->
+		<executeUnit name="InsertEcrGuarBs" describe="导入企业担保交易信息基础段信息" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_GUAR_BS:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+							'440' as InfRecType{#信息记录类型},
+							EA.AcctCode as AcctCode{#账户标识码 },
+							EA.AcctType as AcctType{#账户类型 },
+							'{$ARE.bizDate}' as RptDate{#信息报告日期 },
+							EA.RptDateCode as RptDateCode{#报告时点说明代码},
+							EA.Name as Name{#债务人名称},
+							EA.IDType as IDType{#债务人身份标识类型 },
+							EA.IDNum as IDNum{#债务人身份标识号码},
+							EA.ManagerOrgID as MngmtOrgCode{#业务管理机构代码},
+							EA.ManagerOrgID as ManagerOrgID{#管户机构编号},
+							EA.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_ACCOUNTINFO EA
+					where {$TASK.AcctguarAUCondition}
+					"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+					{MngmtOrgCode,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='OrgCode'}" 
+				/>
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.table" value="ECR_GUAR_BS" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.keyColumns" value="AcctCode" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateColumns" 
+						  value="AcctType,RptDateCode,Name,IDType,IDNum,MngmtOrgCode,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.compareColumns" 
+						  value="AcctType,RptDateCode,Name,IDType,IDNum,MngmtOrgCode" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrGuarBsInf" describe="导入企业担保交易信息基本信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_GUAR_BSINF:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+							EA.AcctCode as AcctCode{#账户标识码 },
+							EA.BusiLines as BusiLines{#担保业务大类 },
+							EA.BusiDtlLines as BusiDtlLines{#担保业务种类细分},
+							EA.OpenDate as OpenDate{#开户日期},
+							EA.LoanAmt as GuarAmt{#担保金额},
+							EA.Cy as Cy{#币种},
+							EA.DueDate as DueDate{#到期日期},
+							EA.GuarMode as GuarMode{#反担保方式},
+							EA.OthRepyGuarWay as OthRepyGuarWay{#其他还款保证方式},
+							EA.SecDep as SecDep{#保证金百分比},
+							EA.AcctCode as CtrctTxtCode{#担保合同文本编号},
+							EA.ManagerOrgID as ManagerOrgID{#管户机构编号},
+							EA.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_ACCOUNTINFO EA
+					where {$TASK.AcctguarAUCondition}
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.table" value="ECR_GUAR_BSINF" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.keyColumns" value="AcctCode" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateColumns" 
+					  	  value="BusiLines,BusiDtlLines,OpenDate,GuarAmt,Cy,DueDate,GuarMode,OthRepyGuarWay,SecDep,CtrctTxtCode,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.compareColumns" 
+					  	  value="BusiLines,BusiDtlLines,OpenDate,GuarAmt,Cy,DueDate,GuarMode,OthRepyGuarWay,SecDep,CtrctTxtCode" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrGuarRltRepymtInf" describe="导入企业担保交易信息在保责任信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_GUAR_RLTREPYMTINF:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+							EA.AcctCode as AcctCode{#账户标识码 },
+							EA.AcctStatus as AcctStatus{#账户状态},
+							EA.AcctBAL as LoanAmt{#在保余额},
+							EA.BalChgDat as RepayPrd{#余额变化日期},
+							EA.FiveCate as FiveCate{#五级分类},
+							EA.FiveCateAdjDate as FiveCateAdjDate{#五级分类认定日期},
+							EA.RiEx as RiEx{#风险敞口},
+							EA.CompAdvFlag as CompAdvFlag {#代偿（垫款）标识},
+							EA.CloseDate as CloseDate{#账户关闭日期},
+							EA.ManagerOrgID as ManagerOrgID{#管户机构编号},
+							EA.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_ACCOUNTINFO EA
+					where {$TASK.AcctguarAUCondition}
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.table" value="ECR_GUAR_RLTREPYMTINF" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.keyColumns" value="AcctCode" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateColumns" 
+						  value="RepayPrd,FiveCateAdjDate,AcctStatus,LoanAmt,FiveCate,RiEx,CompAdvFlag,CloseDate,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.compareColumns" 
+						  value="AcctStatus,LoanAmt,FiveCate,RiEx,CompAdvFlag,CloseDate" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrGuarRltRepymt" describe="导入企业担保交易信息相关还款责任人段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_GUAR_RLTREPYMT:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+							EA.AcctCode as AcctCode{#账户标识码 },
+							concat(concat(ERI.ArlpCertNum,'*'),ERI.ArlpType) as RltRepymtSerialNo{#责任人编号 },
+							ERI.InfoIDType as InfoIDType{#身份类别 },
+							ERI.ArlpName as ArlpName{#相关还款责任人名称},
+							ERI.ArlpCertType as ArlpCertType{#相关还款责任人身份标识类型 },
+							ERI.ArlpCertNum as ArlpCertNum{#相关还款责任人身份标识号码},
+							ERI.ArlpType as ArlpType{#还款责任类型},
+							ERI.ArlpAmt as ArlpAmt{#还款责任金额},
+							ERI.WartySign as WartySign{#联保标志},
+							ERI.MaxGuarMcc as MaxGuarMcc{#保证合同编号},
+							ERI.EffStatus as EffStatus{#有效标志},
+							EA.ManagerOrgID as ManagerOrgID{#管户机构编号},
+							EA.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_ACCOUNTINFO EA,ECR_INT_RLTREPYMTINFO ERI
+					where ERI.BCtrctCode = EA.BCtrctCode
+							and {$TASK.AcctguarAURCondition}
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.table" value="ECR_GUAR_RLTREPYMT" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.keyColumns" value="AcctCode,RltRepymtSerialNo" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.compareColumns" 
+						  value="InfoIDType,ArlpName,ArlpCertType,ArlpCertNum,ArlpType,ArlpAmt,WartySign,MaxGuarMcc,EffStatus" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateColumns" 
+						  value="InfoIDType,ArlpName,ArlpCertType,ArlpCertNum,ArlpType,ArlpAmt,WartySign,MaxGuarMcc,EffStatus,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrGuarCred" describe="导入企业担保交易信息授信额度信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_GUAR_CRED:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+						EA.AcctCode as AcctCode{#账户标识码 },
+						EA.BCtrctCode as Mcc{#授信协议标识码 },
+						EA.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						EA.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_ACCOUNTINFO EA
+					where EA.RecordFlag in('A','U') {#符合记录标志的数据}
+						and (EA.AcctType = 'G3' and EA.CycFlag = '1') {#可循环G3账户适用}
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.table" value="ECR_GUAR_CRED" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.keyColumns" value="AcctCode" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateDifferent" value="false" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateColumns" 
+						  value="OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+			</extendProperties>
+		</executeUnit>
+			
+		<executeUnit name="InsertOverdueWarning" describe="导入企业逾期报送预警信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:ndb:ecr_data:select * from ECR_REPWARNING:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ImportWarningPreHandler,
+													com.amarsoft.app.pbc.ecr.dataimport.ImportWarningHandler"  />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+						EAL.AcctCode as AcctCode{#账户标识码 },
+						EAL.AcctStatus as AcctStatus{#账户状态},
+						EA.CustomerID as CustomerID{#客户号},
+						EA.Name as Name{#企业名称},
+						EA.IDType as IDType{#企业身份标识类型},
+						EA.IDNum as IDNum{#企业身份标识号码},
+						'2' as WarningType{#预警类型},
+						EAL.FiveCate as FiveCate{#五级分类},
+						'{$ARE.bizDate}' as OccurDate{#数据日期},
+						EAL.TotOverd as TotOverd{#当前逾期总额},
+						EAL.OverdPrinc as OverdPrinc{#当前逾期本金},
+						EAL.OverdDy as OverdDy{#当前逾期天数},
+						EAL.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						EAL.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_ACCOUNTINFO EA,ECR_ACCT_ACTLBLTY EAL
+					where EAL.AcctCode = EA.AcctCode
+						and EAL.AcctStatus = '10'
+						and EAL.FiveCate ='1' 
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportWarningPreHandler.database" value="ecr" />		
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportWarningHandler.database" value="ecr" />	
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportWarningHandler.table" value="ECR_REPWARNING" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportWarningHandler.keyColumns" value="AcctCode,WarningType" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportWarningHandler.checkDBRecord" value="false" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ImportWarningHandler.insertColumns" 
+					value="AcctCode,AcctStatus,CustomerID,Name,IDType,IDNum,WarningType,FiveCate,OccurDate,ManagerOrgID,ManagerUserID" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="InsertEcrAcctOrgiCreditor" describe="导入企业借贷借贷交易信息初始债权信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_ACCT_ORIGCREDITOR:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+					'' as CustomerID{#客户编号},
+					'' as AcctCode{#账户标识码 },
+					'' as InitCredName{#初始债权人名称 },
+					'' as InitCedOrgCode{#初始债权人机构代码 },
+					'' as OrigDbtCate{#原债务种类},
+					'' as InitRpySts{#债权转移时的还款状态},
+					'' as ManagerOrgID{#管户机构编号},
+					'' as ManagerUserID{#管户用户编号}
+					from DUAL
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.table" value="ECR_ACCT_ORIGCREDITOR" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.keyColumns" value="AcctCode" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.commitNumber" value="500" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateColumns" value="*" />
+			</extendProperties>
+		</executeUnit>
+	
+		<!-- 担保账户抵质押物信息段未人行预留信息段 ，暂不需要报送 -->
+		<executeUnit name="InsertEcrGuarMotgaCtrct" describe="导入企业担保交易信息抵质押信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+			<extendProperties>
+				<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_GUAR_MOTGACTRCT:etc/ecr_are.xml:,"/>
+				<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+				<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler" />
+				<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+				<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+					value="datasource:db:ecr:select 
+							EA.AcctCode as AcctCode{#账户标识码 },
+							EM.Ccc as Ccc{#抵(质)押合同标识码},
+							EM.RltFlag as EffStatus{#有效标志},
+							EA.ManagerOrgID as ManagerOrgID{#管户机构编号},
+							EA.ManagerUserID as ManagerUserID{#管户用户编号}
+					from ECR_ACCOUNTINFO EA,ECR_INT_MOTGARLT EM
+					where EM.BCtrctCode = EA.BCtrctCode
+							and {$TASK.AcctguarAURCondition}
+							and substr(EM.UPDATEDATE,1,7) = '{$ARE.thisMonth}'
+					"/> 
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.database" value="ecr" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.table" value="ECR_GUAR_MOTGACTRCT" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.keyColumns" value="AcctCode,Ccc" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.commitNumber" value="500" />
+				<!-- <property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateDifferent" value="false" /> -->
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateColumns" 
+						  value="EffStatus" />
+				<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRAcctAndGuarUpdateHandler.updateColumns" 
+						  value="EffStatus,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+			</extendProperties>
+		</executeUnit>
+		
+		<executeUnit name="SyncOrgAcctRecordflag" describe="更新企业借贷交易信息基础段、还款表现段" executeClass="com.amarsoft.app.pbc.ecr.dataimport.SyncOrgAcctRecordflag" allowManualExecute="true"/>
+		
+		<executeUnit name="SyncOrgGuarRecordflag" describe="更新企业担保交易信息基础段" executeClass="com.amarsoft.app.pbc.ecr.dataimport.SyncOrgGuarRecordflag" allowManualExecute="true"/>
+	</executeUnits>
+	<routeMap start="InsertEcrAcctBs">
+		<route unit="InsertEcrAcctBs" successful="InsertEcrAcctBsInf" />
+		<route unit="InsertEcrAcctBsInf" successful="InsertEcrAcctCred" />
+		<route unit="InsertEcrAcctCred" successful="InsertEcrAcctMotgaCtrct" />
+		<route unit="InsertEcrAcctMotgaCtrct" successful="InsertEcrAcctActlblty" />
+		<!-- <route unit="InsertEcrAcctOrgiCreditor" successful="InsertEcrAcctActlblty" /> -->
+		<route unit="InsertEcrAcctActlblty" successful="InsertEcrAcctRltRepymt" />
+		<route unit="InsertEcrAcctRltRepymt" successful="InsertEcrAcctSpecTrstDspn" />
+		<route unit="InsertEcrAcctSpecTrstDspn" successful="SyncOrgAcctRecordflag" />
+		<route unit="SyncOrgAcctRecordflag" successful="InsertEcrGuarBs" />
+		<route unit="InsertEcrGuarBs" successful="InsertEcrGuarBsInf" />
+		<route unit="InsertEcrGuarBsInf" successful="InsertEcrGuarRltRepymtInf" />
+		<route unit="InsertEcrGuarRltRepymtInf" successful="InsertEcrGuarRltRepymt" />
+		<route unit="InsertEcrGuarRltRepymt" successful="InsertEcrGuarMotgaCtrct" />
+		<route unit="InsertEcrGuarRltRepymt" successful="InsertEcrGuarCred" />
+		<route unit="InsertEcrGuarCred" successful="SyncOrgGuarRecordflag" />
+		<route unit="SyncOrgGuarRecordflag" successful="InsertOverdueWarning" />
+	</routeMap>
+</task>

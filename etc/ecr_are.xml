@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--Amarsoft Runtime Environmen Config File-->
+<ARE>
+	<!--系统属性可以做为多种用途的扩展之用,可以放置任意多的属性在此-->
+	<SystemProperties>
+	    <Property name="APP_HOME" value="/data/ctyue/AmarECR5.1" />
+	    
+		<Property name="ECR_HOME" value="{$ARE.APP_HOME}" />
+				
+		<Property name="ecr_etc" value="{$ARE.ECR_HOME}/etc/ecr_inf.xml" />
+		
+		<Property name="ecr_dataSource" value="ecr" />
+		
+		<!-- 加载数据文件 -->
+		<Property name="datacopy" value="ECRDataCopyTask" />
+		<!-- 数据处理 账户信息 -->
+		<Property name="prepareAccount" value="ECRPrepareAccountTask" />
+		<!-- 数据处理 循环贷账户信息,暂停使用 -->
+		<Property name="prepareRlgAccount" value="ECRPrepareRlgAccountTask" />
+		<!-- 数据处理 客户信息 -->
+		<Property name="prepareCust" value="ECRPrepareCustTask" />
+		<!-- 数据处理 财报信息 -->
+		<Property name="prepareFinance" value="ECRPrepareFinanceTask" />
+		<!-- 数据处理 授信和抵质押信息 -->
+		<Property name="prepareCredAndMotga" value="ECRPrepareCredAndMotgaTask" />
+		<!-- 数据处理 借贷和担保交易信息 -->
+		<Property name="prepareAcctAndGuar" value="ECRPrepareAcctAndGuarTask" />
+		<!-- 数据校验 -->
+		<Property name="validate" value="ECRValidateTask" />
+		<!-- 数据迁移 -->
+		<Property name="transfer" value="ECRTransferTask" />
+	    <!-- 生成报文 -->
+		<Property name="report" value="ECRReportTask" />
+		<!-- 加载反馈文件 -->
+		<Property name="feedback" value="ECRFeedbackReportTask" />
+		<!-- 调用报文预处理 -->
+		<Property name="exportenc" value="ECRExportEncTask" />
+		<!-- 调用报文预处理 -->
+		<Property name="feedenc" value="ECRFeedbackEncTask" />
+		
+		<!-- 确定每天生成报文的顺序号的基础，缺省情况下，报文从1开始，如果要改变顺序，设置下面的参数 -->
+		<Property name="baseMessageNumber" value="1" />
+		
+		<Property name="infLimitNum" value="1000000" />
+		
+		<!--单法人机构时的金融机构代码 -->
+		<Property name="ecr_FinanceCode" value="A2900309000413" />
+		<!-- 上线日期/存量日期:格式YYYY/MM/DD,应设置为上线当日系统时间的前一日 -->
+		<Property name="appDate" value="2019/12/31" />
+		<!-- 若bizDate设置为AUTOSELECT时，且当前系统时间早于22：00，则bizdate设为昨天，
+		若设置的是具体日期，格式如YYYY/MM/DD ,则bizdate为此具体日期 -->
+		<Property name="bizDate" value="AUTOSELECT" />
+		<!-- 接口文件日期，若设置为AUTOSELECT时，且当前系统时间早于22：00，则设为昨天，
+		若设置的是具体日期，格式如YYYYMMDD ,则为此具体日期 -->
+		<Property name="fileDate" value="AUTOSELECT" /> 
+		<!-- 信息来源编码  -->
+		<Property name="InfSurcCode" value="A2900309000413" />
+		<Property name="SessionID" value="0000000000000000" />
+		
+		<!-- 接口文件存放位置 -->
+		<Property name="importFile" value="data/import" />
+		
+		<!-- 线程数 -->
+		<Property name="threadNumber" value="10" />
+		
+		<!-- 预处理工程 -->
+		<Property name="client_home" value="F:/workspace/client" />
+		
+		<!-- metadata路径配置 -->
+		<Property name="are.service.METADATA.schemas" value ="{$ARE.APP_HOME}/etc/metadata/ecr_metadata.xml"/>
+		<!-- 数据库路径配置 -->
+		<Property name="are.service.DBCONNECTION.configurationSource" value ="${CONFDIR}/ecr_dbconfig.xml"/>
+				
+	</SystemProperties>
+	
+	<!-- ARE 服务将在初始化时，被装载-->
+	<AREServices>
+		<!-- Java业务对象管理服务。提供Java业务对象管理方法。
+			 应用程序可以通过JBO访问业务对象而不需要对数据库做操作。
+		-->
+		<Service id="JBO" enabled="true" initOnStart="true">
+			<Provider>Amarsoft</Provider>
+			<Version>1.0</Version>
+			<Describe>业务对象管理服务</Describe>
+			<ServiceClass>com.amarsoft.are.jbo.impl.DefaultXMLJBOFactory</ServiceClass>
+			<Properties>
+				<Property name="com.amarsoft.are.jbo.impl.DefaultXMLJBOFactory.configFile" 
+					value="{$ARE.APP_HOME}/etc/jbo/jbomanagers.xml,
+							{$ARE.APP_HOME}/etc/jbo/jbo_task.xml,
+							{$ARE.APP_HOME}/etc/jbo/sample/jbo.xml,
+							{$ARE.APP_HOME}/etc/jbo/ecr/jbo_ecr.xml
+							"/>
+				<Property name="com.amarsoft.are.jbo.impl.DefaultXMLJBOFactory.defaultPackage" value="jbo.task"/>
+			</Properties>
+		</Service>
+		
+		<Service id="TASK" initOnStart="false" serviceClass="com.amarsoft.task.TaskManager">
+	           <Properties>
+	               <Property name="com.amarsoft.task.TaskManager.loaderClass" value="com.amarsoft.task.loader.XMLTaskLoader" />
+	               <Property name="throwBuildException" value="true" />
+	               <Property name="executeResultEnabled" value="true" />
+	               <Property name="fileRecoveryEnabled" value="false" />
+	               <Property name="globalTaskListenerClass" value="com.amarsoft.task.listener.DBTaskRecovery" />
+	               <Property name="globalTaskListenerClassAttributes" value="hangEnabled=true,historyEnabled=true,hangInterval=20,dataSource=ecr" />
+	           </Properties>
+	       </Service> 
+	</AREServices>
+</ARE>

@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!-- 任务定义文件,每个任务有一个文件构成，任务构造器可以根据此文件构造一个任务出来 -->
+
+<task name="ECRPrepareCustTask" describe="导入企业客户基本信息19:31:04------19:34:52" recovery="false"  saveHistory="true"  historyFolder="./his" >
+		<extendProperties>
+				<!-- 抽取条件:未结清或者之前一段时间内结清数据企业基本信息 -->
+				<property name="CustCondition" value=" (CustomerType ='1' or (CustomerType ='2' and exists(select 1 from ECR_ACCOUNTINFO EA
+							where  EI.CustomerID = EA.CustomerID
+							and  EA.RecordFlag &lt;&gt; 'X')))" />
+				<!-- 抽取条件:未结清或者之前一段时间内结清数据企业基本信息关联信息 -->
+				<property name="CustReltCondition" value=" (EI.CustomerType ='1' or (EI.CustomerType ='2' and exists(select 1 from ECR_ACCOUNTINFO EA
+                            where ER.CustomerID=EA.CustomerID
+							and EA.RecordFlag &lt;&gt; 'X')))" />
+		</extendProperties>
+		<executeUnits>
+			<!-- 企业基本信息基础段 -->
+			<executeUnit name="InsertEcrCustBs" describe="导入企业基本信息基础段18:56:37-18:57:43" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+				<extendProperties>
+					<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_CUST_BS:etc/ecr_are.xml:,"/>
+					<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+					<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler" />
+					<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+					<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+						value="datasource:db:ecr:select 
+						EI.CustomerID as CustomerID{#客户编号},
+						'310' as InfRecType{#信息记录类型 },
+						EI.EntName as EntName{#企业机构名称},
+						case when EI.LoanCardNo is not null and length(EI.LoanCardNo) &lt;&gt;0  then '10' when EI.USCCID is not null and length(EI.LoanCardNo) &lt;&gt;0  then '20' else '30' end as EntCertType{#企业身份标识类型},
+						case when EI.LoanCardNo is not null and length(EI.LoanCardNo) &lt;&gt;0  then EI.LoanCardNo when EI.USCCID is not null and length(EI.LoanCardNo) &lt;&gt;0  then EI.USCCID else EI.CorpID end as EntCertNum{#企业身份标识号码},
+						'{$ARE.bizDate}' as RptDate{#信息报告日期},
+						EI.ManagerOrgID as Cimoc{#客户资料维护机构代码 },
+						EI.CustomerType as CustomerType{#客户资料类型 },
+						EI.EtpSts as EtpSts{#存续状态 },
+						EI.OrgType as OrgType{#组织机构类型},
+						EI.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						EI.ManagerUserID as ManagerUserID{#管户用户编号}
+						from ECR_INT_ENTINFO EI
+						where {$TASK.CustCondition}"/> 
+					<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.columnConvertors" value="
+					 	{Cimoc,datasource:db:ecr:select CBCode,PBCode from ECR_CODE_LIBRARY where ColName='ManageOrgID_ECR'}" 
+					/>
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.database" value="ecr" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.table" value="ECR_CUST_BS" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.keyColumns" value="CustomerID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.checkDBRecord" value="true" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.commitNumber" value="500" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.insertColumns" 
+						value="*" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.updateColumns" 
+					    value="RptDate,RptDateCode,Cimoc,CustomerType,EtpSts,OrgType,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.compareColumns" 
+					    value="Cimoc,CustomerType,EtpSts,OrgType" />	
+				</extendProperties>
+			</executeUnit>
+			
+			<!-- 企业基本信息其他标识段 -->
+			<executeUnit name="InsertEcrCustIDInf" describe="导入企业基本信息其他标识段19:01:50-19:01:51" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+				<extendProperties>
+					<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_CUST_IDINF:etc/ecr_are.xml:,"/>
+					<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+					<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler" />
+					<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+					<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+						value="datasource:db:ecr:select
+						ER.CustomerID as CustomerID{#客户编号},
+						ER.RelativeID as OtherIDSerialNo{#其他标识编号},
+						ER.ReltIDType as OthEntCertType{#企业身份标识类型},
+						ER.ReltIDNum as OthEntCertNum{#企业身份标识号码},
+						ER.EffStatus as EffStatus{#有效标志},
+						ER.UpdateDate as IDInfoUpDate{#信息更新日期},
+						ER.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						ER.ManagerUserID as ManagerUserID{#管户用户编号}
+                           from ECR_INT_RELTINFO ER,ECR_INT_ENTINFO EI
+                           where ER.ReltRelType ='60'
+                           and ER.CustomerID = EI.CustomerID
+                           and {$TASK.CustReltCondition}
+                           "/> 
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.database" value="ecr" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.table" value="ECR_CUST_IDINF" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.keyColumns" value="CustomerID,OtherIDSerialNo" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.commitNumber" value="500" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.updateColumns" 
+						value="OthEntCertType,OthEntCertNum,EffStatus,IDInfoUpDate,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.compareColumns" 
+						value="OthEntCertType,OthEntCertNum,EffStatus" />
+				</extendProperties>
+			</executeUnit>
+			
+			<!-- 企业基本信息基本概况段 -->
+			<executeUnit name="InsertEcrCustFcsInf" describe="导入企业基本信息基本概况段19:02:25-19:03:30" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+				<extendProperties>
+					<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_CUST_FCSINF:etc/ecr_are.xml:,"/>
+					<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+					<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler" />
+					<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+					<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+						value="datasource:db:ecr:select 
+						EI.CustomerID as CustomerID{#客户编号},
+						EI.Nationality as Nationality{#国别代码},
+						EI.AdmDivOfReg as AdmDivOfReg{#登记地行政区划代码},
+						EI.RegAdd as RegAdd{#登记地址},
+						EI.EstablishDate as EstablishDate{#成立日期},
+						EI.BizEndDate as BizEndDate{#营业许可证到期日},
+						EI.BizRange as BizRange{#业务范围},
+						EI.EcoIndusCate as EcoIndusCate{#行业分类代码},
+						EI.EcoType as EcoType{#经济类型代码},
+						EI.EntScale as EntScale{#企业规模},
+						EI.UpdateDate as FcsInfoUpDate{#信息更新日期},
+						EI.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						EI.ManagerUserID as ManagerUserID{#管户用户编号}
+						from ECR_INT_ENTINFO EI
+						where {$TASK.CustCondition}"/> 
+					
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.database" value="ecr" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.table" value="ECR_CUST_FCSINF" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.keyColumns" value="CustomerID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.commitNumber" value="500" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.updateColumns" 
+						value="AdmDivOfReg,RegAdd,EstablishDate,BizEndDate,BizRange,EcoIndusCate,EcoType,EntScale,FcsInfoUpDate,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.compareColumns" 
+						value="AdmDivOfReg,RegAdd,EstablishDate,BizEndDate,BizRange,EcoIndusCate,EcoType,EntScale" />
+				</extendProperties>
+			</executeUnit>
+			<!-- 企业基本信息主要组成人员段 -->
+			<executeUnit name="InsertEcrCustMnMmbInf" describe="导入企业基本信息主要组成人员段19:13:39-19:13:43(修改主键了)" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+				<extendProperties>
+					<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_CUST_MNMMBINF:etc/ecr_are.xml:,"/>
+					<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+					<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler" />
+					<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+					<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+						value="datasource:db:ecr:select 
+						ER.CustomerID as CustomerID{#客户编号},
+						ER.RelativeID as MmbSerialNo{#主要组成人员编号},
+						ER.ReltInfo as MmbPstn{#主要组成人员职位},
+						ER.ReltName	as MmbAlias{#主要组成人员姓名},
+						ER.ReltidType as MmbIDType{#主要组成人员证件类型 },
+						ER.ReltidNum as MmbIDNum{#组成人员证件号码},
+						ER.EffStatus as EffStatus{#有效标志},
+						ER.UpdateDate as MnMmbInfoUpDate{#信息更新日期},
+						ER.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						ER.ManagerUserID as ManagerUserID{#管户用户编号}
+						from ECR_INT_RELTINFO ER,ECR_INT_ENTINFO EI
+                           where ER.ReltRelType ='10'
+                           and ER.CustomerID = EI.CustomerID
+                           and {$TASK.CustReltCondition}
+                           "/>
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.database" value="ecr" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.table" value="ECR_CUST_MNMMBINF" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.keyColumns" value="CustomerID,MmbSerialNo,MmbPstn,MmbIDType, MmbIDNum" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.commitNumber" value="500" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.updateColumns" 
+						value="MmbPstn,MmbAlias,MmbIDType,MmbIDNum,EffStatus,MnMmbInfoUpDate,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.compareColumns" 
+						value="MmbPstn,MmbAlias,MmbIDType,MmbIDNum,EffStatus" />
+				</extendProperties>
+			</executeUnit>
+			
+			<!-- 企业基本信息注册资本信息 -->
+			<executeUnit name="InsertCustMnShaInf" describe="导入企业基本信息注册资本信息19:17:12-19:18:10" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+				<extendProperties>
+					<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_CUST_MNSHAINF:etc/ecr_are.xml:,"/>
+					<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+					<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler" />
+					<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+					<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+						value="datasource:db:ecr:select 
+						EI.CustomerID as CustomerID{#客户编号},
+						EI.RegCapCurrency as RegCapCurrency{#注册资本币种},
+						EI.RegCap as RegCap{#注册资本},
+						EI.UpdateDate as MnShaHodInfoUpDate{#信息更新日期},
+						EI.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						EI.ManagerUserID as ManagerUserID{#管户用户编号}
+						from ECR_INT_ENTINFO EI
+						where {$TASK.CustCondition}"/> 
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.database" value="ecr" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.table" value="ECR_CUST_MNSHAINF" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.keyColumns" value="CustomerID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.commitNumber" value="500" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.updateColumns" 
+						value="RegCapCurrency,RegCap,OccurDate,RecordFlag,MnShaHodInfoUpDate,ManagerOrgID,ManagerUserID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.compareColumns" 
+						value="RegCapCurrency,RegCap" />
+				</extendProperties>
+			</executeUnit>
+			
+			<!-- 企业基本信息主要出资人信息 -->
+			<executeUnit name="InsertEcrCustMnHodInf" describe="导入企业基本信息主要出资人信息19:19:12-19:19:13" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+				<extendProperties>
+					<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_CUST_MNHODINF:etc/ecr_are.xml:,"/>
+					<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+					<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler" />
+					<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+					<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+						value="datasource:db:ecr:select 
+						ER.CustomerID as CustomerID{#客户编号},
+						ER.RelativeID as MnSharHodSerialNo{#主要出资人编号},
+						ER.ReltInfo as SharHodType{#出资人类型},
+						ER.ReltType as SharHodCertType{#出资人身份类别},
+						ER.ReltName as SharHodName{#出资人名称},
+						ER.ReltIDType as SharHodIDType{#出资人证件类型/身份标识类型},
+						ER.ReltIDNum as SharHodIDNum{#出资人证件号码/身份标识号码 },
+						ER.InvRatio as InvRatio{#出资比例},
+						ER.EffStatus as EffStatus{#有效标志},
+						ER.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						ER.ManagerUserID as ManagerUserID{#管户用户编号}
+						from ECR_INT_RELTINFO ER,ECR_INT_ENTINFO EI
+                           where ER.InvRatio &gt;= 5
+						and ER.ReltRelType ='20'
+						and ER.CustomerID = EI.CustomerID
+                           and {$TASK.CustReltCondition}
+                           "/>
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.database" value="ecr" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.table" value="ECR_CUST_MNHODINF" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.keyColumns" value="CustomerID,MnSharHodSerialNo" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.commitNumber" value="500" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.updateColumns" 
+						value="SharHodType,SharHodCertType,SharHodName,SharHodIDType,SharHodIDNum,InvRatio,EffStatus,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.compareColumns" 
+						value="SharHodType,SharHodCertType,SharHodName,SharHodIDType,SharHodIDNum,InvRatio,EffStatus" />
+				</extendProperties>
+			</executeUnit>
+			
+			<!-- 企业基本信息实际控制人段-->
+			<executeUnit name="InsertEcrCustActuCotrlInf" describe="导入企业基本信息实际控制人段19:19:49-19:19:50" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+				<extendProperties>
+					<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_CUST_ACTUCOTRLINF:etc/ecr_are.xml:,"/>
+					<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+					<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler" />
+					<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+					<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+						value="datasource:db:ecr:select 
+						ER.CustomerID as CustomerID{#客户编号},
+						ER.RelativeID as ActuCotrlSerialNo{#实际控制人编号},
+						ER.ReltType as ActuCotrlCertType{#实际控制人身份类别},
+						ER.ReltName as ActuCotrlName{#实际控制人姓名/名称},
+						ER.ReltidType as ActuCotrlIDType{#实际控制人证件类型/身份标识类型},
+						ER.ReltidNum as ActuCotrlIDNum{#实际控制人证件号码/身份标识号码},
+						ER.EffStatus as EffStatus{#有效标志},
+						ER.UpdateDate as ActuCotrlInfoUpDate{#信息更新日期},
+						ER.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						ER.ManagerUserID as ManagerUserID{#管户用户编号}
+						from ECR_INT_RELTINFO ER,ECR_INT_ENTINFO EI
+						where ER.ReltRelType ='30'
+						and ER.CustomerID = EI.CustomerID
+						and {$TASK.CustReltCondition}
+                           "/>
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.database" value="ecr" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.table" value="ECR_CUST_ACTUCOTRLINF" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.keyColumns" value="CustomerID,ActuCotrlSerialNo" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.commitNumber" value="500" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.updateColumns" 
+						value="ActuCotrlCertType,ActuCotrlName,ActuCotrlIDType,ActuCotrlIDNum,EffStatus,ActuCotrlInfoUpDate,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.compareColumns" 
+						value="ActuCotrlCertType,ActuCotrlName,ActuCotrlIDType,ActuCotrlIDNum,EffStatus" />
+				</extendProperties>
+			</executeUnit>
+			
+			<!-- 企业基本信息上级机构段-->
+			<executeUnit name="InsertEcrCustSpvsInf" describe="导入企业基本信息上级机构段(增加主键 SupOrgCertNum)" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+				<extendProperties>
+					<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_CUST_SPVSGATHRTYINF:etc/ecr_are.xml:,"/>
+					<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+					<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler" />
+					<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+					<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+						value="datasource:db:ecr:select 
+						ER.CustomerID as CustomerID{#客户编号},
+						ER.ReltInfo as SupOrgType{#上级机构类型},
+						ER.ReltName as SupOrgName{#上级机构名称},
+						ER.ReltidType as SupOrgCertType{#上级机构身份标识类型---------------------?},
+						ER.ReltidNum as SupOrgCertNum{#上级机构身份标识码},
+						ER.UpdateDate as SupOrgInfoUpDate{#信息更新日期},
+						ER.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						ER.ManagerUserID as ManagerUserID{#管户用户编号}
+						from ECR_INT_RELTINFO ER,ECR_INT_ENTINFO EI
+                           where ER.ReltRelType ='40'
+                           and ER.CustomerID = EI.CustomerID
+                           and {$TASK.CustReltCondition}
+                           "/>
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.database" value="ecr" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.table" value="ECR_CUST_SPVSGATHRTYINF" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.keyColumns" value="CustomerID,SupOrgType" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.commitNumber" value="500" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.updateColumns" 
+						value="SupOrgName,SupOrgCertType,SupOrgCertNum,SupOrgInfoUpDate,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.compareColumns" 
+						value="SupOrgName,SupOrgCertType,SupOrgCertNum" />
+				</extendProperties>
+			</executeUnit>
+			
+			<!-- 企业基本信息联系方式段 -->
+			<executeUnit name="InsertEcrCustCotaInf" describe="导入企业基本信息联系方式段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+				<extendProperties>
+					<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_CUST_COTAINF:etc/ecr_are.xml:,"/>
+					<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+					<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler" />
+					<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+					<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+						value="datasource:db:ecr:select 
+						EI.CustomerID as CustomerID{#客户编号},
+						EI.ConAddDistrictCode as ConAddDistrictCode{#联系地址行政区划代码},
+						EI.ConAdd as ConAdd{#联系地址},
+						EI.ConPhone as ConPhone{#联系电话},
+						EI.FinConPhone as FinConPhone{#财务部门联系电话},
+						EI.UpdateDate as CotaInfoUpDate{#信息更新日期},
+						EI.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						EI.ManagerUserID as ManagerUserID{#管户用户编号}
+						from ECR_INT_ENTINFO EI
+						where {$TASK.CustCondition}"/> 
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.database" value="ecr" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.table" value="ECR_CUST_COTAINF" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.keyColumns" value="CustomerID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.commitNumber" value="500" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.updateColumns" 
+						value="ConAddDistrictCode,ConAdd,ConPhone,FinConPhone,CotaInfoUpDate,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.compareColumns" 
+						value="ConAddDistrictCode,ConAdd,ConPhone,FinConPhone" />
+				</extendProperties>
+			</executeUnit>
+	
+			<!-- 企业关联关系信息段 -->
+			<executeUnit name="InsertEcrCustIcdnRltpInf" describe="导入企业关联关系信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+				<extendProperties>
+					<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_CUST_ICDNRLTPINF:etc/ecr_are.xml:,"/>
+					<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+					<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler" />
+					<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+					<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+						value="datasource:db:ecr:select 
+						ECB.CustomerID as CustomerID{#客户编号},
+						ER.RelativeID as AssoEntSerialNo{#关联企业编号},
+						'350' as InfRecType{#信息记录类型},
+						ECB.EntName as EntName{#A企业名称},
+						ECB.EntCertType as EntCertType{#A企业身份标识类型},
+						ECB.EntCertNum as EntCertNum{#A企业身份标识码},
+						ER.ReltName as AssoEntName{#B企业名称},
+						ER.ReltidType as AssoEntCertType{#B企业身份标识类型},
+						ER.ReltidNum as AssoEntCertNum{#B企业身份标识码},
+						ER.ReltInfo as AssoType{#关联关系类型},
+						ER.EffStatus as AssoSign{#关联关系有效标志},
+						'{$ARE.bizDate}' as RptDate{#信息更新日期},
+						ER.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						ER.ManagerUserID as ManagerUserID{#管户用户编号}
+						from  ECR_INT_RELTINFO ER, ECR_CUST_BS ECB,ECR_INT_ENTINFO EI
+						where ER.CustomerID=ECB.CustomerID 
+						and ER.CustomerID = EI.CustomerID
+						and ER.ReltRelType ='50'
+						and {$TASK.CustReltCondition}
+						"/> 
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.database" value="ecr" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.table" value="ECR_CUST_ICDNRLTPINF" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.keyColumns" value="CustomerID,AssoEntSerialNo" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.commitNumber" value="500" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.updateColumns" 
+						value="EntName,EntCertType,EntCertNum,AssoEntName,AssoEntCertType,AssoEntCertNum,AssoType,AssoSign,RptDate,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.compareColumns" 
+						value="EntName,EntCertType,EntCertNum,AssoEntName,AssoEntCertType,AssoEntCertNum,AssoType,AssoSign" />
+				</extendProperties>
+			</executeUnit>
+				
+			<!-- 根据规范提示该段可不启用，使用其他标识段报送 -->
+			<executeUnit name="InsertEcrCustCtfItgInf" describe="导入企业基本信息身份标识整合信息段" executeClass="com.amarsoft.task.units.dpx.PRHUnit" allowManualExecute="true">
+				<extendProperties>
+					<property name="unit.recordSet" value="datasource:db:ecr:select * from ECR_CUST_CTFITGINF:etc/ecr_are.xml:,"/>
+					<property name="unit.provider" value="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider" />
+					<property name="unit.handlers" value="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler" />
+					<property name="unit.handlersThreadNumber" value="{$ARE.threadNumber}"/> 
+					<property name="com.amarsoft.are.dpx.recordset.DefaultDataSourceProvider.dataSource"
+						value="datasource:db:ecr:select
+						ECB.CustomerID as CustomerID{#客户编号},
+						ER.RelativeID as OthOrgSerialNo{#其他组织机构标识编号},
+						'340' as InfRecType{#信息记录类型},
+						ECB.EntName as EntName{#企业名称},
+						ECB.EntCertType as EntCertType{#企业身份标识类型},
+						ECB.EntCertNum as EntCertNum{#企业身份标识号码},
+						ER.ReltIDType as OthEntCertType{#企业其他身份标识类型},
+						ER.ReltIDNum as OthEntCertNum{#企业其他身份标识号码},
+						ER.EffStatus as CertAssFlg{#身份标识关联标志},
+						'{$ARE.bizDate}' as RptDate{#信息更新日期},
+						ER.ManagerOrgID as ManagerOrgID{#管户机构编号},
+						ER.ManagerUserID as ManagerUserID{#管户用户编号}
+						from  ECR_INT_RELTINFO ER, ECR_CUST_BS ECB,ECR_INT_ENTINFO EI
+						where ER.CustomerID=ECB.CustomerID
+						and ER.CustomerID = EI.CustomerID 
+						and ER.ReltRelType ='60'
+						and {$TASK.CustReltCondition}
+						"/> 
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.database" value="ecr" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.table" value="ECR_CUST_CTFITGINF" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.keyColumns" value="OthOrgSerialNo,CustomerID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.commitNumber" value="500" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.updateColumns" 
+						value="EntName,EntCertType,EntCertNum,OthEntCertType,OthEntCertNum,CertAssFlg,RptDate,OccurDate,RecordFlag,ManagerOrgID,ManagerUserID" />
+					<property name="com.amarsoft.app.pbc.ecr.dataimport.ECRCustUpdateHandler.compareColumns" 
+						value="EntName,EntCertType,EntCertNum,OthEntCertType,OthEntCertNum,CertAssFlg" />
+				</extendProperties>
+			</executeUnit>
+			
+			<!-- 企业信息其他段修改时,更新基础段RptDateCode为20-更新客户资料,记录标志RecordFlag为U-更新，信息报告日期和数据日期为当前批量时间-->
+			<executeUnit name="SyncOrgCustRecordflag" describe="更新企业信息基础段" executeClass="com.amarsoft.app.pbc.ecr.dataimport.SyncOrgCustRecordflag" allowManualExecute="true"/>
+		</executeUnits>
+		
+		<routeMap start="InsertEcrCustBs" >
+		 	<route unit="InsertEcrCustBs" successful="InsertEcrCustIDInf" />
+		 	<route unit="InsertEcrCustIDInf" successful="InsertEcrCustFcsInf" />
+		 	<route unit="InsertEcrCustFcsInf" successful="InsertEcrCustMnMmbInf" />
+		 	<route unit="InsertEcrCustMnMmbInf" successful="InsertCustMnShaInf" />
+		 	<route unit="InsertCustMnShaInf" successful="InsertEcrCustMnHodInf" />
+		 	<route unit="InsertEcrCustMnHodInf" successful="InsertEcrCustActuCotrlInf" />
+		 	<route unit="InsertEcrCustActuCotrlInf" successful="InsertEcrCustSpvsInf" />
+		 	<route unit="InsertEcrCustSpvsInf" successful="InsertEcrCustCotaInf" />
+		 	<route unit="InsertEcrCustCotaInf" successful="InsertEcrCustIcdnRltpInf" />
+		 	<route unit="InsertEcrCustIcdnRltpInf" successful="SyncOrgCustRecordflag" />
+	    </routeMap>	
+		
+</task>

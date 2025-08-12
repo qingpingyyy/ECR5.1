@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="GBK" ?>
+<inf>
+	<sgmt name="EnBsEntSgmt" describe="企业基本信息整笔删除请求信息段" type="B" table="HECR_Cust_BsInfDlt" key="InfRecType,EntCertNum,SessionID">
+		<field name="InfRecType" 	describe="信息记录类型" 		type="text" source="fix" value="314" />
+		<field name="InfSurcCode" 	describe="信息来源编码" 		type="text" source="db" dbname="InfSurcCode" 	bsdbname="InfSurcCode" 	/>
+		<field name="EntName" 		describe="企业名称" 			type="text" source="db" dbname="EntName" 		bsdbname="EntName" 		/>
+		<field name="EntCertType" 	describe="企业身份标识类型" 	type="text" source="db" dbname="EntCertType" 	bsdbname="EntCertType" 	/>
+		<field name="EntCertNum" 	describe="企业身份标识号码" 	type="text" source="db" dbname="EntCertNum" 	bsdbname="EntCertNum" 	/>
+	</sgmt>
+</inf>

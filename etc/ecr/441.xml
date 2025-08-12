@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="GBK" ?>
+<inf>
+	<sgmt name="EnSecAcctIDCagsInf" describe="企业担保账户标识变更请求信息段" type="B" table="HECR_IdCagsInfo" key="InfRecType,OdBnesCode,SessionID">
+		<field name="InfRecType" describe="信息记录类型" type="text" source="fix" value="441" />
+		<field name="OdBnesCode" describe="原业务标识号" type="text" source="db" dbname="OdBnesCode" />
+		<field name="NwBnesCode" describe="新业务标识号" type="text" source="db" dbname="NwBnesCode" />
+	</sgmt>
+</inf>

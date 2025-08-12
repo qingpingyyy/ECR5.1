@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="GBK" ?>
+<inf>
+	<sgmt name="MotgaCltalCtrctBsSgmt" describe="基础段" type="B" ctable="ECR_Motga_Bs" htable="HECR_Motga_Bs" key="CcCode">
+		<field name="InfRecType" describe="信息记录类型" type="text" source="fix" value="510" />
+		<field name="CcCode" describe="抵（质）押合同标识码" type="text" source="db" dbname="CcCode" isKey="true" />
+		<field name="RptDate" describe="信息报告日期" type="text" source="db" dbname="RptDate" />
+		<field name="RptDateCode" describe="报告时点说明代码" type="text" source="db" dbname="RptDateCode" />
+		<field name="InfoIDType" describe="债务人身份类别" type="text" source="db" dbname="InfoIDType" />
+		<field name="Name" describe="债务人姓名" type="text" source="db" dbname="Name" />
+		<field name="CertType" describe="债务人身份标识类型" type="text" source="db" dbname="CertType" />
+		<field name="CertNum" describe="债务人身份标识号码" type="text" source="db" dbname="CertNum" />
+		<field name="MngmtOrgCode" describe="业务管理机构代码" type="text" source="db" dbname="MngmtOrgCode" />
+	</sgmt>
+	<sgmt name="MotgaCltalBsInfSgmt" describe="合同基本信息段" type="S" ctable="ECR_Motga_BsInf" htable="HECR_Motga_BsInf" key="CcCode">
+		<field name="GuarType" describe="合同类型" type="text" source="db" dbname="GuarType" />
+		<field name="CcAmt" describe="担保金额" type="numeric" source="db" dbname="CcAmt" />
+		<field name="Cy" describe="币种" type="text" source="db" dbname="Cy" />
+		<field name="CcValDate" describe="抵（质）押合同生效日期" type="text" source="db" dbname="CcValDate" />
+		<field name="CcExpDate" describe="抵（质）押合同到期日期" type="text" source="db" dbname="CcExpDate" />
+		<field name="MaxGuar" describe="最高额担保标志" type="text" source="db" dbname="MaxGuar" />
+		<field name="CcStatus" describe="抵（质）押合同状态" type="text" source="db" dbname="CcStatus" />
+	</sgmt>
+	<sgmt name="ComRecInfSgmt" describe="其他债务人信息段" type="N" ctable="ECR_Motga_ComRecInf" htable="HECR_Motga_ComRecInf" key="CcCode,GrtdSerialNo">
+		<field name="GrtdNm" describe="其他债务人个数" type="num" source="count" />
+		<field name="OtrRec" describe="债务人信息" type="node" source="table" >
+			<field name="InfoIDType" describe="身份类别" type="text" source="db" dbname="InfoIDType" />
+			<field name="GuarName" describe="其他债务人名称" type="text" source="db" dbname="GuarName" />
+			<field name="GuarCertType" describe="其他债务人身份标识类型" type="text" source="db" dbname="GuarCertType" />
+			<field name="GuarCertNum" describe="其他债务人身份标识号码" type="text" source="db" dbname="GuarCertNum" />
+		</field>
+	</sgmt>
+	<sgmt name="MotgaProptInfSgmt" describe="抵押物信息段" type="N" ctable="ECR_Motga_ProptInf" htable="HECR_Motga_ProptInf" key="CcCode,PleCertId">
+		<field name="PleNm" describe="抵押物个数" type="num" source="count" />
+		<field name="PleInf" describe="抵押物信息" type="node" source="table" >
+			<field name="PleType" describe="抵押物种类" type="text" source="db" dbname="PleType" />
+			<field name="MotgaProptIDType" describe="抵押物识别号类型" type="text" source="db" dbname="MotgaProptIDType" />
+			<field name="PleCertID" describe="抵押物唯一识别号" type="text" source="db" dbname="PleCertID" />
+			<field name="PleDistr" describe="抵押物位置所在地行政区划" type="text" source="db" dbname="PleDistr" />
+			<field name="PleValue" describe="抵押物评估价值" type="numeric" source="db" dbname="PleValue" />
+			<field name="PleCy" describe="币种" type="text" source="db" dbname="PleCy" />
+			<field name="ValOrgType" describe="评估机构类型" type="text" source="db" dbname="ValOrgType" />
+			<field name="ValDate" describe="抵押物评估日期" type="text" source="db" dbname="ValDate" />
+			<field name="PledgorType" describe="抵押人类型" type="text" source="db" dbname="PledgorType" />
+			<field name="PledgorName" describe="抵押人姓名" type="text" source="db" dbname="PledgorName" />
+			<field name="PleorCertType" describe="抵押人身份标识类型" type="text" source="db" dbname="PleorCertType" />
+			<field name="PleorCertNum" describe="抵押人身份标识号码" type="text" source="db" dbname="PleorCertNum" />
+			<field name="PleDesc" describe="抵押物说明" type="text" source="db" dbname="PleDesc" />
+		</field>
+	</sgmt>
+	<sgmt name="CltalInfSgmt" describe="质物信息段" type="N" ctable="ECR_Motga_CltalInf" htable="HECR_Motga_CltalInf" key="CcCode,ImpType">
+		<field name="ImpNm" describe="质物种类个数" type="num" source="count" />
+		<field name="ImpInf" describe="质物信息" type="node" source="table" >
+			<field name="ImpType" describe="质物种类" type="text" source="db" dbname="ImpType" />
+			<field name="ImpVal" describe="质物价值" type="numeric" source="db" dbname="ImpVal" />
+			<field name="ImpCy" describe="币种" type="text" source="db" dbname="ImpCy" />
+			<field name="Ippc" describe="出质人类型" type="text" source="db" dbname="Ippc" />
+			<field name="PawnName" describe="出质人名称" type="text" source="db" dbname="PawnName" />
+			<field name="PawnCertType" describe="出质人身份标识类型" type="text" source="db" dbname="PawnCertType" />
+			<field name="PawnCertNum" describe="出质人身份标识号码" type="text" source="db" dbname="PawnCertNum" />
+		</field>
+	</sgmt>
+</inf>

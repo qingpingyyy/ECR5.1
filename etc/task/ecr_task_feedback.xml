@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!-- 任务定义文件,每个任务有一个文件构成，任务构造器可以根据此文件构造一个任务出来 -->
+
+<task name="ECRFeedbackReportTask" describe="企业反馈报文执行任务"  recovery="false"  saveHistory="false"  historyFolder="./his">
+		<executeUnits>
+				<executeUnit name="ECRFeedbackSession" describe="企业反馈报文解析" executeClass="com.amarsoft.app.pbc.ecr.report.sesssion.SessionUnit" allowManualExecute="true">
+					<extendProperties>
+						<!-- 指定运行的Session 此处要注意 开启的是批量Session-->
+						<property name="unit.sessionClass" value="com.amarsoft.app.pbc.ecr.report.feedback.session.FeedbackSession"/>
+						<!--是否多法人标志，1：否。2：是。默认单法人机构1。-->
+						<property name="unit.isFlag" value="1" />
+						<!-- SessionName -->
+						<property name="com.amarsoft.app.pbc.ecr.report.feedback.session.FeedbackSession.sessionName" value="反馈报文解析"/>
+						<!-- 反馈文件目录 -->
+						<property name="com.amarsoft.app.pbc.ecr.report.feedback.session.FeedbackSession.sourceDir" value="data/feedback/report"/>
+						<!-- 反馈文件后缀 -->
+						<property name="com.amarsoft.app.pbc.ecr.report.feedback.session.FeedbackSession.suffix" value=".txt"/>
+					</extendProperties>
+				</executeUnit>
+		</executeUnits>
+		<routeMap start="ECRFeedbackSession">
+	    </routeMap>     
+</task>

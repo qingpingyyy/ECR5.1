@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="GBK" ?>
+<inf>
+	<sgmt name="IncomeAndExpenseStatementDltSgmt" describe="事业单位收入支出表整笔删除请求信息段" type="B" table="HECR_FinanceReport_AllDel" key="CUSTOMERID,InfRecType,SheetYear,SheetType,SheetTypeDivide,SessionID">
+		<field name="InfRecType" 		describe="信息记录类型 " 		type="text" source="fix" value="654" />
+		<field name="EntName" 			describe="企业名称 " 			type="text" source="db" dbname="EntName" 			bsdbname="EntName"/>
+		<field name="EntCertType" 		describe="企业身份标识类型 " 	type="text" source="db" dbname="EntCertType" 		bsdbname="EntCertType" />
+		<field name="EntCertNum" 		describe="企业身份标识号码 " 	type="text" source="db" dbname="EntCertNum" 		bsdbname="EntCertNum" />
+		<field name="SheetYear" 		describe="报表年份 " 			type="text" source="db" dbname="SheetYear" 			bsdbname="SheetYear" />
+		<field name="SheetType" 		describe="报表类型 " 			type="text" source="db" dbname="SheetType" 			bsdbname="SheetType" />
+		<field name="SheetTypeDivide" 	describe="报表类型细分 " 		type="text" source="db" dbname="SheetTypeDivide" 	bsdbname="SheetTypeDivide" />
+	</sgmt>
+</inf>

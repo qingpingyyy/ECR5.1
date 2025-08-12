@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!-- 任务定义文件,每个任务有一个文件构成，任务构造器可以根据此文件构造一个任务出来 -->
+
+<task name="ECRTransferTask" describe="企业待上报数据迁移" recovery="false"  saveHistory="false"  historyFolder="./his">
+	<executeUnits>
+	<!-- 迁移上报数据 -->
+	<executeUnit name="PreTransfer" describe ="迁移待上报数据" executeClass="com.amarsoft.app.pbc.ecr.transfer.TransferProcessSession" allowManualExecute="true">
+		<extendProperties>
+		    <property name="com.amarsoft.app.pbc.ecr.transfer.TransferProcessSession.tabMsgDir" value="{$ARE.ECR_HOME}/etc/ecr_tabMsg.xml" />
+			<property name="com.amarsoft.app.pbc.ecr.transfer.TransferProcessSession.filterScript" value="
+				    connect to ecr;&#xA;
+					set autocommit false;&#xA;
+					
+					delete from ECR_TRANSFERFILTER;&#xA;
+					insert into ECR_TRANSFERFILTER(BusiIDSerialNo,FilterCause,OccurDate,APPLICATIONCODE,REMARK)        
+	                    select distinct BusiIDSerialNo,'E',OccurDate,'1','' from ECR_VALIDATEERRORS where trim(BusiIDSerialNo) is not null and trim(BusiIDSerialNo) &lt;&gt; 'N/A' and applicationcode='1'       
+					union       
+						select distinct BSBusiIDSerialNo,'E',OccurDate,'1','' from ECR_VALIDATEERRORS where trim(BSBusiIDSerialNo) is not null and applicationcode='1'            
+					union        
+						select distinct BSBusiIDSerialNo,'F',OccurDate,'1','' from ECR_FEEDBACK where trim(BSBusiIDSerialNo) is not null and applicationcode='1'
+					union
+						select distinct CustomerID,'D',OccurDate,'1','' from HECR_CUST_BSINFDLT where SessionID &lt;&gt; '88888888888888'
+					union
+						select distinct DelRecCode,'D',OccurDate,'1','' from HECR_BUSI_ALLDEL where SessionID &lt;&gt; '88888888888888'
+					union
+						select distinct BusiIdSerialNo,'B',OperateTime,'1','' from ECR_UNREPORTINFO where Flag = '3'
+					union
+						select distinct(concat(concat(concat(concat(concat(concat(concat(concat(CustomerID , '@'),SheetYear),'@'),SheetType),'@'),SheetTypeDivide),'@'),InfRecType)),'D',OccurDate,'1','' from  HECR_FINANCEREPORT_ALLDEL where SessionID &lt;&gt; '88888888888888';&#xA;
+					commit;&#xA;
+					disconnect;" />
+			</extendProperties>
+		</executeUnit>	
+		
+		<taskContainer name="Transfer" describe="迁移"   taskRef="pool"/>
+		
+		<executeUnit name="UpdateFlag" describe="程序最后更新AccountInfo更新状态" allowManualExecute="true" executeClass="com.amarsoft.task.units.dpx.SQLProcess">
+			<extendProperties>
+				<property name="unit.onErrorAction" value="break"/>
+				<property name="unit.logLevel" value="debug"/>
+				<property name="unit.script" value="
+							connect to {$ARE.ecr_dataSource};&#xA;
+							set autocommit false;&#xA;
+							Update ECR_AccountInfo set RecordFlag = 'R' where RecordFlag in('A','U');&#xA;
+							commit;&#xA;
+							Update ECR_AccountInfo set RecordFlag = 'X' where AcctStatus in ('21','2');&#xA;
+							commit;&#xA;
+							Update ECR_Credit_Bs set RecordFlag = 'X' where RptDateCode = '20' and Recordflag &lt;&gt; 'X';&#xA;
+							commit;&#xA;
+							Update ECR_Motga_Bs set RecordFlag = 'X' where RptDateCode = '20' and Recordflag &lt;&gt; 'X';&#xA;
+							commit;&#xA;
+							disconnect;"
+				/>
+			</extendProperties>
+		</executeUnit>
+	</executeUnits>
+	<routeMap start="PreTransfer">
+		<route unit="PreTransfer" successful="Transfer"/>
+		<route unit="Transfer" successful="UpdateFlag"/>
+	</routeMap>
+		
+	<subTasks>
+		<subTask name="pool">
+			<pool taskThreadNumber="5" queueSize="20" startArgName="element">
+       			<producer className="com.amarsoft.app.pbc.ecr.transfer.TransferArray">
+          			<extendProperties>
+           				<!-- application 1是企业  2是个人-->
+					    <property name="application" value="1" />
+           			</extendProperties>
+       			</producer>
+		    </pool>
+			
+			<executeUnits>
+				<executeUnit name="handler" describe="迁移处理" executeClass="com.amarsoft.app.pbc.ecr.transfer.TransferProcessUnit" allowManualExecute="true">
+					<extendProperties>
+						<!-- 指定运行的Handler 此处要注意 开启的是批量Handler-->
+					    <property name="unit.handlerClass" value="com.amarsoft.app.pbc.ecr.transfer.TransferProcessHandler" />
+						<!--数据库名称 -->
+					    <property name="com.amarsoft.app.pbc.ecr.transfer.TransferProcessHandler.database" value="ecr" />
+					</extendProperties>
+				</executeUnit>
+			</executeUnits>
+			<routeMap start="handler"/>
+		</subTask>
+	</subTasks>
+	
+</task>
