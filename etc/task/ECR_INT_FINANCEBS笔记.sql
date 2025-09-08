@@ -52,7 +52,7 @@ select CUSTOMERID,SHEETYEAR,max(EXTEND1) as EXTEND1 ,SHEETTYPE, SHEETTYPEDIVIDE 
                         when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('04','05','06') then '50' 
                         when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('07','08','09') then '60' 
                         when CF.ReportPeriod='020' and substr(CF.ReportDate,6,2) in ('10','11','12') then '70' 
-                    end as SHEETTYPE, {#报表类型   }
+                    end as SHEETTYPE, {#报表类型}
                 case when cf.ReportScope='020' then '1' when cf.ReportScope ='010' then '2' end		as SHEETTYPEDIVIDE, {#报表类型细分} 		      
                 CI.CustomerName	as ENTNAME, {#企业名称}                
                 case when length(trim(EI.LoancardNo))=16 then EI.LoancardNo 
